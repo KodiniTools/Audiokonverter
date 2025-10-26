@@ -45,7 +45,7 @@
             <!-- Download Button (wenn fertig) -->
             <button
               v-if="file.status === 'completed'"
-              class="btn-icon btn-download"
+              class="btn-icon btn-download btn-download-ready"
               @click="audioStore.downloadFile(file)"
               :title="t('actions.download')"
             >
@@ -195,6 +195,8 @@ function removeFile(fileId) {
 
 .file-item.completed {
   border-left: 4px solid var(--success-color);
+  background: linear-gradient(90deg, rgba(76, 175, 80, 0.08) 0%, var(--card-background) 100%);
+  box-shadow: 0 2px 12px rgba(76, 175, 80, 0.15);
 }
 
 .file-item.error {
@@ -316,6 +318,18 @@ function removeFile(fileId) {
 }
 .btn-download:hover {
   color: var(--success-color);
+}
+
+.btn-download-ready {
+  background: rgba(76, 175, 80, 0.1);
+  color: var(--success-color);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.btn-download-ready:hover {
+  background: var(--success-color);
+  color: white;
+  transform: scale(1.1);
 }
 
 .btn-retry:hover {
