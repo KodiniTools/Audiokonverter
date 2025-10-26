@@ -53,7 +53,7 @@ function scrollToTop() {
 .navbar {
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 50;
   background: var(--card-background);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(184, 184, 184, 0.1);
