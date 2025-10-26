@@ -22,6 +22,17 @@
         <span>{{ t('actions.downloadAll') }}</span>
       </button>
 
+      <!-- Download All as ZIP -->
+      <button
+        v-if="audioStore.hasConvertedFiles"
+        class="action-btn btn-primary"
+        @click="downloadAllAsZip"
+        :title="t('actions.downloadAllAsZip')"
+      >
+        <i class="fas fa-file-archive"></i>
+        <span>{{ t('actions.downloadAllAsZip') }}</span>
+      </button>
+
       <!-- Undo -->
       <button
         class="action-btn btn-secondary"
@@ -75,6 +86,23 @@ async function downloadAll() {
     showToast('success', 'Download gestartet')
   } catch (error) {
     showToast('error', 'Download fehlgeschlagen', { message: error.message })
+  }
+}
+
+async function downloadAllAsZip() {
+  try {
+    showToast('info', t('toast.preparingZip'))
+    const result = await audioStore.downloadAllAsZip()
+
+    if (result.success) {
+      showToast('success', t('toast.zipDownloadStarted'))
+    } else if (result.message === 'noConvertedFiles') {
+      showToast('warning', t('toast.noConvertedFiles'))
+    } else {
+      showToast('error', 'ZIP-Download fehlgeschlagen', { message: result.error })
+    }
+  } catch (error) {
+    showToast('error', 'ZIP-Download fehlgeschlagen', { message: error.message })
   }
 }
 </script>
@@ -132,6 +160,16 @@ async function downloadAll() {
 
 .btn-success:hover {
   background: #45a049;
+}
+
+.btn-primary {
+  background: var(--accent-gradient);
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
 @keyframes fadeIn {

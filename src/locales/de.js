@@ -38,6 +38,7 @@ export default {
   actions: {
     clearAll: 'Alle löschen',
     downloadAll: 'Alle herunterladen',
+    downloadAllAsZip: 'Alle als ZIP herunterladen',
     downloadOptions: 'Download-Optionen',
     exportMetadata: 'Metadaten exportieren',
     undo: 'Rückgängig',
@@ -62,7 +63,10 @@ export default {
     conversionComplete: 'Konvertierung abgeschlossen',
     conversionFailed: 'Konvertierung fehlgeschlagen',
     allFilesCleared: 'Alle Dateien gelöscht',
-    unsupportedFormat: 'Nicht unterstütztes Format'
+    unsupportedFormat: 'Nicht unterstütztes Format',
+    preparingZip: 'ZIP-Datei wird erstellt...',
+    zipDownloadStarted: 'ZIP-Download gestartet',
+    noConvertedFiles: 'Keine konvertierten Dateien zum Herunterladen'
   },
   errors: {
     uploadFailed: 'Upload fehlgeschlagen',
