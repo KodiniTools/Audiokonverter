@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import axios from 'axios'
+import JSZip from 'jszip'
 
 export const useAudioStore = defineStore('audio', () => {
   // State
@@ -217,7 +218,7 @@ export const useAudioStore = defineStore('audio', () => {
 
   async function downloadAllFiles() {
     const completedFiles = audioFiles.value.filter(f => f.status === 'completed' && f.convertedUrl)
-    
+
     if (completedFiles.length === 0) {
       return
     }
@@ -225,6 +226,52 @@ export const useAudioStore = defineStore('audio', () => {
     for (const fileData of completedFiles) {
       await downloadFile(fileData)
       await new Promise(resolve => setTimeout(resolve, 300))
+    }
+  }
+
+  async function downloadAllAsZip() {
+    const completedFiles = audioFiles.value.filter(f => f.status === 'completed' && f.convertedUrl)
+
+    if (completedFiles.length === 0) {
+      return { success: false, message: 'noConvertedFiles' }
+    }
+
+    try {
+      const zip = new JSZip()
+
+      // Lade alle Dateien und füge sie zum ZIP hinzu
+      for (const fileData of completedFiles) {
+        const response = await fetch(fileData.convertedUrl)
+        const blob = await response.blob()
+        const filename = fileData.convertedName || `converted-${fileData.name}`
+        zip.file(filename, blob)
+      }
+
+      // Erstelle ZIP-Datei
+      const zipBlob = await zip.generateAsync({
+        type: 'blob',
+        compression: 'DEFLATE',
+        compressionOptions: { level: 6 }
+      })
+
+      // Lade ZIP herunter
+      const url = window.URL.createObjectURL(zipBlob)
+      const link = document.createElement('a')
+      link.href = url
+      const timestamp = new Date().toISOString().slice(0, 10)
+      link.download = `converted-audio-${timestamp}.zip`
+      link.style.display = 'none'
+
+      document.body.appendChild(link)
+      link.click()
+
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+
+      return { success: true }
+    } catch (error) {
+      console.error('ZIP download failed:', error)
+      return { success: false, error: error.message }
     }
   }
 
@@ -317,7 +364,7 @@ export const useAudioStore = defineStore('audio', () => {
     currentFormat,
     currentQuality,
     conversionProgress,
-    
+
     // Computed
     hasFiles,
     hasConvertedFiles,
@@ -325,7 +372,7 @@ export const useAudioStore = defineStore('audio', () => {
     canRedo,
     fileCount,
     totalSize,
-    
+
     // Actions
     addFiles,
     removeFile,
@@ -335,6 +382,7 @@ export const useAudioStore = defineStore('audio', () => {
     convertAllFiles,
     downloadFile,
     downloadAllFiles,
+    downloadAllAsZip,
     undo,
     redo,
     setFormat,
