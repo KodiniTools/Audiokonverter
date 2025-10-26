@@ -38,7 +38,7 @@ export const useAudioStore = defineStore('audio', () => {
       convertedSize: null,
       error: null
     }))
-    
+
     saveState()
     audioFiles.value.push(...newFiles)
     return newFiles
@@ -209,10 +209,10 @@ export const useAudioStore = defineStore('audio', () => {
       convertedSize: f.convertedSize,
       error: f.error
     }))
-    
+
     history.value.past.push(JSON.stringify(serializableState))
     history.value.future = []
-    
+
     if (history.value.past.length > 20) {
       history.value.past.shift()
     }
@@ -233,7 +233,7 @@ export const useAudioStore = defineStore('audio', () => {
       convertedSize: f.convertedSize,
       error: f.error
     }))
-    
+
     history.value.future.push(JSON.stringify(currentSerializable))
     const previousState = history.value.past.pop()
     audioFiles.value = JSON.parse(previousState)
@@ -254,7 +254,7 @@ export const useAudioStore = defineStore('audio', () => {
       convertedSize: f.convertedSize,
       error: f.error
     }))
-    
+
     history.value.past.push(JSON.stringify(currentSerializable))
     const nextState = history.value.future.pop()
     audioFiles.value = JSON.parse(nextState)
