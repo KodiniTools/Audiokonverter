@@ -121,7 +121,26 @@ export const useAudioStore = defineStore('audio', () => {
           : '/' + response.data.url
 
         file.convertedUrl = '/audiokonverter' + urlPath
-        file.convertedName = response.data.filename
+
+        // Generiere Dateinamen: Ursprünglicher Name + neue Endung
+        let convertedFileName = response.data.filename
+        if (!convertedFileName || convertedFileName === '') {
+          // Fallback: Erstelle Namen aus Original + neue Endung
+          const originalNameWithoutExt = file.name.replace(/\.[^/.]+$/, '')
+          convertedFileName = `${originalNameWithoutExt}.${currentFormat.value}`
+        } else {
+          // Prüfe ob der Server-Dateiname den ursprünglichen Namen behält
+          // Falls nicht, verwende ursprünglichen Namen + neue Endung
+          const originalNameWithoutExt = file.name.replace(/\.[^/.]+$/, '')
+          const serverNameWithoutExt = convertedFileName.replace(/\.[^/.]+$/, '')
+
+          // Wenn der Server einen anderen Namen generiert hat, verwende den Original-Namen
+          if (serverNameWithoutExt !== originalNameWithoutExt) {
+            convertedFileName = `${originalNameWithoutExt}.${currentFormat.value}`
+          }
+        }
+
+        file.convertedName = convertedFileName
         file.convertedSize = response.data.size || null
         file.status = 'completed'
 
