@@ -19,8 +19,12 @@
           <div class="file-item-info">
             <i class="fas fa-file-audio file-icon"></i>
             <div class="file-details">
-              <span class="file-name" :title="file.name">{{ file.name }}</span>
-              <span class="file-size">{{ audioStore.formatFileSize(file.size) }}</span>
+              <span class="file-name" :title="file.status === 'completed' && file.convertedName ? file.convertedName : file.name">
+                {{ file.status === 'completed' && file.convertedName ? file.convertedName : file.name }}
+              </span>
+              <span class="file-size">
+                {{ file.status === 'completed' && file.convertedSize ? audioStore.formatFileSize(file.convertedSize) : audioStore.formatFileSize(file.size) }}
+              </span>
             </div>
           </div>
 

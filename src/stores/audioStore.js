@@ -35,9 +35,10 @@ export const useAudioStore = defineStore('audio', () => {
       progress: 0,
       convertedUrl: null,
       convertedName: null,
+      convertedSize: null,
       error: null
     }))
-    
+
     saveState()
     audioFiles.value.push(...newFiles)
     return newFiles
@@ -112,22 +113,24 @@ export const useAudioStore = defineStore('audio', () => {
 
       updateFileProgress(fileData.id, 100, 'completed')
       const file = audioFiles.value.find(f => f.id === fileData.id)
-      
+
       if (file) {
         // Verwende url statt output
-        const urlPath = response.data.url.startsWith('/') 
-          ? response.data.url 
+        const urlPath = response.data.url.startsWith('/')
+          ? response.data.url
           : '/' + response.data.url
-        
+
         file.convertedUrl = '/audiokonverter' + urlPath
         file.convertedName = response.data.filename
+        file.convertedSize = response.data.size || null
         file.status = 'completed'
-        
+
         console.log('✅ Konvertierung erfolgreich:', {
           url: file.convertedUrl,
-          name: file.convertedName
+          name: file.convertedName,
+          size: file.convertedSize
         })
-        
+
         convertedFiles.value.push(file)
       }
       return { success: true, data: response.data }
@@ -203,12 +206,13 @@ export const useAudioStore = defineStore('audio', () => {
       progress: f.progress,
       convertedUrl: f.convertedUrl,
       convertedName: f.convertedName,
+      convertedSize: f.convertedSize,
       error: f.error
     }))
-    
+
     history.value.past.push(JSON.stringify(serializableState))
     history.value.future = []
-    
+
     if (history.value.past.length > 20) {
       history.value.past.shift()
     }
@@ -216,7 +220,7 @@ export const useAudioStore = defineStore('audio', () => {
 
   function undo() {
     if (!canUndo.value) return
-    
+
     const currentSerializable = audioFiles.value.map(f => ({
       id: f.id,
       name: f.name,
@@ -226,9 +230,10 @@ export const useAudioStore = defineStore('audio', () => {
       progress: f.progress,
       convertedUrl: f.convertedUrl,
       convertedName: f.convertedName,
+      convertedSize: f.convertedSize,
       error: f.error
     }))
-    
+
     history.value.future.push(JSON.stringify(currentSerializable))
     const previousState = history.value.past.pop()
     audioFiles.value = JSON.parse(previousState)
@@ -236,7 +241,7 @@ export const useAudioStore = defineStore('audio', () => {
 
   function redo() {
     if (!canRedo.value) return
-    
+
     const currentSerializable = audioFiles.value.map(f => ({
       id: f.id,
       name: f.name,
@@ -246,9 +251,10 @@ export const useAudioStore = defineStore('audio', () => {
       progress: f.progress,
       convertedUrl: f.convertedUrl,
       convertedName: f.convertedName,
+      convertedSize: f.convertedSize,
       error: f.error
     }))
-    
+
     history.value.past.push(JSON.stringify(currentSerializable))
     const nextState = history.value.future.pop()
     audioFiles.value = JSON.parse(nextState)
