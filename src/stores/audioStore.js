@@ -144,6 +144,20 @@ export const useAudioStore = defineStore('audio', () => {
         file.convertedSize = response.data.size || null
         file.status = 'completed'
 
+        // Wenn keine Größe vom Server kommt, hole sie vom Server
+        if (!file.convertedSize) {
+          try {
+            const headResponse = await fetch(file.convertedUrl, { method: 'HEAD' })
+            const contentLength = headResponse.headers.get('Content-Length')
+            if (contentLength) {
+              file.convertedSize = parseInt(contentLength, 10)
+              console.log('📏 Größe vom Server abgerufen:', file.convertedSize)
+            }
+          } catch (error) {
+            console.warn('⚠️ Konnte Dateigröße nicht abrufen:', error)
+          }
+        }
+
         console.log('✅ Konvertierung erfolgreich:', {
           url: file.convertedUrl,
           name: file.convertedName,
