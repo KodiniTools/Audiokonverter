@@ -2,11 +2,76 @@ import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import { spawn } from 'child_process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 let mainWindow;
+let backendProcess;
+
+// Start backend server
+function startBackendServer() {
+  return new Promise((resolve, reject) => {
+    const backendPath = app.isPackaged
+      ? path.join(process.resourcesPath, 'app.asar.unpacked', 'backend', 'server.js')
+      : path.join(__dirname, '..', 'backend', 'server.js');
+
+    const nodePath = process.execPath;
+
+    console.log('Starting backend server...');
+    console.log('Backend path:', backendPath);
+    console.log('Node path:', nodePath);
+
+    if (!fs.existsSync(backendPath)) {
+      console.error('Backend server file not found at:', backendPath);
+      reject(new Error('Backend server file not found'));
+      return;
+    }
+
+    backendProcess = spawn(nodePath, [backendPath], {
+      env: {
+        ...process.env,
+        PORT: '3001',
+        NODE_ENV: 'production'
+      },
+      stdio: 'pipe'
+    });
+
+    backendProcess.stdout.on('data', (data) => {
+      console.log(`Backend: ${data.toString().trim()}`);
+    });
+
+    backendProcess.stderr.on('data', (data) => {
+      console.error(`Backend Error: ${data.toString().trim()}`);
+    });
+
+    backendProcess.on('error', (error) => {
+      console.error('Failed to start backend server:', error);
+      reject(error);
+    });
+
+    backendProcess.on('close', (code) => {
+      console.log(`Backend process exited with code ${code}`);
+      backendProcess = null;
+    });
+
+    // Wait a bit for the server to start
+    setTimeout(() => {
+      console.log('Backend server should be running on http://localhost:3001');
+      resolve();
+    }, 2000);
+  });
+}
+
+// Stop backend server
+function stopBackendServer() {
+  if (backendProcess) {
+    console.log('Stopping backend server...');
+    backendProcess.kill();
+    backendProcess = null;
+  }
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -45,7 +110,16 @@ function createWindow() {
 }
 
 // App lifecycle
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  try {
+    // Start backend server first
+    await startBackendServer();
+    console.log('Backend server started successfully');
+  } catch (error) {
+    console.error('Failed to start backend server:', error);
+    // Continue anyway - user might have backend running separately
+  }
+
   createWindow();
 
   app.on('activate', () => {
@@ -56,9 +130,14 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
+  stopBackendServer();
   if (process.platform !== 'darwin') {
     app.quit();
   }
+});
+
+app.on('before-quit', () => {
+  stopBackendServer();
 });
 
 // IPC Handlers for file operations

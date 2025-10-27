@@ -5,9 +5,11 @@ Desktop-Version der Audio Konverter Anwendung, erstellt mit Electron.
 ## Features
 
 - Native Desktop-Anwendung für Windows, macOS und Linux
-- Native Datei-Dialoge für Dateiverwaltung
-- Offline-fähig (Konvertierung erfolgt über Backend)
+- **Integriertes Backend** - Keine separate Backend-Installation nötig
+- **FFmpeg eingebettet** - Vollständig standalone und offline-fähig
+- Native Datei-Dialoge für bessere UX
 - Vollständig unabhängig von der Web-Anwendung
+- **ZIP-Archive verfügbar** für portable Installation
 
 ## Voraussetzungen
 
@@ -52,9 +54,10 @@ npm run electron:build:win
 Erstellt:
 - **NSIS Installer** (.exe) - Standard Windows Installer
 - **MSI Installer** (.msi) - Windows Installer Package
-- Beide für x64 und ia32 Architekturen
+- **ZIP Archive** (.zip) - Portable Version ohne Installation
+- Alle für x64 und ia32 Architekturen
 
-Die fertigen Installer findest du im Ordner `dist-electron/`.
+Die fertigen Pakete findest du im Ordner `dist-electron/`.
 
 ### macOS-spezifisch
 
@@ -76,14 +79,18 @@ Erstellt:
 - AppImage (universal)
 - DEB Package (Debian/Ubuntu)
 - RPM Package (RedHat/Fedora)
+- ZIP Archive (portable)
 
 ## Projektstruktur
 
 ```
 Audiokonverter/
 ├── electron/                  # Electron-spezifische Dateien
-│   ├── main.js               # Electron Main Process
+│   ├── main.js               # Electron Main Process (mit Backend-Start)
 │   └── preload.js            # Preload Script (IPC Bridge)
+├── backend/                   # Integrierter Backend-Server
+│   ├── server.js             # Express Server mit FFmpeg
+│   └── package.json          # Backend Dependencies
 ├── src/                      # Vue.js Quellcode (geteilt mit Web)
 │   ├── composables/
 │   │   └── useElectron.js   # Electron-spezifische Funktionen
@@ -106,9 +113,20 @@ Audiokonverter/
 - Base-Path: `./` (relativ)
 - Läuft als Standalone-App
 - Native Datei-Dialoge
-- Benötigt weiterhin Backend-Server für Konvertierung
+- **Backend automatisch integriert** - keine separate Installation nötig
+- **FFmpeg eingebettet** - vollständig offline-fähig
 
 ## Desktop-spezifische Features
+
+### Integriertes Backend
+
+Die Desktop-App startet automatisch einen lokalen Backend-Server:
+
+- **Automatischer Start**: Backend startet beim App-Start
+- **FFmpeg eingebettet**: Alle Audio-Konvertierungen offline möglich
+- **Port 3001**: Backend läuft lokal auf http://localhost:3001
+- **Automatisches Beenden**: Backend stoppt beim Schließen der App
+- **Keine Konfiguration nötig**: Alles funktioniert out-of-the-box
 
 ### Native Datei-Dialoge
 
@@ -168,17 +186,15 @@ Die Desktop-App ist **vollständig getrennt** von der Web-Anwendung:
 
 **Die Web-App wird durch die Desktop-App nicht beeinflusst!**
 
-### Backend-Server
+### Technische Details
 
-Die Desktop-App benötigt weiterhin einen laufenden Backend-Server für die Audiokonvertierung:
+Das Backend ist in die Desktop-App integriert:
 
-```bash
-cd backend
-npm install
-npm start
-```
-
-Der Backend-Server muss auf `http://localhost:3001` laufen.
+- **Express Server**: REST API für Audio-Konvertierung
+- **FFmpeg**: Embedded via `ffmpeg-static` npm package
+- **Automatische Verwaltung**: Electron startet/stoppt Backend
+- **Temporäre Dateien**: Werden automatisch nach 1 Stunde gelöscht
+- **Unterstützte Formate**: MP3, WAV, FLAC, OGG, AAC, M4A
 
 ### Icons
 
@@ -217,29 +233,35 @@ MSI-Erstellung benötigt:
 
 ### Windows
 
-Die erstellten Installer findest du unter:
+Die erstellten Pakete findest du unter:
 ```
 dist-electron/
-├── Audio Konverter Setup x.x.x.exe  (NSIS)
-├── Audio Konverter x.x.x.msi        (MSI)
+├── Audio Konverter Setup x.x.x.exe  (NSIS Installer)
+├── Audio Konverter x.x.x.msi        (MSI Installer)
+├── Audio Konverter x.x.x-win.zip    (Portable ZIP)
 ```
+
+**Empfehlung**: NSIS oder MSI für Installation, ZIP für portable Nutzung
 
 ### macOS
 
 ```
 dist-electron/
-├── Audio Konverter-x.x.x.dmg
-├── Audio Konverter-x.x.x-mac.zip
+├── Audio Konverter-x.x.x.dmg        (DMG Image)
+├── Audio Konverter-x.x.x-mac.zip    (ZIP Archive)
 ```
 
 ### Linux
 
 ```
 dist-electron/
-├── Audio Konverter-x.x.x.AppImage
-├── audio-konverter_x.x.x_amd64.deb
-├── audio-konverter-x.x.x.x86_64.rpm
+├── Audio Konverter-x.x.x.AppImage          (Universal)
+├── audio-konverter_x.x.x_amd64.deb         (Debian/Ubuntu)
+├── audio-konverter-x.x.x.x86_64.rpm        (RedHat/Fedora)
+├── Audio Konverter-x.x.x-linux.zip         (Portable ZIP)
 ```
+
+**Alle Pakete beinhalten FFmpeg und sind vollständig standalone!**
 
 ## Updates
 
