@@ -38,6 +38,7 @@ export default {
   actions: {
     clearAll: 'Alle löschen',
     downloadAll: 'Alle herunterladen',
+    downloadAllAsZip: 'Alle als ZIP herunterladen',
     downloadOptions: 'Download-Optionen',
     exportMetadata: 'Metadaten exportieren',
     undo: 'Rückgängig',

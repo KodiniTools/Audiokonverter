@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import axios from 'axios'
+import JSZip from 'jszip'
 
 export const useAudioStore = defineStore('audio', () => {
   // State
@@ -226,7 +227,7 @@ export const useAudioStore = defineStore('audio', () => {
 
   async function downloadAllFiles() {
     const completedFiles = audioFiles.value.filter(f => f.status === 'completed' && f.convertedUrl)
-    
+
     if (completedFiles.length === 0) {
       return
     }
@@ -234,6 +235,49 @@ export const useAudioStore = defineStore('audio', () => {
     for (const fileData of completedFiles) {
       await downloadFile(fileData)
       await new Promise(resolve => setTimeout(resolve, 300))
+    }
+  }
+
+  async function downloadAllAsZip() {
+    const completedFiles = audioFiles.value.filter(f => f.status === 'completed' && f.convertedUrl)
+
+    if (completedFiles.length === 0) {
+      return
+    }
+
+    try {
+      const zip = new JSZip()
+
+      // Download all files and add to ZIP
+      for (const fileData of completedFiles) {
+        try {
+          const response = await fetch(fileData.convertedUrl)
+          const blob = await response.blob()
+          const filename = fileData.convertedName || `converted-${fileData.name}`
+          zip.file(filename, blob)
+        } catch (error) {
+          console.error(`Failed to add ${fileData.name} to ZIP:`, error)
+        }
+      }
+
+      // Generate ZIP file
+      const zipBlob = await zip.generateAsync({ type: 'blob' })
+
+      // Download ZIP
+      const url = window.URL.createObjectURL(zipBlob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `audio-konverter-${new Date().toISOString().split('T')[0]}.zip`
+      link.style.display = 'none'
+
+      document.body.appendChild(link)
+      link.click()
+
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('ZIP creation failed:', error)
+      throw error
     }
   }
 
@@ -278,6 +322,7 @@ export const useAudioStore = defineStore('audio', () => {
     cancelConversion,
     downloadFile,
     downloadAllFiles,
+    downloadAllAsZip,
     setFormat,
     setQuality,
     formatFileSize
