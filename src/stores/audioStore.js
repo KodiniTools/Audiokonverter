@@ -126,10 +126,17 @@ export const useAudioStore = defineStore('audio', () => {
         file.convertedFormat = currentFormat.value
         file.status = 'completed'
 
+        // Update display name and size with converted file info
+        file.name = response.data.filename
+        if (response.data.size) {
+          file.size = response.data.size
+        }
+
         console.log('✅ Konvertierung erfolgreich:', {
           url: file.convertedUrl,
           name: file.convertedName,
-          format: file.convertedFormat
+          format: file.convertedFormat,
+          size: file.size
         })
 
         convertedFiles.value.push(file)

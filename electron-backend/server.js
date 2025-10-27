@@ -203,7 +203,8 @@ app.post('/audiokonverter/api/convert', upload.single('file'), async (req, res) 
     res.json({
       ok: true,
       url: `/files/${outputFilename}`,
-      filename: outputFilename
+      filename: outputFilename,
+      size: stats.size
     });
 
   } catch (error) {
