@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
 import { spawn } from 'child_process';
 import os from 'os';
-import ffmpegStatic from 'ffmpeg-static';
+import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -55,9 +55,9 @@ function getFFmpegPath() {
     return process.env.FFMPEG_PATH;
   }
 
-  // Use ffmpeg-static (includes binaries for all platforms)
-  if (ffmpegStatic) {
-    return ffmpegStatic;
+  // Use @ffmpeg-installer/ffmpeg (includes binaries for all platforms)
+  if (ffmpegInstaller && ffmpegInstaller.path) {
+    return ffmpegInstaller.path;
   }
 
   // Fallback to system ffmpeg
