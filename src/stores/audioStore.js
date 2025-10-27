@@ -6,7 +6,6 @@ export const useAudioStore = defineStore('audio', () => {
   // State
   const audioFiles = ref([])
   const convertedFiles = ref([])
-  const isConverting = ref(false)
   const currentFormat = ref('mp3')
   const currentQuality = ref(7)
   const conversionProgress = ref({})
@@ -18,7 +17,8 @@ export const useAudioStore = defineStore('audio', () => {
   const hasConvertedFiles = computed(() => convertedFiles.value.length > 0)
   const canUndo = computed(() => history.value.past.length > 0)
   const canRedo = computed(() => history.value.future.length > 0)
-  
+  const isConverting = computed(() => audioFiles.value.some(f => f.status === 'converting'))
+
   const fileCount = computed(() => audioFiles.value.length)
   const totalSize = computed(() => {
     return audioFiles.value.reduce((sum, file) => sum + file.size, 0)
@@ -165,9 +165,8 @@ export const useAudioStore = defineStore('audio', () => {
   async function convertAllFiles() {
     if (isConverting.value) return
 
-    isConverting.value = true
     abortController.value = new AbortController() // Create new controller for batch
-    const pendingFiles = audioFiles.value.filter(f => f.status === 'pending' || f.status === 'error')
+    const pendingFiles = audioFiles.value.filter(f => f.status === 'pending' || f.status === 'error' || f.status === 'cancelled')
 
     for (const fileData of pendingFiles) {
       const result = await convertFile(fileData)
@@ -177,7 +176,6 @@ export const useAudioStore = defineStore('audio', () => {
       }
     }
 
-    isConverting.value = false
     abortController.value = null
   }
 
@@ -186,7 +184,6 @@ export const useAudioStore = defineStore('audio', () => {
       console.log('🛑 Abbrechen aller Konvertierungen...')
       abortController.value.abort()
       abortController.value = null
-      isConverting.value = false
 
       // Mark all converting files as cancelled
       audioFiles.value.forEach(file => {
