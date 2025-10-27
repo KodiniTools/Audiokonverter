@@ -108,7 +108,7 @@ async function convertAudio(inputPath, outputPath, format, quality) {
       '-err_detect', 'ignore_err',  // Ignore errors during decoding
       '-i', inputPath,
       '-vn', // No video
-      '-map', '0:a',                // Map only audio stream
+      '-map', '0:a?',               // Map audio stream if available
     ];
 
     // Set codec and parameters based on output format
@@ -180,6 +180,20 @@ app.post('/audiokonverter/api/convert', upload.single('file'), async (req, res) 
 
     // Perform conversion
     await convertAudio(inputPath, outputPath, format, parseInt(quality));
+
+    // Verify output file exists and has content
+    try {
+      const stats = await fs.stat(outputPath);
+      if (stats.size === 0) {
+        throw new Error('Output file is empty');
+      }
+      console.log(`Conversion successful: ${outputFilename} (${stats.size} bytes)`);
+    } catch (err) {
+      console.error('Output file verification failed:', err);
+      // Clean up empty/invalid output file
+      await fs.unlink(outputPath).catch(() => {});
+      throw new Error('Conversion failed: output file is invalid or empty');
+    }
 
     // Clean up input file
     await fs.unlink(inputPath).catch(() => {});
