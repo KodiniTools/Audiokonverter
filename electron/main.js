@@ -82,17 +82,19 @@ function startFrontendServer() {
     const distPath = path.join(__dirname, '..', 'dist');
 
     frontendServer = http.createServer(async (req, res) => {
-      console.log('Frontend server request:', req.method, req.url);
+      const decodedUrl = decodeURIComponent(req.url);
+      console.log('Frontend server request:', req.method, decodedUrl);
 
       // Proxy requests to /audiokonverter/* to backend
-      if (req.url.startsWith('/audiokonverter/')) {
-        const backendUrl = `http://localhost:3001${req.url}`;
+      if (decodedUrl.startsWith('/audiokonverter/')) {
+        const backendUrl = `http://localhost:3001${decodedUrl}`;
         console.log('Proxying to backend:', backendUrl);
 
         const proxyReq = http.request(backendUrl, {
           method: req.method,
           headers: req.headers
         }, (proxyRes) => {
+          console.log('Backend response:', proxyRes.statusCode, decodedUrl);
           res.writeHead(proxyRes.statusCode, proxyRes.headers);
           proxyRes.pipe(res);
         });
