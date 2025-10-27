@@ -3,12 +3,15 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import { spawn } from 'child_process';
+import http from 'http';
+import { createReadStream } from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 let mainWindow;
 let backendProcess;
+let frontendServer;
 
 // Start backend server
 function startBackendServer() {
@@ -73,6 +76,87 @@ function stopBackendServer() {
   }
 }
 
+// Start frontend HTTP server with proxy
+function startFrontendServer() {
+  return new Promise((resolve, reject) => {
+    const distPath = path.join(__dirname, '..', 'dist');
+
+    frontendServer = http.createServer(async (req, res) => {
+      console.log('Frontend server request:', req.method, req.url);
+
+      // Proxy requests to /audiokonverter/* to backend
+      if (req.url.startsWith('/audiokonverter/')) {
+        const backendUrl = `http://localhost:3001${req.url}`;
+        console.log('Proxying to backend:', backendUrl);
+
+        const proxyReq = http.request(backendUrl, {
+          method: req.method,
+          headers: req.headers
+        }, (proxyRes) => {
+          res.writeHead(proxyRes.statusCode, proxyRes.headers);
+          proxyRes.pipe(res);
+        });
+
+        proxyReq.on('error', (error) => {
+          console.error('Proxy error:', error);
+          res.writeHead(500);
+          res.end('Proxy error');
+        });
+
+        req.pipe(proxyReq);
+        return;
+      }
+
+      // Serve static files from dist/
+      let filePath = path.join(distPath, req.url === '/' ? 'index.html' : req.url);
+
+      // Check if file exists
+      if (!fs.existsSync(filePath)) {
+        filePath = path.join(distPath, 'index.html'); // Fallback to index.html
+      }
+
+      // Get content type
+      const ext = path.extname(filePath);
+      const contentTypes = {
+        '.html': 'text/html',
+        '.js': 'text/javascript',
+        '.css': 'text/css',
+        '.json': 'application/json',
+        '.png': 'image/png',
+        '.jpg': 'image/jpeg',
+        '.svg': 'image/svg+xml',
+        '.woff': 'font/woff',
+        '.woff2': 'font/woff2',
+        '.ttf': 'font/ttf'
+      };
+
+      const contentType = contentTypes[ext] || 'application/octet-stream';
+
+      res.writeHead(200, { 'Content-Type': contentType });
+      createReadStream(filePath).pipe(res);
+    });
+
+    frontendServer.listen(3002, () => {
+      console.log('Frontend server running on http://localhost:3002');
+      resolve();
+    });
+
+    frontendServer.on('error', (error) => {
+      console.error('Frontend server error:', error);
+      reject(error);
+    });
+  });
+}
+
+// Stop frontend server
+function stopFrontendServer() {
+  if (frontendServer) {
+    console.log('Stopping frontend server...');
+    frontendServer.close();
+    frontendServer = null;
+  }
+}
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
@@ -82,60 +166,14 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
-      contextIsolation: true,
-      sandbox: false, // Allow localhost requests
-      webSecurity: false // Allow CORS for localhost
+      contextIsolation: true
     },
     icon: path.join(__dirname, '..', 'icon-512.png'),
     title: 'Audio Konverter'
   });
 
-  // Intercept requests to /audiokonverter/* and redirect to localhost:3001
-  mainWindow.webContents.session.webRequest.onBeforeRequest(
-    { urls: ['file://*', '*://*/audiokonverter/*'] },
-    (details, callback) => {
-      const url = new URL(details.url);
-
-      // If it's a request to /audiokonverter/*, redirect to localhost:3001
-      if (url.pathname.startsWith('/audiokonverter/')) {
-        const newUrl = `http://localhost:3001${url.pathname}${url.search}`;
-        console.log(`Redirecting: ${details.url} -> ${newUrl}`);
-        callback({ redirectURL: newUrl });
-      } else {
-        callback({});
-      }
-    }
-  );
-
-  // Allow localhost requests and add CORS headers
-  mainWindow.webContents.session.webRequest.onBeforeSendHeaders(
-    { urls: ['http://localhost:*/*', 'http://127.0.0.1:*/*'] },
-    (details, callback) => {
-      callback({ requestHeaders: details.requestHeaders });
-    }
-  );
-
-  mainWindow.webContents.session.webRequest.onHeadersReceived(
-    { urls: ['http://localhost:*/*', 'http://127.0.0.1:*/*'] },
-    (details, callback) => {
-      callback({
-        responseHeaders: {
-          ...details.responseHeaders,
-          'Access-Control-Allow-Origin': ['*']
-        }
-      });
-    }
-  );
-
-  // Load the built app
-  const indexPath = path.join(__dirname, '..', 'dist', 'index.html');
-
-  if (fs.existsSync(indexPath)) {
-    mainWindow.loadFile(indexPath);
-  } else {
-    console.error('Index file not found at:', indexPath);
-    console.error('Please run "npm run build" first to create the distribution files.');
-  }
+  // Load app from local HTTP server (with proxy)
+  mainWindow.loadURL('http://localhost:3002');
 
   // Open DevTools in development
   if (process.env.NODE_ENV === 'development') {
@@ -153,9 +191,12 @@ app.whenReady().then(async () => {
     // Start backend server first
     await startBackendServer();
     console.log('Backend server started successfully');
+
+    // Start frontend server with proxy
+    await startFrontendServer();
+    console.log('Frontend server started successfully');
   } catch (error) {
-    console.error('Failed to start backend server:', error);
-    // Continue anyway - user might have backend running separately
+    console.error('Failed to start servers:', error);
   }
 
   createWindow();
@@ -168,6 +209,7 @@ app.whenReady().then(async () => {
 });
 
 app.on('window-all-closed', () => {
+  stopFrontendServer();
   stopBackendServer();
   if (process.platform !== 'darwin') {
     app.quit();
@@ -175,6 +217,7 @@ app.on('window-all-closed', () => {
 });
 
 app.on('before-quit', () => {
+  stopFrontendServer();
   stopBackendServer();
 });
 
