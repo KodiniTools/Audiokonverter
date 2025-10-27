@@ -199,9 +199,10 @@ app.post('/audiokonverter/api/convert', upload.single('file'), async (req, res) 
     await fs.unlink(inputPath).catch(() => {});
 
     // Return success with file info
+    // NOTE: Don't include /audiokonverter prefix - Vue app adds it automatically
     res.json({
       ok: true,
-      url: `/audiokonverter/files/${outputFilename}`,
+      url: `/files/${outputFilename}`,
       filename: outputFilename
     });
 
@@ -220,11 +221,13 @@ app.post('/audiokonverter/api/convert', upload.single('file'), async (req, res) 
   }
 });
 
-// Serve converted files
-app.get('/audiokonverter/files/:filename', async (req, res) => {
+// Serve converted files - handler function
+async function serveFile(req, res) {
   try {
     const filename = req.params.filename;
     const filePath = path.join(outputDir, filename);
+
+    console.log('[Electron Backend] Serving file:', filename, 'from', filePath);
 
     // Check if file exists
     await fs.access(filePath);
@@ -240,10 +243,14 @@ app.get('/audiokonverter/files/:filename', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('File access error:', error);
+    console.error('[Electron Backend] File access error:', error);
     res.status(404).json({ ok: false, error: 'File not found' });
   }
-});
+}
+
+// Serve converted files - both routes (with and without /audiokonverter prefix)
+app.get('/audiokonverter/files/:filename', serveFile);
+app.get('/files/:filename', serveFile);
 
 // Cleanup old files periodically (every hour)
 setInterval(async () => {
