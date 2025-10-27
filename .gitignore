@@ -46,3 +46,6 @@ release/
 # Cache
 .cache
 .temp
+
+# Backup
+backup-webapp/
