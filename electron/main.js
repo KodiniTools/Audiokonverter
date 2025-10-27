@@ -13,6 +13,22 @@ let mainWindow;
 let backendProcess;
 let frontendServer;
 
+// Single instance lock to prevent multiple instances
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  console.log('Another instance is already running. Quitting...');
+  app.quit();
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    // Someone tried to run a second instance, focus our window
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
+    }
+  });
+}
+
 // Start backend server
 function startBackendServer() {
   return new Promise((resolve, reject) => {
@@ -20,11 +36,20 @@ function startBackendServer() {
       ? path.join(process.resourcesPath, 'app.asar.unpacked', 'electron-backend', 'server.js')
       : path.join(__dirname, '..', 'electron-backend', 'server.js');
 
-    const nodePath = process.execPath;
+    // Use node.exe from resources in production, not electron.exe
+    let nodePath;
+    if (app.isPackaged) {
+      // In production: use node.exe that should be bundled or use electron as fallback
+      // But spawn backend as a separate process
+      nodePath = process.execPath; // This will be electron.exe, we need to handle this differently
+    } else {
+      nodePath = process.execPath; // In dev this is node
+    }
 
     console.log('Starting backend server...');
     console.log('Backend path:', backendPath);
-    console.log('Node path:', nodePath);
+    console.log('Is packaged:', app.isPackaged);
+    console.log('Node/Electron path:', nodePath);
 
     if (!fs.existsSync(backendPath)) {
       console.error('Backend server file not found at:', backendPath);
@@ -32,14 +57,18 @@ function startBackendServer() {
       return;
     }
 
-    backendProcess = spawn(nodePath, [backendPath], {
+    // In packaged app, we need to spawn with electron but set a flag to prevent infinite loop
+    const spawnOptions = {
       env: {
         ...process.env,
         PORT: '3001',
-        NODE_ENV: 'production'
+        NODE_ENV: 'production',
+        ELECTRON_RUN_AS_NODE: '1' // This makes electron behave like node
       },
       stdio: 'pipe'
-    });
+    };
+
+    backendProcess = spawn(nodePath, [backendPath], spawnOptions);
 
     backendProcess.stdout.on('data', (data) => {
       console.log(`Backend: ${data.toString().trim()}`);
