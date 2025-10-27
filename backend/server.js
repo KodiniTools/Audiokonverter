@@ -24,6 +24,18 @@ app.use(cors({
 
 app.use(express.json());
 
+// Middleware to handle both /audiokonverter/* and /* paths
+// This allows Electron (without proxy) to work with direct paths
+app.use((req, res, next) => {
+  // If path doesn't start with /audiokonverter but we have that endpoint, add it
+  if (!req.path.startsWith('/audiokonverter') &&
+      (req.path.startsWith('/api/') || req.path.startsWith('/files/'))) {
+    req.url = '/audiokonverter' + req.url;
+    console.log('Path rewritten:', req.path, '-> /audiokonverter' + req.path);
+  }
+  next();
+});
+
 // Create temp directories
 const uploadsDir = path.join(os.tmpdir(), 'audiokonverter-uploads');
 const outputDir = path.join(os.tmpdir(), 'audiokonverter-output');
