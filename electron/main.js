@@ -17,8 +17,8 @@ let frontendServer;
 function startBackendServer() {
   return new Promise((resolve, reject) => {
     const backendPath = app.isPackaged
-      ? path.join(process.resourcesPath, 'app.asar.unpacked', 'backend', 'server.js')
-      : path.join(__dirname, '..', 'backend', 'server.js');
+      ? path.join(process.resourcesPath, 'app.asar.unpacked', 'electron-backend', 'server.js')
+      : path.join(__dirname, '..', 'electron-backend', 'server.js');
 
     const nodePath = process.execPath;
 

@@ -49,11 +49,11 @@
     "files": [
       "dist/**/*",
       "electron/**/*",
-      "backend/**/*",
-      "!backend/node_modules"
+      "electron-backend/**/*",
+      "!electron-backend/node_modules"
     ],
     "asarUnpack": [
-      "backend/**/*",
+      "electron-backend/**/*",
       "node_modules/@ffmpeg-installer/**/*"
     ],
     "win": {
