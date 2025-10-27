@@ -3,6 +3,7 @@
   "version": "2.0.0",
   "type": "module",
   "description": "Modern Audio Converter with Vue 3, Vite and i18n",
+  "author": "Kodini Tools",
   "scripts": {
     "dev": "vite",
     "build": "vite build --mode production",
