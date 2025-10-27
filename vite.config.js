@@ -5,18 +5,22 @@ import { fileURLToPath, URL } from 'node:url'
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production'
-  
+  const isElectron = process.env.ELECTRON === 'true'
+
   return {
     plugins: [vue()],
-    
+
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url))
       }
     },
 
-    // Base Path - /audiokonverter/ für Production, / für Development
-    base: isProduction ? '/audiokonverter/' : '/',
+    // Base Path
+    // - Electron: relative path for local file access
+    // - Web Production: /audiokonverter/
+    // - Web Development: /
+    base: isElectron ? './' : (isProduction ? '/audiokonverter/' : '/'),
 
     // Development Server
     server: {

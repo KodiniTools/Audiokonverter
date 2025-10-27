@@ -33,6 +33,16 @@ dist-ssr
 dist/
 build/
 
+# Electron Build Output
+dist-electron/
+out/
+release/
+
+# Electron cache
+.electron/
+.electron-builder/
+.electron-gyp/
+
 # Cache
 .cache
 .temp

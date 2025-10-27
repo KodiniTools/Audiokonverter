@@ -37,10 +37,12 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAudioStore } from '@/stores/audioStore'
 import { useToast } from '@/composables/useToast'
+import { useElectron } from '@/composables/useElectron'
 
 const { t } = useI18n()
 const audioStore = useAudioStore()
 const { showToast } = useToast()
+const { isElectron, selectFiles } = useElectron()
 
 const fileInput = ref(null)
 const isDragging = ref(false)
@@ -48,8 +50,16 @@ const isDragging = ref(false)
 const SUPPORTED_FORMATS = ['audio/mpeg', 'audio/wav', 'audio/flac', 'audio/ogg', 'audio/aac', 'audio/x-m4a', 'audio/mp4']
 const MAX_FILE_SIZE = 300 * 1024 * 1024 // 300MB
 
-function triggerFileInput() {
-  fileInput.value?.click()
+async function triggerFileInput() {
+  // Use native Electron file dialog if available
+  if (isElectron.value) {
+    const files = await selectFiles()
+    if (files && files.length > 0) {
+      processFiles(files)
+    }
+  } else {
+    fileInput.value?.click()
+  }
 }
 
 function handleFileSelect(event) {
