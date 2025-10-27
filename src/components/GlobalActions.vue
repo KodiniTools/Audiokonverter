@@ -11,6 +11,17 @@
         <span>{{ t('actions.clearAll') }}</span>
       </button>
 
+      <!-- Cancel Conversion -->
+      <button
+        v-if="audioStore.isConverting"
+        class="action-btn btn-danger"
+        @click="cancelConversion"
+        :title="t('actions.cancelConversion')"
+      >
+        <i class="fas fa-stop-circle"></i>
+        <span>{{ t('actions.cancel') }}</span>
+      </button>
+
       <!-- Download All -->
       <button
         v-if="audioStore.hasConvertedFiles"
@@ -77,6 +88,11 @@ async function downloadAll() {
     showToast('error', 'Download fehlgeschlagen', { message: error.message })
   }
 }
+
+function cancelConversion() {
+  audioStore.cancelConversion()
+  showToast('info', t('toast.conversionCancelled'))
+}
 </script>
 
 <style scoped>
@@ -132,6 +148,26 @@ async function downloadAll() {
 
 .btn-success:hover {
   background: #45a049;
+}
+
+.btn-danger {
+  background: #f44336;
+  color: white;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.btn-danger:hover {
+  background: #da190b;
+  animation: none;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.85;
+  }
 }
 
 @keyframes fadeIn {

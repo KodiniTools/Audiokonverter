@@ -46,11 +46,11 @@
               <i class="fas fa-download"></i>
             </button>
 
-            <!-- Retry Button (bei Fehler) -->
+            <!-- Retry Button (bei Fehler oder Abbruch) -->
             <button
-              v-if="file.status === 'error'"
+              v-if="file.status === 'error' || file.status === 'cancelled'"
               class="btn-icon btn-retry"
-              @click="audioStore.convertFile(file)"
+              @click="retryFile(file)"
               :title="t('actions.retry')"
             >
               <i class="fas fa-redo"></i>
@@ -96,6 +96,7 @@ function getStatusIcon(status) {
     converting: 'fas fa-spinner fa-spin',
     completed: 'fas fa-check-circle',
     error: 'fas fa-exclamation-circle',
+    cancelled: 'fas fa-ban',
     pending: 'fas fa-clock'
   }
   return icons[status] || 'fas fa-circle'
@@ -104,6 +105,14 @@ function getStatusIcon(status) {
 function removeFile(fileId) {
   audioStore.removeFile(fileId)
   showToast('info', t('toast.fileRemoved'))
+}
+
+function retryFile(file) {
+  // Reset cancelled/error status to pending before retrying
+  file.status = 'pending'
+  file.error = null
+  file.progress = 0
+  audioStore.convertFile(file)
 }
 </script>
 
@@ -195,6 +204,10 @@ function removeFile(fileId) {
   border-left: 4px solid var(--error-color);
 }
 
+.file-item.cancelled {
+  border-left: 4px solid #ff9800;
+}
+
 .file-item.converting {
   border-left: 4px solid var(--primary-color);
 }
@@ -267,6 +280,11 @@ function removeFile(fileId) {
 .status-badge.error {
   background: rgba(244, 67, 54, 0.1);
   color: var(--error-color);
+}
+
+.status-badge.cancelled {
+  background: rgba(255, 152, 0, 0.1);
+  color: #ff9800;
 }
 
 .status-badge.converting {

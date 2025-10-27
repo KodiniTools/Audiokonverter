@@ -11,6 +11,7 @@ export const useAudioStore = defineStore('audio', () => {
   const currentQuality = ref(7)
   const conversionProgress = ref({})
   const history = ref({ past: [], future: [] })
+  const abortController = ref(null) // For canceling conversions
 
   // Computed
   const hasFiles = computed(() => audioFiles.value.length > 0)
@@ -75,14 +76,20 @@ export const useAudioStore = defineStore('audio', () => {
 
     updateFileProgress(fileData.id, 0, 'converting')
 
+    // Create abort controller for this conversion
+    if (!abortController.value) {
+      abortController.value = new AbortController()
+    }
+
     try {
       console.log('🔄 Starte Konvertierung:', fileData.name)
-      
+
       const response = await axios.post('/audiokonverter/api/convert', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
         timeout: 600000, // 10 Minuten Timeout
+        signal: abortController.value.signal, // Add abort signal
         onUploadProgress: (progressEvent) => {
           const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
           console.log('📤 Upload Progress:', percentCompleted + '%')
@@ -132,6 +139,19 @@ export const useAudioStore = defineStore('audio', () => {
       }
       return { success: true, data: response.data }
     } catch (error) {
+      // Check if it was canceled
+      if (axios.isCancel(error) || error.name === 'CanceledError') {
+        console.log('⏸️ Konvertierung abgebrochen:', fileData.name)
+        const file = audioFiles.value.find(f => f.id === fileData.id)
+        if (file) {
+          file.status = 'cancelled'
+          file.error = 'Konvertierung abgebrochen'
+        }
+        updateFileProgress(fileData.id, 0, 'cancelled')
+        return { success: false, cancelled: true }
+      }
+
+      // Handle other errors
       updateFileProgress(fileData.id, 0, 'error')
       const file = audioFiles.value.find(f => f.id === fileData.id)
       if (file) {
@@ -146,13 +166,37 @@ export const useAudioStore = defineStore('audio', () => {
     if (isConverting.value) return
 
     isConverting.value = true
+    abortController.value = new AbortController() // Create new controller for batch
     const pendingFiles = audioFiles.value.filter(f => f.status === 'pending' || f.status === 'error')
 
     for (const fileData of pendingFiles) {
-      await convertFile(fileData)
+      const result = await convertFile(fileData)
+      // Stop if conversion was cancelled
+      if (result && result.cancelled) {
+        break
+      }
     }
 
     isConverting.value = false
+    abortController.value = null
+  }
+
+  function cancelConversion() {
+    if (abortController.value) {
+      console.log('🛑 Abbrechen aller Konvertierungen...')
+      abortController.value.abort()
+      abortController.value = null
+      isConverting.value = false
+
+      // Mark all converting files as cancelled
+      audioFiles.value.forEach(file => {
+        if (file.status === 'converting') {
+          file.status = 'cancelled'
+          file.error = 'Konvertierung abgebrochen'
+          file.progress = 0
+        }
+      })
+    }
   }
 
   async function downloadFile(fileData) {
@@ -278,7 +322,7 @@ export const useAudioStore = defineStore('audio', () => {
     currentFormat,
     currentQuality,
     conversionProgress,
-    
+
     // Computed
     hasFiles,
     hasConvertedFiles,
@@ -286,7 +330,7 @@ export const useAudioStore = defineStore('audio', () => {
     canRedo,
     fileCount,
     totalSize,
-    
+
     // Actions
     addFiles,
     removeFile,
@@ -294,6 +338,7 @@ export const useAudioStore = defineStore('audio', () => {
     updateFileProgress,
     convertFile,
     convertAllFiles,
+    cancelConversion,
     downloadFile,
     downloadAllFiles,
     undo,

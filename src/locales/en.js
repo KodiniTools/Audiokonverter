@@ -43,12 +43,15 @@ export default {
     undo: 'Undo',
     redo: 'Redo',
     download: 'Download',
-    retry: 'Retry'
+    retry: 'Retry',
+    cancel: 'Cancel',
+    cancelConversion: 'Cancel Conversion'
   },
   status: {
     processing: 'Processing...',
     completed: 'Completed',
     error: 'Error',
+    cancelled: 'Cancelled',
     ready: 'Ready',
     waiting: 'Waiting...'
   },
@@ -61,6 +64,7 @@ export default {
     fileRemoved: 'File removed',
     conversionComplete: 'Conversion complete',
     conversionFailed: 'Conversion failed',
+    conversionCancelled: 'Conversion cancelled',
     allFilesCleared: 'All files cleared',
     unsupportedFormat: 'Unsupported format'
   },
