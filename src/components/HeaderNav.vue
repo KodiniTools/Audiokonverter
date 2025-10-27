@@ -53,8 +53,8 @@ function scrollToTop() {
 .navbar {
   position: sticky;
   top: 0;
-  /* z-index von 1000 auf 100 reduziert */
-  z-index: 100; 
+  /* z-index reduziert damit SSI-Navigation Dropdown darüber liegt */
+  z-index: 10;
   background: var(--card-background);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(184, 184, 184, 0.1);
