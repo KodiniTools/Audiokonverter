@@ -70,15 +70,27 @@ const upload = multer({
 // Get FFmpeg path
 function getFFmpegPath() {
   if (process.env.FFMPEG_PATH) {
+    console.log('[FFmpeg] Using FFMPEG_PATH from environment:', process.env.FFMPEG_PATH);
     return process.env.FFMPEG_PATH;
   }
 
   // Use @ffmpeg-installer/ffmpeg (includes binaries for all platforms)
   if (ffmpegInstaller && ffmpegInstaller.path) {
-    return ffmpegInstaller.path;
+    let ffmpegPath = ffmpegInstaller.path;
+
+    // In packaged app, fix the path if it's inside ASAR
+    if (ffmpegPath.includes('app.asar')) {
+      // Replace app.asar with app.asar.unpacked
+      ffmpegPath = ffmpegPath.replace('app.asar', 'app.asar.unpacked');
+      console.log('[FFmpeg] Corrected path for packaged app:', ffmpegPath);
+    }
+
+    console.log('[FFmpeg] Using path from @ffmpeg-installer:', ffmpegPath);
+    return ffmpegPath;
   }
 
   // Fallback to system ffmpeg
+  console.log('[FFmpeg] Falling back to system ffmpeg');
   return 'ffmpeg';
 }
 

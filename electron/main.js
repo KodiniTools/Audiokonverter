@@ -71,20 +71,28 @@ function startBackendServer() {
     backendProcess = spawn(nodePath, [backendPath], spawnOptions);
 
     backendProcess.stdout.on('data', (data) => {
-      console.log(`Backend: ${data.toString().trim()}`);
+      const output = data.toString().trim();
+      console.log(`[Backend stdout] ${output}`);
     });
 
     backendProcess.stderr.on('data', (data) => {
-      console.error(`Backend Error: ${data.toString().trim()}`);
+      const output = data.toString().trim();
+      console.error(`[Backend stderr] ${output}`);
     });
 
     backendProcess.on('error', (error) => {
-      console.error('Failed to start backend server:', error);
+      console.error('[Backend] Failed to start backend server:', error);
+      console.error('[Backend] Node path:', nodePath);
+      console.error('[Backend] Backend path:', backendPath);
+      console.error('[Backend] Spawn options:', JSON.stringify(spawnOptions, null, 2));
       reject(error);
     });
 
     backendProcess.on('close', (code) => {
-      console.log(`Backend process exited with code ${code}`);
+      console.log(`[Backend] Process exited with code ${code}`);
+      if (code !== 0 && code !== null) {
+        console.error(`[Backend] Process crashed with non-zero exit code: ${code}`);
+      }
       backendProcess = null;
     });
 
