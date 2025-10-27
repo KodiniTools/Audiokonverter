@@ -13,10 +13,11 @@
     "deploy:windows": "powershell -ExecutionPolicy Bypass -File .\\deploy.ps1",
     "deploy:linux": "bash deploy.sh",
     "electron:dev": "cross-env ELECTRON=true vite build --mode development && electron .",
-    "electron:build": "cross-env ELECTRON=true vite build --mode production && electron-builder",
-    "electron:build:win": "cross-env ELECTRON=true vite build --mode production && electron-builder --win",
-    "electron:build:mac": "cross-env ELECTRON=true vite build --mode production && electron-builder --mac",
-    "electron:build:linux": "cross-env ELECTRON=true vite build --mode production && electron-builder --linux"
+    "electron:build": "npm run electron:install-backend && cross-env ELECTRON=true vite build --mode production && electron-builder",
+    "electron:build:win": "npm run electron:install-backend && cross-env ELECTRON=true vite build --mode production && electron-builder --win",
+    "electron:build:mac": "npm run electron:install-backend && cross-env ELECTRON=true vite build --mode production && electron-builder --mac",
+    "electron:build:linux": "npm run electron:install-backend && cross-env ELECTRON=true vite build --mode production && electron-builder --linux",
+    "electron:install-backend": "cd electron-backend && npm install"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.5.0",
