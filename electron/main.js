@@ -67,8 +67,15 @@ function startBackendServer() {
     const nodeModulesPath = app.isPackaged
       ? path.join(process.resourcesPath, 'app.asar', 'node_modules')
       : path.join(__dirname, '..', 'node_modules');
+
+    const backendNodeModulesPath = app.isPackaged
+      ? path.join(process.resourcesPath, 'app.asar.unpacked', 'electron-backend', 'node_modules')
+      : path.join(__dirname, '..', 'electron-backend', 'node_modules');
+
     log('Node modules path: ' + nodeModulesPath);
     log('Node modules exists: ' + fs.existsSync(nodeModulesPath));
+    log('Backend node_modules path: ' + backendNodeModulesPath);
+    log('Backend node_modules exists: ' + fs.existsSync(backendNodeModulesPath));
 
     // In packaged app, we need to spawn with electron but set a flag to prevent infinite loop
     const spawnOptions = {
@@ -76,9 +83,13 @@ function startBackendServer() {
         ...process.env,
         PORT: '3001',
         NODE_ENV: 'production',
-        ELECTRON_RUN_AS_NODE: '1' // This makes electron behave like node
+        ELECTRON_RUN_AS_NODE: '1', // This makes electron behave like node
+        NODE_PATH: backendNodeModulesPath // Point to backend's node_modules
       },
-      stdio: 'pipe'
+      stdio: 'pipe',
+      cwd: app.isPackaged
+        ? path.join(process.resourcesPath, 'app.asar.unpacked', 'electron-backend')
+        : path.join(__dirname, '..', 'electron-backend')
     };
 
     log('Spawn options: ' + JSON.stringify(spawnOptions, null, 2));

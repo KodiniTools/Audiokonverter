@@ -54,12 +54,14 @@
       "dist/**/*",
       "electron/**/*",
       "electron-backend/**/*",
+      "!electron-backend/node_modules",
       "LICENSES.txt"
     ],
     "asarUnpack": [
       "electron-backend/**/*",
       "node_modules/@ffmpeg-installer/**/*"
     ],
+    "afterPack": "./scripts/afterPack.js",
     "win": {
       "target": [
         {
