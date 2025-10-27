@@ -36,26 +36,39 @@ function startBackendServer() {
       ? path.join(process.resourcesPath, 'app.asar.unpacked', 'electron-backend', 'server.js')
       : path.join(__dirname, '..', 'electron-backend', 'server.js');
 
-    // Use node.exe from resources in production, not electron.exe
-    let nodePath;
-    if (app.isPackaged) {
-      // In production: use node.exe that should be bundled or use electron as fallback
-      // But spawn backend as a separate process
-      nodePath = process.execPath; // This will be electron.exe, we need to handle this differently
-    } else {
-      nodePath = process.execPath; // In dev this is node
-    }
+    // Create log file for debugging
+    const logPath = path.join(app.getPath('userData'), 'backend.log');
+    const logStream = fs.createWriteStream(logPath, { flags: 'w' });
 
-    console.log('Starting backend server...');
-    console.log('Backend path:', backendPath);
-    console.log('Is packaged:', app.isPackaged);
-    console.log('Node/Electron path:', nodePath);
+    const log = (message) => {
+      const timestamp = new Date().toISOString();
+      const logMessage = `[${timestamp}] ${message}\n`;
+      console.log(message);
+      logStream.write(logMessage);
+    };
+
+    log('=== BACKEND START DEBUG ===');
+    log('Backend path: ' + backendPath);
+    log('Is packaged: ' + app.isPackaged);
+    log('process.execPath: ' + process.execPath);
+    log('process.argv[0]: ' + process.argv[0]);
+    log('User data path: ' + app.getPath('userData'));
+    log('Resources path: ' + process.resourcesPath);
 
     if (!fs.existsSync(backendPath)) {
-      console.error('Backend server file not found at:', backendPath);
+      log('ERROR: Backend server file not found at: ' + backendPath);
       reject(new Error('Backend server file not found'));
       return;
     }
+
+    log('Backend file exists: OK');
+
+    // Check if we can find node_modules
+    const nodeModulesPath = app.isPackaged
+      ? path.join(process.resourcesPath, 'app.asar', 'node_modules')
+      : path.join(__dirname, '..', 'node_modules');
+    log('Node modules path: ' + nodeModulesPath);
+    log('Node modules exists: ' + fs.existsSync(nodeModulesPath));
 
     // In packaged app, we need to spawn with electron but set a flag to prevent infinite loop
     const spawnOptions = {
@@ -68,37 +81,51 @@ function startBackendServer() {
       stdio: 'pipe'
     };
 
-    backendProcess = spawn(nodePath, [backendPath], spawnOptions);
+    log('Spawn options: ' + JSON.stringify(spawnOptions, null, 2));
+    log('Spawning backend process...');
+
+    try {
+      backendProcess = spawn(process.execPath, [backendPath], spawnOptions);
+      log('Backend process spawned with PID: ' + backendProcess.pid);
+    } catch (err) {
+      log('ERROR spawning backend: ' + err.message);
+      reject(err);
+      return;
+    }
 
     backendProcess.stdout.on('data', (data) => {
       const output = data.toString().trim();
-      console.log(`[Backend stdout] ${output}`);
+      const message = `[Backend stdout] ${output}`;
+      console.log(message);
+      logStream.write(message + '\n');
     });
 
     backendProcess.stderr.on('data', (data) => {
       const output = data.toString().trim();
-      console.error(`[Backend stderr] ${output}`);
+      const message = `[Backend stderr] ${output}`;
+      console.error(message);
+      logStream.write(message + '\n');
     });
 
     backendProcess.on('error', (error) => {
-      console.error('[Backend] Failed to start backend server:', error);
-      console.error('[Backend] Node path:', nodePath);
-      console.error('[Backend] Backend path:', backendPath);
-      console.error('[Backend] Spawn options:', JSON.stringify(spawnOptions, null, 2));
+      log('[Backend] ERROR: Failed to start backend server: ' + error.message);
+      log('[Backend] Error stack: ' + error.stack);
       reject(error);
     });
 
     backendProcess.on('close', (code) => {
-      console.log(`[Backend] Process exited with code ${code}`);
+      log(`[Backend] Process exited with code ${code}`);
       if (code !== 0 && code !== null) {
-        console.error(`[Backend] Process crashed with non-zero exit code: ${code}`);
+        log(`[Backend] ERROR: Process crashed with non-zero exit code: ${code}`);
       }
       backendProcess = null;
+      logStream.end();
     });
 
     // Wait a bit for the server to start
     setTimeout(() => {
-      console.log('Backend server should be running on http://localhost:3001');
+      log('Backend server should be running on http://localhost:3001');
+      log('Log file location: ' + logPath);
       resolve();
     }, 2000);
   });
@@ -321,4 +348,19 @@ ipcMain.handle('write-file', async (event, filePath, data) => {
 
 ipcMain.handle('get-app-path', async () => {
   return app.getPath('userData');
+});
+
+ipcMain.handle('get-backend-log', async () => {
+  const logPath = path.join(app.getPath('userData'), 'backend.log');
+  try {
+    const logContent = await fs.promises.readFile(logPath, 'utf-8');
+    return { success: true, content: logContent, path: logPath };
+  } catch (error) {
+    return { success: false, error: error.message, path: logPath };
+  }
+});
+
+ipcMain.handle('open-log-folder', async () => {
+  const { shell } = await import('electron');
+  shell.openPath(app.getPath('userData'));
 });

@@ -67,6 +67,16 @@
           </button>
         </section>
 
+        <section v-if="isElectronApp" class="section">
+          <h3>Debug</h3>
+          <p class="debug-info">Für Fehlerdiagnose und Support</p>
+          <button class="btn-secondary btn-debug" @click="openLogFolder">
+            <i class="fas fa-folder-open"></i>
+            Log-Ordner öffnen
+          </button>
+          <p v-if="logPath" class="log-path">{{ logPath }}</p>
+        </section>
+
         <section class="section">
           <h3>{{ t('about.contact') }}</h3>
           <p>Kodini Tools</p>
@@ -77,18 +87,48 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const isOpen = ref(false)
+const logPath = ref('')
+
+const isElectronApp = computed(() => {
+  return window.electronAPI && window.electronAPI.isElectron
+})
 
 function openModal() {
   isOpen.value = true
+  loadLogPath()
 }
 
 function closeModal() {
   isOpen.value = false
+}
+
+async function loadLogPath() {
+  if (isElectronApp.value && window.electronAPI.getBackendLog) {
+    try {
+      const result = await window.electronAPI.getBackendLog()
+      if (result && result.path) {
+        logPath.value = result.path
+      }
+    } catch (error) {
+      console.error('Could not get log path:', error)
+    }
+  }
+}
+
+async function openLogFolder() {
+  if (isElectronApp.value && window.electronAPI.openLogFolder) {
+    try {
+      await window.electronAPI.openLogFolder()
+    } catch (error) {
+      console.error('Could not open log folder:', error)
+      alert('Log-Ordner konnte nicht geöffnet werden.')
+    }
+  }
 }
 
 async function openLicenses() {
@@ -271,6 +311,32 @@ defineExpose({
 .btn-secondary:hover {
   background: rgba(144, 144, 144, 0.2);
   transform: translateY(-2px);
+}
+
+.btn-debug {
+  background: rgba(255, 165, 0, 0.1);
+  border-color: rgba(255, 165, 0, 0.3);
+}
+
+.btn-debug:hover {
+  background: rgba(255, 165, 0, 0.2);
+}
+
+.debug-info {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.log-path {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-family: monospace;
+  word-break: break-all;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(144, 144, 144, 0.1);
+  border-radius: 6px;
 }
 
 @keyframes fadeIn {

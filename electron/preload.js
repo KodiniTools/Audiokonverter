@@ -10,6 +10,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   writeFile: (filePath, data) => ipcRenderer.invoke('write-file', filePath, data),
   getAppPath: () => ipcRenderer.invoke('get-app-path'),
 
+  // Debug operations
+  getBackendLog: () => ipcRenderer.invoke('get-backend-log'),
+  openLogFolder: () => ipcRenderer.invoke('open-log-folder'),
+
   // Check if running in Electron
   isElectron: true,
 
