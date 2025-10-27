@@ -1,5 +1,8 @@
 <template>
   <div v-if="audioStore.hasFiles" class="file-list-section">
+    <div style="background: red; color: white; padding: 10px; font-weight: bold; text-align: center; margin-bottom: 10px;">
+      ⚠️ SCROLL TEST VERSION AKTIV - NEUE ÄNDERUNGEN GELADEN ⚠️
+    </div>
     <div class="file-list-header">
       <h3 class="file-list-title">
         <i class="fas fa-file-audio"></i>
