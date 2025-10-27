@@ -61,7 +61,7 @@
       "electron-backend/**/*",
       "node_modules/@ffmpeg-installer/**/*"
     ],
-    "afterPack": "./scripts/afterPack.js",
+    "afterPack": "./scripts/afterPack.cjs",
     "win": {
       "target": [
         {
