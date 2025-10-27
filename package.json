@@ -4,6 +4,7 @@
   "type": "module",
   "description": "Modern Audio Converter with Vue 3, Vite and i18n",
   "author": "Kodini Tools",
+  "license": "SEE LICENSE IN LICENSES.txt",
   "scripts": {
     "dev": "vite",
     "build": "vite build --mode production",
@@ -52,7 +53,8 @@
       "dist/**/*",
       "electron/**/*",
       "electron-backend/**/*",
-      "!electron-backend/node_modules"
+      "!electron-backend/node_modules",
+      "LICENSES.txt"
     ],
     "asarUnpack": [
       "electron-backend/**/*",
