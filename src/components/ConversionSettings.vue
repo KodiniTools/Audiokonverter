@@ -55,11 +55,11 @@
     <!-- Convert Button -->
     <button
       class="btn btn-primary btn-convert"
-      :disabled="audioStore.isConverting || !hasPendingFiles"
+      :disabled="audioStore.isConverting || !canConvert"
       @click="startConversion"
     >
       <i :class="audioStore.isConverting ? 'fas fa-spinner fa-spin' : 'fas fa-sync-alt'"></i>
-      {{ audioStore.isConverting ? t('conversion.converting') : t('conversion.convert') }}
+      {{ buttonText }}
     </button>
   </div>
 </template>
@@ -75,7 +75,32 @@ const audioStore = useAudioStore()
 const { showToast } = useToast()
 
 const hasPendingFiles = computed(() => {
-  return audioStore.audioFiles.some(f => f.status === 'pending' || f.status === 'error')
+  return audioStore.audioFiles.some(f => f.status === 'pending' || f.status === 'error' || f.status === 'cancelled')
+})
+
+// Prüfe ob es completed Dateien gibt bei denen das Format geändert wurde
+const hasCompletedFilesWithDifferentFormat = computed(() => {
+  return audioStore.audioFiles.some(f =>
+    f.status === 'completed' &&
+    f.convertedFormat &&
+    f.convertedFormat !== audioStore.currentFormat
+  )
+})
+
+// Button ist aktiv wenn es pending files ODER completed files mit anderem Format gibt
+const canConvert = computed(() => {
+  return hasPendingFiles.value || hasCompletedFilesWithDifferentFormat.value
+})
+
+// Button Text: "Wiederholen" wenn nur format-geänderte completed files, sonst "Konvertieren"
+const buttonText = computed(() => {
+  if (audioStore.isConverting) {
+    return t('conversion.converting')
+  }
+  if (hasCompletedFilesWithDifferentFormat.value && !hasPendingFiles.value) {
+    return t('actions.retry')
+  }
+  return t('conversion.convert')
 })
 
 const qualityLabel = computed(() => {
@@ -119,6 +144,19 @@ const qualityInfo = computed(() => {
 
 async function startConversion() {
   try {
+    // Wenn completed Dateien mit anderem Format existieren, setze sie auf pending
+    if (hasCompletedFilesWithDifferentFormat.value) {
+      audioStore.audioFiles.forEach(file => {
+        if (file.status === 'completed' &&
+            file.convertedFormat &&
+            file.convertedFormat !== audioStore.currentFormat) {
+          file.status = 'pending'
+          file.progress = 0
+          file.error = null
+        }
+      })
+    }
+
     await audioStore.convertAllFiles()
     showToast('success', t('toast.conversionComplete'))
   } catch (error) {

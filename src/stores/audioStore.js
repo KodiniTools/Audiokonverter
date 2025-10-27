@@ -9,14 +9,11 @@ export const useAudioStore = defineStore('audio', () => {
   const currentFormat = ref('mp3')
   const currentQuality = ref(7)
   const conversionProgress = ref({})
-  const history = ref({ past: [], future: [] })
   const abortController = ref(null) // For canceling conversions
 
   // Computed
   const hasFiles = computed(() => audioFiles.value.length > 0)
   const hasConvertedFiles = computed(() => convertedFiles.value.length > 0)
-  const canUndo = computed(() => history.value.past.length > 0)
-  const canRedo = computed(() => history.value.future.length > 0)
   const isConverting = computed(() => audioFiles.value.some(f => f.status === 'converting'))
 
   const fileCount = computed(() => audioFiles.value.length)
@@ -36,16 +33,15 @@ export const useAudioStore = defineStore('audio', () => {
       progress: 0,
       convertedUrl: null,
       convertedName: null,
+      convertedFormat: null,
       error: null
     }))
-    
-    saveState()
+
     audioFiles.value.push(...newFiles)
     return newFiles
   }
 
   function removeFile(fileId) {
-    saveState()
     const index = audioFiles.value.findIndex(f => f.id === fileId)
     if (index !== -1) {
       audioFiles.value.splice(index, 1)
@@ -53,7 +49,6 @@ export const useAudioStore = defineStore('audio', () => {
   }
 
   function clearAllFiles() {
-    saveState()
     audioFiles.value = []
     convertedFiles.value = []
     conversionProgress.value = {}
@@ -122,19 +117,21 @@ export const useAudioStore = defineStore('audio', () => {
       
       if (file) {
         // Verwende url statt output
-        const urlPath = response.data.url.startsWith('/') 
-          ? response.data.url 
+        const urlPath = response.data.url.startsWith('/')
+          ? response.data.url
           : '/' + response.data.url
-        
+
         file.convertedUrl = '/audiokonverter' + urlPath
         file.convertedName = response.data.filename
+        file.convertedFormat = currentFormat.value
         file.status = 'completed'
-        
+
         console.log('✅ Konvertierung erfolgreich:', {
           url: file.convertedUrl,
-          name: file.convertedName
+          name: file.convertedName,
+          format: file.convertedFormat
         })
-        
+
         convertedFiles.value.push(file)
       }
       return { success: true, data: response.data }
@@ -233,68 +230,6 @@ export const useAudioStore = defineStore('audio', () => {
     }
   }
 
-  // History Management
-  function saveState() {
-    const serializableState = audioFiles.value.map(f => ({
-      id: f.id,
-      name: f.name,
-      size: f.size,
-      type: f.type,
-      status: f.status,
-      progress: f.progress,
-      convertedUrl: f.convertedUrl,
-      convertedName: f.convertedName,
-      error: f.error
-    }))
-    
-    history.value.past.push(JSON.stringify(serializableState))
-    history.value.future = []
-    
-    if (history.value.past.length > 20) {
-      history.value.past.shift()
-    }
-  }
-
-  function undo() {
-    if (!canUndo.value) return
-    
-    const currentSerializable = audioFiles.value.map(f => ({
-      id: f.id,
-      name: f.name,
-      size: f.size,
-      type: f.type,
-      status: f.status,
-      progress: f.progress,
-      convertedUrl: f.convertedUrl,
-      convertedName: f.convertedName,
-      error: f.error
-    }))
-    
-    history.value.future.push(JSON.stringify(currentSerializable))
-    const previousState = history.value.past.pop()
-    audioFiles.value = JSON.parse(previousState)
-  }
-
-  function redo() {
-    if (!canRedo.value) return
-    
-    const currentSerializable = audioFiles.value.map(f => ({
-      id: f.id,
-      name: f.name,
-      size: f.size,
-      type: f.type,
-      status: f.status,
-      progress: f.progress,
-      convertedUrl: f.convertedUrl,
-      convertedName: f.convertedName,
-      error: f.error
-    }))
-    
-    history.value.past.push(JSON.stringify(currentSerializable))
-    const nextState = history.value.future.pop()
-    audioFiles.value = JSON.parse(nextState)
-  }
-
   function setFormat(format) {
     currentFormat.value = format
   }
@@ -323,8 +258,6 @@ export const useAudioStore = defineStore('audio', () => {
     // Computed
     hasFiles,
     hasConvertedFiles,
-    canUndo,
-    canRedo,
     fileCount,
     totalSize,
 
@@ -338,8 +271,6 @@ export const useAudioStore = defineStore('audio', () => {
     cancelConversion,
     downloadFile,
     downloadAllFiles,
-    undo,
-    redo,
     setFormat,
     setQuality,
     formatFileSize
