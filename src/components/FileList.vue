@@ -143,6 +143,35 @@ function removeFile(fileId) {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+/* Custom scrollbar styling */
+.file-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.file-list::-webkit-scrollbar-track {
+  background: rgba(184, 184, 184, 0.1);
+  border-radius: 4px;
+}
+
+.file-list::-webkit-scrollbar-thumb {
+  background: rgba(144, 144, 144, 0.4);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.file-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(144, 144, 144, 0.6);
+}
+
+/* Firefox scrollbar styling */
+.file-list {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(144, 144, 144, 0.4) rgba(184, 184, 184, 0.1);
 }
 
 .file-item {
@@ -315,6 +344,10 @@ function removeFile(fileId) {
 }
 
 @media (max-width: 768px) {
+  .file-list {
+    max-height: 400px;
+  }
+
   .file-item-content {
     flex-direction: column;
     align-items: flex-start;
