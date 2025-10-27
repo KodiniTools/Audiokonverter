@@ -83,11 +83,32 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
       contextIsolation: true,
-      sandbox: true
+      sandbox: false, // Allow localhost requests
+      webSecurity: false // Allow CORS for localhost
     },
     icon: path.join(__dirname, '..', 'icon-512.png'),
     title: 'Audio Konverter'
   });
+
+  // Allow localhost requests in session
+  mainWindow.webContents.session.webRequest.onBeforeSendHeaders(
+    { urls: ['http://localhost:*/*', 'http://127.0.0.1:*/*'] },
+    (details, callback) => {
+      callback({ requestHeaders: details.requestHeaders });
+    }
+  );
+
+  mainWindow.webContents.session.webRequest.onHeadersReceived(
+    { urls: ['http://localhost:*/*', 'http://127.0.0.1:*/*'] },
+    (details, callback) => {
+      callback({
+        responseHeaders: {
+          ...details.responseHeaders,
+          'Access-Control-Allow-Origin': ['*']
+        }
+      });
+    }
+  );
 
   // Load the built app
   const indexPath = path.join(__dirname, '..', 'dist', 'index.html');
