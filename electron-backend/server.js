@@ -104,8 +104,11 @@ async function convertAudio(inputPath, outputPath, format, quality) {
 
     // Build FFmpeg arguments based on format with explicit codecs
     const args = [
+      '-fflags', '+genpts',         // Generate presentation timestamps
+      '-err_detect', 'ignore_err',  // Ignore errors during decoding
       '-i', inputPath,
       '-vn', // No video
+      '-map', '0:a',                // Map only audio stream
     ];
 
     // Set codec and parameters based on output format
