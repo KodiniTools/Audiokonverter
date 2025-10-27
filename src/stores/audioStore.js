@@ -77,14 +77,8 @@ export const useAudioStore = defineStore('audio', () => {
 
     try {
       console.log('🔄 Starte Konvertierung:', fileData.name)
-
-      // Use direct localhost URL in Electron, proxy path in web
-      const isElectron = window.electronAPI && window.electronAPI.isElectron
-      const apiUrl = isElectron
-        ? 'http://localhost:3001/audiokonverter/api/convert'
-        : '/audiokonverter/api/convert'
-
-      const response = await axios.post(apiUrl, formData, {
+      
+      const response = await axios.post('/audiokonverter/api/convert', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
@@ -118,25 +112,22 @@ export const useAudioStore = defineStore('audio', () => {
 
       updateFileProgress(fileData.id, 100, 'completed')
       const file = audioFiles.value.find(f => f.id === fileData.id)
-
+      
       if (file) {
         // Verwende url statt output
-        const urlPath = response.data.url.startsWith('/')
-          ? response.data.url
+        const urlPath = response.data.url.startsWith('/') 
+          ? response.data.url 
           : '/' + response.data.url
-
-        // In Electron, use full localhost URL; in web, use proxy path
-        file.convertedUrl = isElectron
-          ? 'http://localhost:3001' + urlPath
-          : '/audiokonverter' + urlPath
+        
+        file.convertedUrl = '/audiokonverter' + urlPath
         file.convertedName = response.data.filename
         file.status = 'completed'
-
+        
         console.log('✅ Konvertierung erfolgreich:', {
           url: file.convertedUrl,
           name: file.convertedName
         })
-
+        
         convertedFiles.value.push(file)
       }
       return { success: true, data: response.data }

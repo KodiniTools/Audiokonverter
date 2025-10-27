@@ -90,7 +90,24 @@ function createWindow() {
     title: 'Audio Konverter'
   });
 
-  // Allow localhost requests in session
+  // Intercept requests to /audiokonverter/* and redirect to localhost:3001
+  mainWindow.webContents.session.webRequest.onBeforeRequest(
+    { urls: ['file://*', '*://*/audiokonverter/*'] },
+    (details, callback) => {
+      const url = new URL(details.url);
+
+      // If it's a request to /audiokonverter/*, redirect to localhost:3001
+      if (url.pathname.startsWith('/audiokonverter/')) {
+        const newUrl = `http://localhost:3001${url.pathname}${url.search}`;
+        console.log(`Redirecting: ${details.url} -> ${newUrl}`);
+        callback({ redirectURL: newUrl });
+      } else {
+        callback({});
+      }
+    }
+  );
+
+  // Allow localhost requests and add CORS headers
   mainWindow.webContents.session.webRequest.onBeforeSendHeaders(
     { urls: ['http://localhost:*/*', 'http://127.0.0.1:*/*'] },
     (details, callback) => {
