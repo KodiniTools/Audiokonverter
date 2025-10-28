@@ -8,79 +8,67 @@
 
     <!-- Downloads Grid -->
     <div class="downloads-grid">
-      <!-- Windows EXE -->
-      <div class="download-card">
+      <!-- Windows EXE 64-bit (Empfohlen) -->
+      <div class="download-card featured">
+        <div class="download-badge">{{ t('downloads.recommended') }}</div>
         <div class="download-icon">
           <i class="fab fa-windows"></i>
         </div>
         <h3 class="download-name">{{ t('downloads.windows.exe.name') }}</h3>
         <p class="download-description">{{ t('downloads.windows.exe.description') }}</p>
-        <button class="btn btn-primary download-btn" @click="downloadFile('windows-exe')">
+        <button class="btn btn-primary download-btn" @click="downloadFile('windows-exe-x64')">
           <i class="fas fa-download"></i>
           {{ t('downloads.downloadButton') }}
         </button>
       </div>
 
-      <!-- Windows MSI -->
+      <!-- Windows MSI 64-bit -->
       <div class="download-card">
         <div class="download-icon">
           <i class="fab fa-windows"></i>
         </div>
-        <h3 class="download-name">{{ t('downloads.windows.msi.name') }}</h3>
-        <p class="download-description">{{ t('downloads.windows.msi.description') }}</p>
-        <button class="btn btn-primary download-btn" @click="downloadFile('windows-msi')">
+        <h3 class="download-name">{{ t('downloads.windows.msi64.name') }}</h3>
+        <p class="download-description">{{ t('downloads.windows.msi64.description') }}</p>
+        <button class="btn btn-primary download-btn" @click="downloadFile('windows-msi-x64')">
           <i class="fas fa-download"></i>
           {{ t('downloads.downloadButton') }}
         </button>
       </div>
 
-      <!-- macOS DMG -->
+      <!-- Windows MSI 32-bit -->
       <div class="download-card">
         <div class="download-icon">
-          <i class="fab fa-apple"></i>
+          <i class="fab fa-windows"></i>
         </div>
-        <h3 class="download-name">{{ t('downloads.macos.name') }}</h3>
-        <p class="download-description">{{ t('downloads.macos.description') }}</p>
-        <button class="btn btn-primary download-btn" @click="downloadFile('macos-dmg')">
+        <h3 class="download-name">{{ t('downloads.windows.msi32.name') }}</h3>
+        <p class="download-description">{{ t('downloads.windows.msi32.description') }}</p>
+        <button class="btn btn-primary download-btn" @click="downloadFile('windows-msi-x86')">
           <i class="fas fa-download"></i>
           {{ t('downloads.downloadButton') }}
         </button>
       </div>
 
-      <!-- Linux DEB -->
-      <div class="download-card">
-        <div class="download-icon">
-          <i class="fab fa-linux"></i>
-        </div>
-        <h3 class="download-name">{{ t('downloads.linux.deb.name') }}</h3>
-        <p class="download-description">{{ t('downloads.linux.deb.description') }}</p>
-        <button class="btn btn-primary download-btn" @click="downloadFile('linux-deb')">
-          <i class="fas fa-download"></i>
-          {{ t('downloads.downloadButton') }}
-        </button>
-      </div>
-
-      <!-- Linux AppImage -->
-      <div class="download-card">
-        <div class="download-icon">
-          <i class="fab fa-linux"></i>
-        </div>
-        <h3 class="download-name">{{ t('downloads.linux.appimage.name') }}</h3>
-        <p class="download-description">{{ t('downloads.linux.appimage.description') }}</p>
-        <button class="btn btn-primary download-btn" @click="downloadFile('linux-appimage')">
-          <i class="fas fa-download"></i>
-          {{ t('downloads.downloadButton') }}
-        </button>
-      </div>
-
-      <!-- Portable ZIP -->
+      <!-- Portable ZIP 64-bit -->
       <div class="download-card">
         <div class="download-icon">
           <i class="fas fa-file-archive"></i>
         </div>
-        <h3 class="download-name">{{ t('downloads.portable.name') }}</h3>
-        <p class="download-description">{{ t('downloads.portable.description') }}</p>
-        <button class="btn btn-primary download-btn" @click="downloadFile('portable-zip')">
+        <h3 class="download-name">{{ t('downloads.portable64.name') }}</h3>
+        <p class="download-description">{{ t('downloads.portable64.description') }}</p>
+        <button class="btn btn-primary download-btn" @click="downloadFile('portable-zip-x64')">
+          <i class="fas fa-download"></i>
+          {{ t('downloads.downloadButton') }}
+        </button>
+      </div>
+
+      <!-- Portable ZIP 32-bit -->
+      <div class="download-card">
+        <div class="download-icon">
+          <i class="fas fa-file-archive"></i>
+        </div>
+        <h3 class="download-name">{{ t('downloads.portable32.name') }}</h3>
+        <p class="download-description">{{ t('downloads.portable32.description') }}</p>
+        <button class="btn btn-primary download-btn" @click="downloadFile('portable-zip-x86')">
           <i class="fas fa-download"></i>
           {{ t('downloads.downloadButton') }}
         </button>
@@ -103,14 +91,12 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
 function downloadFile(type) {
-  // TODO: Implement actual download URLs
   const downloadUrls = {
-    'windows-exe': '/downloads/AudioConverter-Setup.exe',
-    'windows-msi': '/downloads/AudioConverter-Setup.msi',
-    'macos-dmg': '/downloads/AudioConverter.dmg',
-    'linux-deb': '/downloads/AudioConverter.deb',
-    'linux-appimage': '/downloads/AudioConverter.AppImage',
-    'portable-zip': '/downloads/AudioConverter-Portable.zip'
+    'windows-exe-x64': '/audiokonverter/downloads/AudioConverter-Setup.exe',
+    'windows-msi-x64': '/audiokonverter/downloads/AudioConverter-Setup-x64.msi',
+    'windows-msi-x86': '/audiokonverter/downloads/AudioConverter-Setup-x86.msi',
+    'portable-zip-x64': '/audiokonverter/downloads/AudioConverter-Portable-x64.zip',
+    'portable-zip-x86': '/audiokonverter/downloads/AudioConverter-Portable-x86.zip'
   }
 
   const url = downloadUrls[type]
@@ -175,6 +161,26 @@ function downloadFile(type) {
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+}
+
+.download-card.featured {
+  border: 2px solid var(--primary-color);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.1);
+}
+
+.download-badge {
+  position: absolute;
+  top: -12px;
+  right: 20px;
+  background: var(--accent-gradient);
+  color: white;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .download-card:hover {

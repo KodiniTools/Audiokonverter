@@ -75,36 +75,31 @@ export default {
   },
   downloads: {
     title: 'Download Desktop App',
-    subtitle: 'Download our desktop application and convert audio files offline on your computer. Available for Windows, macOS and Linux.',
+    subtitle: 'Download our Windows desktop application and convert audio files offline on your computer.',
     downloadButton: 'Download',
-    systemRequirements: 'System Requirements: Windows 10+, macOS 10.14+, or modern Linux distribution',
+    recommended: 'Recommended',
+    systemRequirements: 'System Requirements: Windows 10 or newer (64-bit recommended)',
     windows: {
       exe: {
-        name: 'Windows Installer',
+        name: 'Windows Installer (64-bit)',
         description: 'Recommended for most Windows users. Easy installation with automatic update functionality.'
       },
-      msi: {
-        name: 'Windows MSI',
-        description: 'Enterprise installer for corporate environments with advanced installation options.'
-      }
-    },
-    macos: {
-      name: 'macOS App',
-      description: 'For Apple Mac with Intel or Apple Silicon. Optimized for macOS Monterey and later.'
-    },
-    linux: {
-      deb: {
-        name: 'Linux DEB',
-        description: 'For Debian, Ubuntu and derived distributions. Easy installation with dpkg.'
+      msi64: {
+        name: 'Windows MSI (64-bit)',
+        description: 'Enterprise installer for corporate environments. Advanced installation options for IT administrators.'
       },
-      appimage: {
-        name: 'Linux AppImage',
-        description: 'Universal format for all Linux distributions. No installation required.'
+      msi32: {
+        name: 'Windows MSI (32-bit)',
+        description: 'For older Windows systems. Compatible with 32-bit Windows versions.'
       }
     },
-    portable: {
-      name: 'Portable Version',
-      description: 'ZIP archive without installation. Perfect for USB drives or temporary use.'
+    portable64: {
+      name: 'Portable Version (64-bit)',
+      description: 'ZIP archive without installation. Perfect for USB drives or temporary use on modern PCs.'
+    },
+    portable32: {
+      name: 'Portable Version (32-bit)',
+      description: 'ZIP archive for older systems. No installation required, runs from USB or local folder.'
     }
   },
   faq: {

@@ -75,36 +75,31 @@ export default {
   },
   downloads: {
     title: 'Desktop-App Herunterladen',
-    subtitle: 'Laden Sie unsere Desktop-Anwendung herunter und konvertieren Sie Audiodateien offline auf Ihrem Computer. Verfügbar für Windows, macOS und Linux.',
+    subtitle: 'Laden Sie unsere Windows Desktop-Anwendung herunter und konvertieren Sie Audiodateien offline auf Ihrem Computer.',
     downloadButton: 'Herunterladen',
-    systemRequirements: 'Systemanforderungen: Windows 10+, macOS 10.14+, oder moderne Linux-Distribution',
+    recommended: 'Empfohlen',
+    systemRequirements: 'Systemanforderungen: Windows 10 oder neuer (64-bit empfohlen)',
     windows: {
       exe: {
-        name: 'Windows Installer',
+        name: 'Windows Installer (64-bit)',
         description: 'Empfohlen für die meisten Windows-Benutzer. Einfache Installation mit automatischer Update-Funktion.'
       },
-      msi: {
-        name: 'Windows MSI',
-        description: 'Enterprise-Installer für Unternehmensumgebungen mit erweiterten Installationsoptionen.'
-      }
-    },
-    macos: {
-      name: 'macOS App',
-      description: 'Für Apple Mac mit Intel oder Apple Silicon. Optimiert für macOS Monterey und neuer.'
-    },
-    linux: {
-      deb: {
-        name: 'Linux DEB',
-        description: 'Für Debian, Ubuntu und abgeleitete Distributionen. Einfache Installation mit dpkg.'
+      msi64: {
+        name: 'Windows MSI (64-bit)',
+        description: 'Enterprise-Installer für Unternehmensumgebungen. Erweiterte Installationsoptionen für IT-Administratoren.'
       },
-      appimage: {
-        name: 'Linux AppImage',
-        description: 'Universelles Format für alle Linux-Distributionen. Keine Installation erforderlich.'
+      msi32: {
+        name: 'Windows MSI (32-bit)',
+        description: 'Für ältere Windows-Systeme. Kompatibel mit 32-bit Windows-Versionen.'
       }
     },
-    portable: {
-      name: 'Portable Version',
-      description: 'ZIP-Archiv ohne Installation. Perfekt für USB-Sticks oder temporäre Nutzung.'
+    portable64: {
+      name: 'Portable Version (64-bit)',
+      description: 'ZIP-Archiv ohne Installation. Perfekt für USB-Sticks oder temporäre Nutzung auf modernen PCs.'
+    },
+    portable32: {
+      name: 'Portable Version (32-bit)',
+      description: 'ZIP-Archiv für ältere Systeme. Keine Installation erforderlich, läuft von USB oder lokalem Ordner.'
     }
   },
   faq: {
