@@ -15,7 +15,7 @@ module.exports = {
         NODE_ENV: 'production',
         PORT: 9000,
         UPLOAD_DIR: './uploads',
-        OUTPUT_DIR: './output',
+        OUTPUT_DIR: './files',
         MAX_FILE_SIZE: '500MB'
       },
       
