@@ -155,6 +155,22 @@ app.post('/audiokonverter/api/convert', upload.single('file'), async (req, res) 
     // Perform conversion
     await convertAudio(inputPath, outputPath, format, parseInt(quality));
 
+    // Verify output file exists and has content
+    let fileSize = 0;
+    try {
+      const stats = await fs.stat(outputPath);
+      if (stats.size === 0) {
+        throw new Error('Output file is empty');
+      }
+      fileSize = stats.size;
+      console.log(`Conversion successful: ${outputFilename} (${fileSize} bytes)`);
+    } catch (err) {
+      console.error('Output file verification failed:', err);
+      // Clean up empty/invalid output file
+      await fs.unlink(outputPath).catch(() => {});
+      throw new Error('Conversion failed: output file is invalid or empty');
+    }
+
     // Clean up input file
     await fs.unlink(inputPath).catch(() => {});
 
@@ -162,7 +178,8 @@ app.post('/audiokonverter/api/convert', upload.single('file'), async (req, res) 
     res.json({
       ok: true,
       url: `/audiokonverter/files/${outputFilename}`,
-      filename: outputFilename
+      filename: outputFilename,
+      size: fileSize
     });
 
   } catch (error) {

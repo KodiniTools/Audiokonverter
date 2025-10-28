@@ -28,6 +28,8 @@ export const useAudioStore = defineStore('audio', () => {
       id: `${file.name}-${Date.now()}-${Math.random()}`,
       file,
       name: file.name,
+      originalName: file.name, // Speichere originalen Namen
+      originalSize: file.size, // Speichere originale Größe
       size: file.size,
       type: file.type,
       status: 'pending',
@@ -203,20 +205,27 @@ export const useAudioStore = defineStore('audio', () => {
 
   async function downloadFile(fileData) {
     if (!fileData.convertedUrl) return
-    
+
     try {
       const response = await fetch(fileData.convertedUrl)
       const blob = await response.blob()
-      
+
+      // Verwende originalen Dateinamen mit neuer Endung
+      let downloadName = fileData.convertedName || `converted-${fileData.name}`
+      if (fileData.originalName && fileData.convertedFormat) {
+        const baseName = fileData.originalName.substring(0, fileData.originalName.lastIndexOf('.')) || fileData.originalName
+        downloadName = `${baseName}.${fileData.convertedFormat}`
+      }
+
       const url = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
-      link.download = fileData.convertedName || `converted-${fileData.name}`
+      link.download = downloadName
       link.style.display = 'none'
-      
+
       document.body.appendChild(link)
       link.click()
-      
+
       document.body.removeChild(link)
       window.URL.revokeObjectURL(url)
     } catch (error) {
@@ -253,7 +262,14 @@ export const useAudioStore = defineStore('audio', () => {
         try {
           const response = await fetch(fileData.convertedUrl)
           const blob = await response.blob()
-          const filename = fileData.convertedName || `converted-${fileData.name}`
+
+          // Verwende originalen Dateinamen mit neuer Endung
+          let filename = fileData.convertedName || `converted-${fileData.name}`
+          if (fileData.originalName && fileData.convertedFormat) {
+            const baseName = fileData.originalName.substring(0, fileData.originalName.lastIndexOf('.')) || fileData.originalName
+            filename = `${baseName}.${fileData.convertedFormat}`
+          }
+
           zip.file(filename, blob)
         } catch (error) {
           console.error(`Failed to add ${fileData.name} to ZIP:`, error)
