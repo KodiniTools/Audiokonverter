@@ -93,5 +93,13 @@ export default {
         a: 'Yes, you can upload multiple files and they will be converted sequentially.'
       }
     }
+  },
+  about: {
+    description: 'Description',
+    descriptionText: 'A modern audio converter for web. Convert your audio files quickly and easily between various formats.',
+    openSource: 'Open Source Software',
+    openSourceText: 'This application uses the following open-source software:',
+    viewLicenses: 'View All Licenses',
+    contact: 'Contact'
   }
 }

@@ -7,8 +7,16 @@
       </a>
 
       <div class="nav-actions">
-        <button 
-          class="nav-btn language-toggle" 
+        <button
+          class="nav-btn about-btn"
+          @click="openAbout"
+          title="About"
+        >
+          <i class="fas fa-info-circle"></i>
+        </button>
+
+        <button
+          class="nav-btn language-toggle"
           @click="toggleLanguage"
           :title="t('nav.language')"
         >
@@ -16,8 +24,8 @@
           <i class="fas fa-globe"></i>
         </button>
 
-        <button 
-          class="nav-btn theme-toggle" 
+        <button
+          class="nav-btn theme-toggle"
           @click="themeStore.toggleTheme()"
           :title="t('nav.toggleTheme')"
         >
@@ -26,16 +34,20 @@
       </div>
     </div>
   </nav>
+
+  <AboutDialog ref="aboutDialog" />
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useThemeStore } from '@/stores/themeStore'
 import { setLocale } from '@/locales'
+import AboutDialog from './AboutDialog.vue'
 
 const { t, locale } = useI18n()
 const themeStore = useThemeStore()
+const aboutDialog = ref(null)
 
 const currentLocale = computed(() => locale.value)
 
@@ -46,6 +58,12 @@ function toggleLanguage() {
 
 function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+function openAbout() {
+  if (aboutDialog.value) {
+    aboutDialog.value.openModal()
+  }
 }
 </script>
 

@@ -93,5 +93,13 @@ export default {
         a: 'Ja, Sie können mehrere Dateien hochladen und sie werden nacheinander konvertiert.'
       }
     }
+  },
+  about: {
+    description: 'Beschreibung',
+    descriptionText: 'Ein moderner Audio-Konverter für Web. Konvertieren Sie Ihre Audio-Dateien schnell und einfach zwischen verschiedenen Formaten.',
+    openSource: 'Open Source Software',
+    openSourceText: 'Diese Anwendung nutzt die folgende Open-Source-Software:',
+    viewLicenses: 'Alle Lizenzen anzeigen',
+    contact: 'Kontakt'
   }
 }
