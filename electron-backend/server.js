@@ -78,8 +78,8 @@ function getFFmpegPath() {
   if (ffmpegInstaller && ffmpegInstaller.path) {
     let ffmpegPath = ffmpegInstaller.path;
 
-    // In packaged app, fix the path if it's inside ASAR
-    if (ffmpegPath.includes('app.asar')) {
+    // In packaged app, fix the path if it's inside ASAR but not already unpacked
+    if (ffmpegPath.includes('app.asar') && !ffmpegPath.includes('app.asar.unpacked')) {
       // Replace app.asar with app.asar.unpacked
       ffmpegPath = ffmpegPath.replace('app.asar', 'app.asar.unpacked');
       console.log('[FFmpeg] Corrected path for packaged app:', ffmpegPath);
