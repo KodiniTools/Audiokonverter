@@ -41,8 +41,6 @@ export default {
     downloadAllAsZip: 'Alle als ZIP herunterladen',
     downloadOptions: 'Download-Optionen',
     exportMetadata: 'Metadaten exportieren',
-    undo: 'Rückgängig',
-    redo: 'Wiederholen',
     download: 'Herunterladen',
     retry: 'Wiederholen',
     cancel: 'Abbrechen',

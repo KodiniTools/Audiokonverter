@@ -41,8 +41,6 @@ export default {
     downloadAllAsZip: 'Download All as ZIP',
     downloadOptions: 'Download Options',
     exportMetadata: 'Export Metadata',
-    undo: 'Undo',
-    redo: 'Redo',
     download: 'Download',
     retry: 'Retry',
     cancel: 'Cancel',
