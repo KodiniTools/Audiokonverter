@@ -73,6 +73,40 @@ export default {
     serverError: 'Server error',
     unsupportedFile: 'Unsupported file'
   },
+  downloads: {
+    title: 'Download Desktop App',
+    subtitle: 'Download our desktop application and convert audio files offline on your computer. Available for Windows, macOS and Linux.',
+    downloadButton: 'Download',
+    systemRequirements: 'System Requirements: Windows 10+, macOS 10.14+, or modern Linux distribution',
+    windows: {
+      exe: {
+        name: 'Windows Installer',
+        description: 'Recommended for most Windows users. Easy installation with automatic update functionality.'
+      },
+      msi: {
+        name: 'Windows MSI',
+        description: 'Enterprise installer for corporate environments with advanced installation options.'
+      }
+    },
+    macos: {
+      name: 'macOS App',
+      description: 'For Apple Mac with Intel or Apple Silicon. Optimized for macOS Monterey and later.'
+    },
+    linux: {
+      deb: {
+        name: 'Linux DEB',
+        description: 'For Debian, Ubuntu and derived distributions. Easy installation with dpkg.'
+      },
+      appimage: {
+        name: 'Linux AppImage',
+        description: 'Universal format for all Linux distributions. No installation required.'
+      }
+    },
+    portable: {
+      name: 'Portable Version',
+      description: 'ZIP archive without installation. Perfect for USB drives or temporary use.'
+    }
+  },
   faq: {
     title: 'Frequently Asked Questions',
     questions: {
