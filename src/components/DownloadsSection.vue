@@ -22,7 +22,7 @@
 
             <p><strong>{{ t('downloads.securityWarning.howToInstall.title') }}</strong></p>
             <ol>
-              <li v-for="(step, index) in t('downloads.securityWarning.howToInstall.steps')" :key="index">
+              <li v-for="(step, index) in tm('downloads.securityWarning.howToInstall.steps')" :key="index">
                 {{ step }}
               </li>
             </ol>
@@ -118,7 +118,7 @@
 <script setup>
 import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n()
+const { t, tm } = useI18n()
 
 function downloadFile(type) {
   const downloadUrls = {
