@@ -6,11 +6,54 @@
       <p class="downloads-subtitle">{{ t('downloads.subtitle') }}</p>
     </div>
 
+    <!-- Windows Defender Warning -->
+    <div class="security-warning">
+      <div class="warning-icon">
+        <i class="fas fa-shield-alt"></i>
+      </div>
+      <div class="warning-content">
+        <h3 class="warning-title">{{ t('downloads.securityWarning.title') }}</h3>
+        <p class="warning-text">{{ t('downloads.securityWarning.description') }}</p>
+        <details class="warning-details">
+          <summary>{{ t('downloads.securityWarning.learnMore') }}</summary>
+          <div class="warning-steps">
+            <p><strong>{{ t('downloads.securityWarning.why.title') }}</strong></p>
+            <p>{{ t('downloads.securityWarning.why.description') }}</p>
+
+            <p><strong>{{ t('downloads.securityWarning.howToInstall.title') }}</strong></p>
+            <ol>
+              <li v-for="(step, index) in t('downloads.securityWarning.howToInstall.steps')" :key="index">
+                {{ step }}
+              </li>
+            </ol>
+
+            <p class="warning-recommendation">
+              <i class="fas fa-lightbulb"></i>
+              {{ t('downloads.securityWarning.recommendation') }}
+            </p>
+          </div>
+        </details>
+      </div>
+    </div>
+
     <!-- Downloads Grid -->
     <div class="downloads-grid">
-      <!-- Windows EXE 64-bit (Empfohlen) -->
+      <!-- Portable ZIP 64-bit (Empfohlen) -->
       <div class="download-card featured">
         <div class="download-badge">{{ t('downloads.recommended') }}</div>
+        <div class="download-icon">
+          <i class="fas fa-file-archive"></i>
+        </div>
+        <h3 class="download-name">{{ t('downloads.portable64.name') }}</h3>
+        <p class="download-description">{{ t('downloads.portable64.description') }}</p>
+        <button class="btn btn-primary download-btn" @click="downloadFile('portable-zip-x64')">
+          <i class="fas fa-download"></i>
+          {{ t('downloads.downloadButton') }}
+        </button>
+      </div>
+
+      <!-- Windows EXE 64-bit -->
+      <div class="download-card">
         <div class="download-icon">
           <i class="fab fa-windows"></i>
         </div>
@@ -43,19 +86,6 @@
         <h3 class="download-name">{{ t('downloads.windows.msi32.name') }}</h3>
         <p class="download-description">{{ t('downloads.windows.msi32.description') }}</p>
         <button class="btn btn-primary download-btn" @click="downloadFile('windows-msi-x86')">
-          <i class="fas fa-download"></i>
-          {{ t('downloads.downloadButton') }}
-        </button>
-      </div>
-
-      <!-- Portable ZIP 64-bit -->
-      <div class="download-card">
-        <div class="download-icon">
-          <i class="fas fa-file-archive"></i>
-        </div>
-        <h3 class="download-name">{{ t('downloads.portable64.name') }}</h3>
-        <p class="download-description">{{ t('downloads.portable64.description') }}</p>
-        <button class="btn btn-primary download-btn" @click="downloadFile('portable-zip-x64')">
           <i class="fas fa-download"></i>
           {{ t('downloads.downloadButton') }}
         </button>
@@ -259,6 +289,128 @@ function downloadFile(type) {
   color: var(--primary-color);
 }
 
+/* Security Warning Styles */
+.security-warning {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 152, 0, 0.1) 100%);
+  border: 2px solid #ffa726;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 3rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.warning-icon {
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--warning-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.75rem;
+}
+
+.warning-content {
+  flex: 1;
+}
+
+.warning-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 0.75rem;
+}
+
+.warning-text {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.warning-details {
+  margin-top: 1rem;
+}
+
+.warning-details summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--primary-color);
+  padding: 0.5rem 0;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+.warning-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.warning-details summary:before {
+  content: '▶';
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.warning-details[open] summary:before {
+  transform: rotate(90deg);
+}
+
+.warning-details summary:hover {
+  color: var(--primary-hover);
+}
+
+.warning-steps {
+  padding: 1.5rem;
+  background: var(--card-background);
+  border-radius: 12px;
+  margin-top: 1rem;
+  border: 1px solid rgba(184, 184, 184, 0.2);
+}
+
+.warning-steps p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.warning-steps strong {
+  color: var(--text-color);
+  font-size: 1.1rem;
+}
+
+.warning-steps ol {
+  margin: 1rem 0 1.5rem 1.5rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.warning-steps li {
+  margin-bottom: 0.5rem;
+}
+
+.warning-recommendation {
+  background: rgba(59, 130, 246, 0.1);
+  border-left: 4px solid var(--primary-color);
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.warning-recommendation i {
+  color: var(--primary-color);
+  font-size: 1.25rem;
+  margin-top: 0.2rem;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -277,6 +429,25 @@ function downloadFile(type) {
 
   .downloads-subtitle {
     font-size: 1rem;
+  }
+
+  .security-warning {
+    flex-direction: column;
+    padding: 1.5rem;
+  }
+
+  .warning-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+
+  .warning-title {
+    font-size: 1.25rem;
+  }
+
+  .warning-steps {
+    padding: 1rem;
   }
 
   .downloads-grid {

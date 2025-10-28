@@ -79,6 +79,25 @@ export default {
     downloadButton: 'Herunterladen',
     recommended: 'Empfohlen',
     systemRequirements: 'Systemanforderungen: Windows 10 oder neuer (64-bit empfohlen)',
+    securityWarning: {
+      title: 'Wichtiger Hinweis zu Windows Defender',
+      description: 'Windows Defender kann die Installer-Dateien als potenzielle Bedrohung kennzeichnen. Dies ist ein bekannter Fehlalarm (False Positive), da unsere App nicht digital signiert ist.',
+      learnMore: 'Mehr erfahren und Installationsanleitung ansehen',
+      why: {
+        title: 'Warum passiert das?',
+        description: 'Unsere Software ist vollkommen sicher, aber Windows Defender stuft unbekannte Programme ohne digitales Zertifikat als verdächtig ein. Dies ist eine Vorsichtsmaßnahme von Microsoft, um Nutzer zu schützen.'
+      },
+      howToInstall: {
+        title: 'So installieren Sie trotzdem:',
+        steps: [
+          'Laden Sie die gewünschte Datei herunter',
+          'Wenn Windows Defender eine Warnung zeigt, klicken Sie auf "Weitere Informationen"',
+          'Klicken Sie dann auf "Trotzdem ausführen" oder "Trotzdem herunterladen"',
+          'Folgen Sie den Installationsanweisungen'
+        ]
+      },
+      recommendation: 'Tipp: Die Portable Version (ZIP) löst seltener Antivirus-Warnungen aus und benötigt keine Installation.'
+    },
     windows: {
       exe: {
         name: 'Windows Installer (64-bit)',
@@ -95,7 +114,7 @@ export default {
     },
     portable64: {
       name: 'Portable Version (64-bit)',
-      description: 'ZIP-Archiv ohne Installation. Perfekt für USB-Sticks oder temporäre Nutzung auf modernen PCs.'
+      description: 'Keine Installation nötig! Entpacken und direkt starten. Löst selten Antivirus-Warnungen aus.'
     },
     portable32: {
       name: 'Portable Version (32-bit)',
