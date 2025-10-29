@@ -38,6 +38,7 @@ export default {
   actions: {
     clearAll: 'Clear All',
     downloadAll: 'Download All',
+    downloadAsZip: 'Download as ZIP',
     downloadOptions: 'Download Options',
     exportMetadata: 'Export Metadata',
     undo: 'Undo',
@@ -62,7 +63,9 @@ export default {
     conversionComplete: 'Conversion complete',
     conversionFailed: 'Conversion failed',
     allFilesCleared: 'All files cleared',
-    unsupportedFormat: 'Unsupported format'
+    unsupportedFormat: 'Unsupported format',
+    zipDownloadStarted: 'ZIP download started',
+    zipDownloadFailed: 'ZIP download failed'
   },
   errors: {
     uploadFailed: 'Upload failed',

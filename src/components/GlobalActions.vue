@@ -21,6 +21,17 @@
         <i class="fas fa-download"></i>
         <span>{{ t('actions.downloadAll') }}</span>
       </button>
+
+      <!-- Download All as ZIP -->
+      <button
+        v-if="audioStore.hasConvertedFiles"
+        class="action-btn btn-success"
+        @click="downloadAllAsZip"
+        :title="t('actions.downloadAsZip')"
+      >
+        <i class="fas fa-file-archive"></i>
+        <span>{{ t('actions.downloadAsZip') }}</span>
+      </button>
     </div>
   </div>
 </template>
@@ -53,6 +64,15 @@ async function downloadAll() {
     showToast('success', 'Download gestartet')
   } catch (error) {
     showToast('error', 'Download fehlgeschlagen', { message: error.message })
+  }
+}
+
+async function downloadAllAsZip() {
+  try {
+    await audioStore.downloadAllAsZip()
+    showToast('success', t('toast.zipDownloadStarted'))
+  } catch (error) {
+    showToast('error', t('toast.zipDownloadFailed'), { message: error.message })
   }
 }
 </script>

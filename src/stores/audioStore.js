@@ -181,7 +181,7 @@ export const useAudioStore = defineStore('audio', () => {
 
   async function downloadAllFiles() {
     const completedFiles = audioFiles.value.filter(f => f.status === 'completed' && f.convertedUrl)
-    
+
     if (completedFiles.length === 0) {
       return
     }
@@ -190,6 +190,43 @@ export const useAudioStore = defineStore('audio', () => {
       await downloadFile(fileData)
       await new Promise(resolve => setTimeout(resolve, 300))
     }
+  }
+
+  async function downloadAllAsZip() {
+    const JSZip = (await import('jszip')).default
+    const completedFiles = audioFiles.value.filter(f => f.status === 'completed' && f.convertedUrl)
+
+    if (completedFiles.length === 0) {
+      throw new Error('Keine konvertierten Dateien vorhanden')
+    }
+
+    const zip = new JSZip()
+
+    // Fetch all files and add to ZIP
+    for (const fileData of completedFiles) {
+      try {
+        const response = await fetch(fileData.convertedUrl)
+        if (!response.ok) throw new Error(`Failed to fetch ${fileData.name}`)
+
+        const blob = await response.blob()
+        const fileName = fileData.name.replace(/\.[^/.]+$/, '') + '.' + currentFormat.value
+        zip.file(fileName, blob)
+      } catch (error) {
+        console.error(`Error adding ${fileData.name} to ZIP:`, error)
+      }
+    }
+
+    // Generate ZIP and trigger download
+    const zipBlob = await zip.generateAsync({ type: 'blob' })
+    const url = window.URL.createObjectURL(zipBlob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `converted-audio-${Date.now()}.zip`
+    link.style.display = 'none'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
   }
 
   // History Management
@@ -296,6 +333,7 @@ export const useAudioStore = defineStore('audio', () => {
     convertAllFiles,
     downloadFile,
     downloadAllFiles,
+    downloadAllAsZip,
     undo,
     redo,
     setFormat,
