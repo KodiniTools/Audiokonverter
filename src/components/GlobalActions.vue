@@ -21,28 +21,6 @@
         <i class="fas fa-download"></i>
         <span>{{ t('actions.downloadAll') }}</span>
       </button>
-
-      <!-- Undo -->
-      <button
-        class="action-btn btn-secondary"
-        @click="audioStore.undo()"
-        :disabled="!audioStore.canUndo"
-        :title="t('actions.undo')"
-      >
-        <i class="fas fa-undo"></i>
-        <span>{{ t('actions.undo') }}</span>
-      </button>
-
-      <!-- Redo -->
-      <button
-        class="action-btn btn-secondary"
-        @click="audioStore.redo()"
-        :disabled="!audioStore.canRedo"
-        :title="t('actions.redo')"
-      >
-        <i class="fas fa-redo"></i>
-        <span>{{ t('actions.redo') }}</span>
-      </button>
     </div>
   </div>
 </template>
