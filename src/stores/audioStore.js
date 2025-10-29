@@ -73,10 +73,23 @@ export const useAudioStore = defineStore('audio', () => {
     formData.append('format', currentFormat.value)
     formData.append('quality', currentQuality.value)
 
+    // Calculate and send explicit bitrate for MP3/AAC to ensure 320 kbps at max quality
+    const bitrates = {
+      mp3: [64, 96, 128, 160, 192, 224, 256, 320, 320, 320],
+      aac: [64, 96, 128, 160, 192, 224, 256, 320, 320, 320]
+    }
+
+    if (currentFormat.value === 'mp3' || currentFormat.value === 'aac' || currentFormat.value === 'm4a') {
+      const bitrateArray = bitrates[currentFormat.value === 'm4a' ? 'aac' : currentFormat.value]
+      const targetBitrate = bitrateArray[currentQuality.value - 1]
+      formData.append('bitrate', targetBitrate)
+    }
+
     updateFileProgress(fileData.id, 0, 'converting')
 
     try {
       console.log('🔄 Starte Konvertierung:', fileData.name)
+      console.log('📊 Quality:', currentQuality.value, 'Format:', currentFormat.value, 'Bitrate:', formData.get('bitrate') || 'N/A')
       
       const response = await axios.post('/audiokonverter/api/convert', formData, {
         headers: {
