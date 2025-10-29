@@ -73,6 +73,35 @@ export default {
     serverError: 'Serverfehler',
     unsupportedFile: 'Nicht unterstützte Datei'
   },
+  downloads: {
+    title: 'Desktop-App Herunterladen',
+    subtitle: 'Laden Sie unsere Windows Desktop-Anwendung herunter und konvertieren Sie Audiodateien offline auf Ihrem Computer.',
+    downloadButton: 'Herunterladen',
+    recommended: 'Empfohlen',
+    systemRequirements: 'Systemanforderungen: Windows 10 oder neuer (64-bit empfohlen)',
+    windows: {
+      exe: {
+        name: 'Windows Installer (64-bit)',
+        description: 'Empfohlen für die meisten Windows-Benutzer. Einfache Installation mit automatischer Update-Funktion.'
+      },
+      msi64: {
+        name: 'Windows MSI (64-bit)',
+        description: 'Enterprise-Installer für Unternehmensumgebungen. Erweiterte Installationsoptionen für IT-Administratoren.'
+      },
+      msi32: {
+        name: 'Windows MSI (32-bit)',
+        description: 'Für ältere Windows-Systeme. Kompatibel mit 32-bit Windows-Versionen.'
+      }
+    },
+    portable64: {
+      name: 'Portable Version (64-bit)',
+      description: 'ZIP-Archiv ohne Installation. Perfekt für USB-Sticks oder temporäre Nutzung auf modernen PCs.'
+    },
+    portable32: {
+      name: 'Portable Version (32-bit)',
+      description: 'ZIP-Archiv für ältere Systeme. Keine Installation erforderlich, läuft von USB oder lokalem Ordner.'
+    }
+  },
   faq: {
     title: 'Häufig gestellte Fragen',
     questions: {
