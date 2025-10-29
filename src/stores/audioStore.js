@@ -176,15 +176,16 @@ export const useAudioStore = defineStore('audio', () => {
 
   async function downloadFile(fileData) {
     if (!fileData.convertedUrl) return
-    
+
     try {
       const response = await fetch(fileData.convertedUrl)
       const blob = await response.blob()
-      
+
       const url = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
-      link.download = fileData.convertedName || `converted-${fileData.name}`
+      // Use the updated file.name which has the correct extension
+      link.download = fileData.name || fileData.convertedName || `converted-${fileData.name}`
       link.style.display = 'none'
       
       document.body.appendChild(link)
@@ -228,8 +229,8 @@ export const useAudioStore = defineStore('audio', () => {
         if (!response.ok) throw new Error(`Failed to fetch ${fileData.name}`)
 
         const blob = await response.blob()
-        const fileName = fileData.name.replace(/\.[^/.]+$/, '') + '.' + currentFormat.value
-        zip.file(fileName, blob)
+        // Use the already updated fileData.name which has the correct extension
+        zip.file(fileData.name, blob)
       } catch (error) {
         console.error(`Error adding ${fileData.name} to ZIP:`, error)
       }
