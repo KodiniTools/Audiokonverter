@@ -79,6 +79,25 @@ export default {
     downloadButton: 'Download',
     recommended: 'Recommended',
     systemRequirements: 'System Requirements: Windows 10 or newer (64-bit recommended)',
+    securityWarning: {
+      title: 'Important Notice about Windows Defender',
+      description: 'Windows Defender may flag the installer files as a potential threat. This is a known false positive, as our app is not digitally signed.',
+      learnMore: 'Learn more and view installation instructions',
+      why: {
+        title: 'Why does this happen?',
+        description: 'Our software is completely safe, but Windows Defender classifies unknown programs without a digital certificate as suspicious. This is a precautionary measure by Microsoft to protect users.'
+      },
+      howToInstall: {
+        title: 'How to install anyway:',
+        steps: [
+          'Download the desired file',
+          'If Windows Defender shows a warning, click on "More info"',
+          'Then click on "Run anyway" or "Keep anyway"',
+          'Follow the installation instructions'
+        ]
+      },
+      recommendation: 'Tip: The Portable version (ZIP) triggers antivirus warnings less often and requires no installation.'
+    },
     windows: {
       exe: {
         name: 'Windows Installer (64-bit)',
@@ -95,7 +114,7 @@ export default {
     },
     portable64: {
       name: 'Portable Version (64-bit)',
-      description: 'ZIP archive without installation. Perfect for USB drives or temporary use on modern PCs.'
+      description: 'No installation needed! Extract and run directly. Rarely triggers antivirus warnings.'
     },
     portable32: {
       name: 'Portable Version (32-bit)',
