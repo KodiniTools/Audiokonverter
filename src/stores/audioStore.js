@@ -112,22 +112,41 @@ export const useAudioStore = defineStore('audio', () => {
 
       updateFileProgress(fileData.id, 100, 'completed')
       const file = audioFiles.value.find(f => f.id === fileData.id)
-      
+
       if (file) {
         // Verwende url statt output
-        const urlPath = response.data.url.startsWith('/') 
-          ? response.data.url 
+        const urlPath = response.data.url.startsWith('/')
+          ? response.data.url
           : '/' + response.data.url
-        
+
         file.convertedUrl = '/audiokonverter' + urlPath
         file.convertedName = response.data.filename
+
+        // Update filename with new extension (keep original name)
+        const baseName = file.name.replace(/\.[^/.]+$/, '') // Remove old extension
+        const newExtension = currentFormat.value
+        file.name = `${baseName}.${newExtension}`
+
+        // Fetch converted file size from server
+        try {
+          const sizeResponse = await fetch(file.convertedUrl, { method: 'HEAD' })
+          const contentLength = sizeResponse.headers.get('content-length')
+          if (contentLength) {
+            file.size = parseInt(contentLength, 10)
+          }
+        } catch (sizeError) {
+          console.warn('Could not fetch file size:', sizeError)
+        }
+
         file.status = 'completed'
-        
+
         console.log('✅ Konvertierung erfolgreich:', {
           url: file.convertedUrl,
-          name: file.convertedName
+          name: file.convertedName,
+          displayName: file.name,
+          size: file.size
         })
-        
+
         convertedFiles.value.push(file)
       }
       return { success: true, data: response.data }
