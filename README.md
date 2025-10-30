@@ -226,7 +226,7 @@ MIT License
 
 ## 👨‍💻 Autor
 
-Audio Converter Team
+Kodini Tools
 
 ## 🙏 Credits
 
