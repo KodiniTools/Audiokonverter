@@ -144,5 +144,91 @@ export default {
         a: 'Ja, Sie können mehrere Dateien hochladen und sie werden nacheinander konvertiert.'
       }
     }
+  },
+  licenses: {
+    title: 'Open Source Lizenzen',
+    subtitle: 'Diese Anwendung verwendet die folgenden Open-Source-Bibliotheken und -Tools',
+    homepage: 'Homepage',
+    licenseText: 'Lizenztext',
+    footer: 'Wir danken allen Open-Source-Entwicklern für ihre großartige Arbeit. Alle aufgeführten Marken und Namen gehören ihren jeweiligen Eigentümern.',
+    items: {
+      vue: {
+        name: 'Vue.js',
+        type: 'MIT License',
+        description: 'Das progressive JavaScript-Framework für den Aufbau moderner Benutzeroberflächen. Vue.js ist das Herzstück dieser Anwendung.',
+        url: 'https://vuejs.org',
+        licenseUrl: 'https://github.com/vuejs/core/blob/main/LICENSE'
+      },
+      vite: {
+        name: 'Vite',
+        type: 'MIT License',
+        description: 'Modernes Frontend-Build-Tool mit blitzschnellem Hot Module Replacement (HMR) für eine optimale Entwicklererfahrung.',
+        url: 'https://vitejs.dev',
+        licenseUrl: 'https://github.com/vitejs/vite/blob/main/LICENSE'
+      },
+      pinia: {
+        name: 'Pinia',
+        type: 'MIT License',
+        description: 'Intuitives, typsicheres State-Management für Vue.js. Pinia verwaltet den gesamten Anwendungsstatus.',
+        url: 'https://pinia.vuejs.org',
+        licenseUrl: 'https://github.com/vuejs/pinia/blob/v2/LICENSE'
+      },
+      vueI18n: {
+        name: 'Vue I18n',
+        type: 'MIT License',
+        description: 'Internationalisierungs-Plugin für Vue.js, das die mehrsprachige Unterstützung dieser Anwendung ermöglicht.',
+        url: 'https://vue-i18n.intlify.dev',
+        licenseUrl: 'https://github.com/intlify/vue-i18n-next/blob/master/LICENSE'
+      },
+      axios: {
+        name: 'Axios',
+        type: 'MIT License',
+        description: 'Promise-basierter HTTP-Client für Browser und Node.js zur Kommunikation mit dem Backend-Server.',
+        url: 'https://axios-http.com',
+        licenseUrl: 'https://github.com/axios/axios/blob/v1.x/LICENSE'
+      },
+      jszip: {
+        name: 'JSZip',
+        type: 'MIT / GPL-3.0',
+        description: 'JavaScript-Bibliothek zum Erstellen, Lesen und Bearbeiten von ZIP-Dateien, verwendet für die "Als ZIP herunterladen"-Funktion.',
+        url: 'https://stuk.github.io/jszip',
+        licenseUrl: 'https://github.com/Stuk/jszip/blob/main/LICENSE.markdown'
+      },
+      fontawesome: {
+        name: 'Font Awesome',
+        type: 'Font: SIL OFL 1.1 / Icons: CC BY 4.0 / Code: MIT',
+        description: 'Umfassende Icon-Bibliothek mit Tausenden von Icons für eine moderne und intuitive Benutzeroberfläche.',
+        url: 'https://fontawesome.com',
+        licenseUrl: 'https://fontawesome.com/license/free'
+      },
+      ffmpeg: {
+        name: 'FFmpeg',
+        type: 'LGPL 2.1+ / GPL 2+',
+        description: 'Leistungsstarkes Multimedia-Framework zur Dekodierung, Kodierung und Konvertierung von Audio- und Videodateien. FFmpeg ist die Konvertierungs-Engine des Backends.',
+        url: 'https://ffmpeg.org',
+        licenseUrl: 'https://ffmpeg.org/legal.html'
+      },
+      nodejs: {
+        name: 'Node.js',
+        type: 'MIT License',
+        description: 'JavaScript-Laufzeitumgebung, die das Backend dieser Anwendung betreibt und serverseitige Verarbeitung ermöglicht.',
+        url: 'https://nodejs.org',
+        licenseUrl: 'https://github.com/nodejs/node/blob/main/LICENSE'
+      },
+      express: {
+        name: 'Express.js',
+        type: 'MIT License',
+        description: 'Minimales und flexibles Node.js-Web-Application-Framework für die Backend-API-Endpunkte.',
+        url: 'https://expressjs.com',
+        licenseUrl: 'https://github.com/expressjs/express/blob/master/LICENSE'
+      },
+      multer: {
+        name: 'Multer',
+        type: 'MIT License',
+        description: 'Node.js-Middleware für die Verarbeitung von Multipart/Form-Data, verwendet für den Datei-Upload.',
+        url: 'https://github.com/expressjs/multer',
+        licenseUrl: 'https://github.com/expressjs/multer/blob/master/LICENSE'
+      }
+    }
   }
 }

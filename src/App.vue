@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="app-container">
     <HeaderNav />
-    
+
     <main class="main-content">
       <div class="container">
         <HeaderTitle />
@@ -12,6 +12,7 @@
         <StatusDisplay />
         <DownloadsSection />
         <FaqSection />
+        <LicensesSection />
       </div>
     </main>
 
@@ -31,6 +32,7 @@ import GlobalActions from '@/components/GlobalActions.vue'
 import StatusDisplay from '@/components/StatusDisplay.vue'
 import DownloadsSection from '@/components/DownloadsSection.vue'
 import FaqSection from '@/components/FaqSection.vue'
+import LicensesSection from '@/components/LicensesSection.vue'
 import ToastContainer from '@/components/ToastContainer.vue'
 
 const themeStore = useThemeStore()

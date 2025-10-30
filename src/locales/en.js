@@ -144,5 +144,91 @@ export default {
         a: 'Yes, you can upload multiple files and they will be converted sequentially.'
       }
     }
+  },
+  licenses: {
+    title: 'Open Source Licenses',
+    subtitle: 'This application uses the following open-source libraries and tools',
+    homepage: 'Homepage',
+    licenseText: 'License Text',
+    footer: 'We thank all open-source developers for their amazing work. All trademarks and names mentioned belong to their respective owners.',
+    items: {
+      vue: {
+        name: 'Vue.js',
+        type: 'MIT License',
+        description: 'The progressive JavaScript framework for building modern user interfaces. Vue.js is the heart of this application.',
+        url: 'https://vuejs.org',
+        licenseUrl: 'https://github.com/vuejs/core/blob/main/LICENSE'
+      },
+      vite: {
+        name: 'Vite',
+        type: 'MIT License',
+        description: 'Modern frontend build tool with blazing fast Hot Module Replacement (HMR) for an optimal developer experience.',
+        url: 'https://vitejs.dev',
+        licenseUrl: 'https://github.com/vitejs/vite/blob/main/LICENSE'
+      },
+      pinia: {
+        name: 'Pinia',
+        type: 'MIT License',
+        description: 'Intuitive, type-safe state management for Vue.js. Pinia manages the entire application state.',
+        url: 'https://pinia.vuejs.org',
+        licenseUrl: 'https://github.com/vuejs/pinia/blob/v2/LICENSE'
+      },
+      vueI18n: {
+        name: 'Vue I18n',
+        type: 'MIT License',
+        description: 'Internationalization plugin for Vue.js, enabling the multilingual support of this application.',
+        url: 'https://vue-i18n.intlify.dev',
+        licenseUrl: 'https://github.com/intlify/vue-i18n-next/blob/master/LICENSE'
+      },
+      axios: {
+        name: 'Axios',
+        type: 'MIT License',
+        description: 'Promise-based HTTP client for browsers and Node.js for communication with the backend server.',
+        url: 'https://axios-http.com',
+        licenseUrl: 'https://github.com/axios/axios/blob/v1.x/LICENSE'
+      },
+      jszip: {
+        name: 'JSZip',
+        type: 'MIT / GPL-3.0',
+        description: 'JavaScript library for creating, reading and editing ZIP files, used for the "Download as ZIP" feature.',
+        url: 'https://stuk.github.io/jszip',
+        licenseUrl: 'https://github.com/Stuk/jszip/blob/main/LICENSE.markdown'
+      },
+      fontawesome: {
+        name: 'Font Awesome',
+        type: 'Font: SIL OFL 1.1 / Icons: CC BY 4.0 / Code: MIT',
+        description: 'Comprehensive icon library with thousands of icons for a modern and intuitive user interface.',
+        url: 'https://fontawesome.com',
+        licenseUrl: 'https://fontawesome.com/license/free'
+      },
+      ffmpeg: {
+        name: 'FFmpeg',
+        type: 'LGPL 2.1+ / GPL 2+',
+        description: 'Powerful multimedia framework for decoding, encoding and converting audio and video files. FFmpeg is the conversion engine of the backend.',
+        url: 'https://ffmpeg.org',
+        licenseUrl: 'https://ffmpeg.org/legal.html'
+      },
+      nodejs: {
+        name: 'Node.js',
+        type: 'MIT License',
+        description: 'JavaScript runtime environment that powers the backend of this application and enables server-side processing.',
+        url: 'https://nodejs.org',
+        licenseUrl: 'https://github.com/nodejs/node/blob/main/LICENSE'
+      },
+      express: {
+        name: 'Express.js',
+        type: 'MIT License',
+        description: 'Minimal and flexible Node.js web application framework for the backend API endpoints.',
+        url: 'https://expressjs.com',
+        licenseUrl: 'https://github.com/expressjs/express/blob/master/LICENSE'
+      },
+      multer: {
+        name: 'Multer',
+        type: 'MIT License',
+        description: 'Node.js middleware for handling multipart/form-data, used for file uploads.',
+        url: 'https://github.com/expressjs/multer',
+        licenseUrl: 'https://github.com/expressjs/multer/blob/master/LICENSE'
+      }
+    }
   }
 }
