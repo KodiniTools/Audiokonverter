@@ -9,7 +9,6 @@ Eine moderne Audio-Konverter-Anwendung mit Vue 3, Vite und i18n-Unterstützung.
 - 🎨 **Dark Mode** - Automatischer Theme-Wechsel
 - 📦 **Drag & Drop** - Intuitive Datei-Upload-Funktion
 - 🔄 **Batch-Konvertierung** - Mehrere Dateien gleichzeitig
-- 💾 **Undo/Redo** - Aktionsverlauf mit History
 - 🎛️ **Flexible Einstellungen** - Format & Qualität anpassbar
 - 📱 **Mobile-Ready** - Optimiert für alle Geräte
 
@@ -226,7 +225,7 @@ MIT License
 
 ## 👨‍💻 Autor
 
-Audio Converter Team
+Dinko Ramić - Kodini Tools kodinitools.com
 
 ## 🙏 Credits
 
