@@ -1,4 +1,4 @@
-# 🎵 Audio Konverter Vue 3
+# 🎵 Audio Konverter MP3, WAV, FLAC, OGG, AAC, M4A
 
 Eine moderne Audio-Konverter-Anwendung mit Vue 3, Vite und i18n-Unterstützung.
 
