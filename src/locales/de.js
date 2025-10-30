@@ -228,6 +228,13 @@ export default {
         description: 'Node.js-Middleware für die Verarbeitung von Multipart/Form-Data, verwendet für den Datei-Upload.',
         url: 'https://github.com/expressjs/multer',
         licenseUrl: 'https://github.com/expressjs/multer/blob/master/LICENSE'
+      },
+      repository: {
+        name: 'Audio Konverter - Quellcode',
+        type: 'Open Source',
+        description: 'Der vollständige Quellcode dieser Anwendung ist öffentlich auf GitHub verfügbar. Beiträge, Issues und Feedback sind willkommen!',
+        url: 'https://github.com/KodiniTools/Audiokonverter',
+        licenseUrl: 'https://github.com/KodiniTools/Audiokonverter/blob/main/LICENSE'
       }
     }
   }
