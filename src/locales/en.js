@@ -1,98 +1,98 @@
 export default {
   app: {
-    title: 'Audio Converter',
-    subtitle: 'Convert your audio files quickly and easily'
+    title: '🎵 Audio Converter',
+    subtitle: 'Fast & easy conversion'
   },
   nav: {
-    home: 'Home',
-    toggleTheme: 'Toggle Theme',
-    language: 'Language'
+    home: '🏠 Home',
+    toggleTheme: '🎨 Theme',
+    language: '🌍 Language'
   },
   upload: {
-    title: 'Upload Files',
-    dragDrop: 'Drag files here or click to select',
-    supportedFormats: 'Supported formats: MP3, WAV, FLAC, OGG, AAC, M4A',
-    selectFiles: 'Select Files',
-    filesSelected: '{count} file selected | {count} files selected'
+    title: '📁 Upload',
+    dragDrop: '📂 Drop files here or click to browse',
+    supportedFormats: 'MP3 • WAV • FLAC • OGG • AAC • M4A',
+    selectFiles: '📁 Choose files',
+    filesSelected: '{count} file | {count} files'
   },
   conversion: {
-    title: 'Conversion Settings',
-    format: 'Target Format',
-    quality: 'Quality',
+    title: '⚙️ Settings',
+    format: '🎯 Format',
+    quality: '✨ Quality',
     qualityLevels: {
-      low: 'Low',
-      medium: 'Medium',
-      high: 'High',
-      maximum: 'Maximum'
+      low: '📉 Low',
+      medium: '📊 Medium',
+      high: '📈 High',
+      maximum: '🚀 Maximum'
     },
-    convert: 'Convert',
-    converting: 'Converting...',
-    progress: 'Progress'
+    convert: '🔄 Convert',
+    converting: '⏳ Converting...',
+    progress: '📊 Progress'
   },
   fileList: {
-    title: 'Selected Files',
-    empty: 'No files selected',
-    remove: 'Remove',
-    size: 'Size'
+    title: '📋 Files',
+    empty: 'No files yet',
+    remove: '🗑️',
+    size: '📦 Size'
   },
   actions: {
-    clearAll: 'Clear All',
-    downloadAllAsZip: 'Download All as ZIP',
-    creatingZip: 'Creating ZIP...',
-    downloadOptions: 'Download Options',
-    exportMetadata: 'Export Metadata',
-    download: 'Download',
-    retry: 'Retry'
+    clearAll: '🗑️ Clear',
+    downloadAllAsZip: '📦 ZIP Download',
+    creatingZip: '⏳ Creating ZIP...',
+    downloadOptions: '⬇️ Download',
+    exportMetadata: '📄 Metadata',
+    download: '⬇️',
+    retry: '🔄'
   },
   status: {
-    processing: 'Processing...',
-    completed: 'Completed',
-    error: 'Error',
-    ready: 'Ready',
-    waiting: 'Waiting...'
+    processing: '⏳ Processing...',
+    completed: '✅ Done',
+    error: '❌ Error',
+    ready: '🟢 Ready',
+    waiting: '⏸️ Waiting...'
   },
   toast: {
-    success: 'Success',
-    error: 'Error',
-    warning: 'Warning',
-    info: 'Information',
-    fileAdded: 'File added',
-    fileRemoved: 'File removed',
-    conversionComplete: 'Conversion complete',
-    conversionFailed: 'Conversion failed',
-    allFilesCleared: 'All files cleared',
-    unsupportedFormat: 'Unsupported format',
-    noFilesToDownload: 'No converted files to download',
-    zipDownloadStarted: 'ZIP download started',
-    zipDownloadFailed: 'ZIP download failed'
+    success: '✅ Success',
+    error: '❌ Error',
+    warning: '⚠️ Warning',
+    info: 'ℹ️ Info',
+    fileAdded: '✅ Added',
+    fileRemoved: '🗑️ Removed',
+    conversionComplete: '🎉 Done!',
+    conversionFailed: '❌ Failed',
+    allFilesCleared: '🗑️ All cleared',
+    unsupportedFormat: '⚠️ Format not supported',
+    noFilesToDownload: '📭 No files to download',
+    zipDownloadStarted: '📦 ZIP download started',
+    zipDownloadFailed: '❌ ZIP download failed'
   },
   errors: {
-    uploadFailed: 'Upload failed',
-    conversionFailed: 'Conversion failed',
-    noFiles: 'No files selected',
-    fileTooLarge: 'File too large (max. 300MB)',
-    networkError: 'Network error',
-    serverError: 'Server error',
-    unsupportedFile: 'Unsupported file'
+    uploadFailed: '❌ Upload failed',
+    conversionFailed: '❌ Conversion failed',
+    noFiles: '📭 No files',
+    fileTooLarge: '📦 Too large (max. 300MB)',
+    networkError: '🌐 Network error',
+    serverError: '🖥️ Server error',
+    unsupportedFile: '⚠️ Not supported'
   },
   faq: {
-    title: 'Frequently Asked Questions',
+    title: '❓ FAQ',
     questions: {
       formats: {
-        q: 'Which formats are supported?',
-        a: 'We support MP3, WAV, FLAC, OGG, AAC and M4A formats.'
+        q: '🎵 Which formats?',
+        a: 'MP3, WAV, FLAC, OGG, AAC and M4A are supported.'
       },
       quality: {
-        q: 'What do the quality levels mean?',
-        a: 'Quality determines the bitrate and compression of the output file. Higher quality means better sound but larger files.'
+        q: '✨ What does quality mean?',
+        a: 'Higher quality = better sound, larger file.'
       },
       privacy: {
-        q: 'Are my files safe?',
-        a: 'Yes, all files are only processed temporarily and automatically deleted after conversion.'
+        q: '🔒 Are my files safe?',
+        a: 'Yes! Files are automatically deleted after conversion.'
       },
       batch: {
-        q: 'Can I convert multiple files at once?',
-        a: 'Yes, you can upload multiple files and they will be converted sequentially.'
+        q: '📚 Multiple files at once?',
+        a: 'Sure! Just upload multiple files.'
       }
     }
   }

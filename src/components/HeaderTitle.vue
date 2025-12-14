@@ -14,48 +14,52 @@ const { t } = useI18n()
 <style scoped>
 .header-title {
   text-align: center;
-  margin: 3rem 0 2rem;
-  animation: fadeInDown 0.6s ease;
+  margin: 1.5rem 0 1rem;
+  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .main-title {
-  font-size: 3rem;
-  font-weight: 800;
+  font-size: 2rem;
+  font-weight: 700;
   background: var(--accent-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.02em;
 }
 
 .main-subtitle {
-  font-size: 1.25rem;
+  font-size: 0.95rem;
   color: var(--text-secondary);
   font-weight: 400;
 }
 
-@keyframes fadeInDown {
-  from {
+@keyframes popIn {
+  0% {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: scale(0.9) translateY(-10px);
   }
-  to {
+  70% {
+    transform: scale(1.02) translateY(0);
+  }
+  100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: scale(1) translateY(0);
   }
 }
 
 @media (max-width: 768px) {
   .header-title {
-    margin: 2rem 0 1.5rem;
+    margin: 1rem 0 0.75rem;
   }
 
   .main-title {
-    font-size: 2rem;
+    font-size: 1.6rem;
   }
 
   .main-subtitle {
-    font-size: 1rem;
+    font-size: 0.85rem;
   }
 }
 </style>

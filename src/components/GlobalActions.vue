@@ -96,28 +96,30 @@ async function downloadAllAsZip() {
 
 <style scoped>
 .global-actions {
-  margin: 2rem 0;
-  animation: fadeIn 0.5s ease;
+  margin: 1rem 0;
+  animation: fadeIn 0.35s ease;
 }
 
 .actions-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1rem;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .action-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.875rem 1.5rem;
+  gap: 0.4rem;
+  padding: 0.6rem 1.1rem;
   border: none;
-  border-radius: 10px;
-  font-size: 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  flex: 1;
+  min-width: 120px;
 }
 
 .action-btn:disabled {
@@ -126,18 +128,18 @@ async function downloadAllAsZip() {
 }
 
 .action-btn:not(:disabled):hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
 .btn-secondary {
-  background: rgba(144, 144, 144, 0.1);
+  background: rgba(148, 163, 184, 0.1);
   color: var(--text-color);
-  border: 2px solid rgba(144, 144, 144, 0.2);
+  border: 1px solid rgba(148, 163, 184, 0.15);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: rgba(144, 144, 144, 0.2);
+  background: rgba(148, 163, 184, 0.18);
 }
 
 .btn-success {
@@ -145,26 +147,23 @@ async function downloadAllAsZip() {
   color: white;
 }
 
-.btn-success:hover {
-  background: #45a049;
+.btn-success:hover:not(:disabled) {
+  filter: brightness(1.1);
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @media (max-width: 768px) {
   .actions-grid {
-    grid-template-columns: 1fr 1fr;
+    flex-direction: row;
   }
 
-  .action-btn span {
-    font-size: 0.875rem;
+  .action-btn {
+    font-size: 0.8rem;
+    padding: 0.55rem 0.9rem;
   }
 }
 </style>

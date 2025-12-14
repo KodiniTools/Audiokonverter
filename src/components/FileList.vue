@@ -2,7 +2,6 @@
   <div v-if="audioStore.hasFiles" class="file-list-section">
     <div class="file-list-header">
       <h3 class="file-list-title">
-        <i class="fas fa-file-audio"></i>
         {{ t('upload.filesSelected', { count: audioStore.fileCount }) }}
       </h3>
       <span class="file-list-size">{{ formattedTotalSize }}</span>
@@ -17,7 +16,7 @@
       >
         <div class="file-item-content">
           <div class="file-item-info">
-            <i class="fas fa-file-audio file-icon"></i>
+            <i class="fas fa-music file-icon"></i>
             <div class="file-details">
               <span class="file-name" :title="file.name">{{ file.name }}</span>
               <span class="file-size">{{ audioStore.formatFileSize(file.size) }}</span>
@@ -31,12 +30,12 @@
               {{ t(`status.${file.status}`) }}
             </span>
 
-            <!-- Progress Bar (nur während Konvertierung) -->
+            <!-- Progress Bar -->
             <div v-if="file.status === 'converting'" class="progress-bar-small">
               <div class="progress-fill" :style="{ width: file.progress + '%' }"></div>
             </div>
 
-            <!-- Download Button (wenn fertig) -->
+            <!-- Download Button -->
             <button
               v-if="file.status === 'completed'"
               class="btn-icon btn-download"
@@ -46,7 +45,7 @@
               <i class="fas fa-download"></i>
             </button>
 
-            <!-- Retry Button (bei Fehler) -->
+            <!-- Retry Button -->
             <button
               v-if="file.status === 'error'"
               class="btn-icon btn-retry"
@@ -69,7 +68,6 @@
 
         <!-- Error Message -->
         <div v-if="file.error" class="file-error">
-          <i class="fas fa-exclamation-circle"></i>
           {{ file.error }}
         </div>
       </li>
@@ -94,8 +92,8 @@ const formattedTotalSize = computed(() => {
 function getStatusIcon(status) {
   const icons = {
     converting: 'fas fa-spinner fa-spin',
-    completed: 'fas fa-check-circle',
-    error: 'fas fa-exclamation-circle',
+    completed: 'fas fa-check',
+    error: 'fas fa-exclamation',
     pending: 'fas fa-clock'
   }
   return icons[status] || 'fas fa-circle'
@@ -109,29 +107,26 @@ function removeFile(fileId) {
 
 <style scoped>
 .file-list-section {
-  margin: 2rem 0;
-  animation: slideInUp 0.5s ease;
+  margin: 1rem 0;
+  animation: slideInUp 0.35s ease;
 }
 
 .file-list-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-  padding: 0 0.5rem;
+  margin-bottom: 0.75rem;
+  padding: 0 0.25rem;
 }
 
 .file-list-title {
-  font-size: 1.25rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-color);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
 }
 
 .file-list-size {
-  font-size: 0.95rem;
+  font-size: 0.8rem;
   color: var(--text-secondary);
   font-weight: 500;
 }
@@ -142,80 +137,72 @@ function removeFile(fileId) {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  max-height: 500px;
+  gap: 0.5rem;
+  max-height: 300px;
   overflow-y: auto;
-  padding-right: 0.5rem;
+  padding-right: 0.25rem;
 }
 
-/* Custom scrollbar styling */
 .file-list::-webkit-scrollbar {
-  width: 8px;
+  width: 4px;
 }
 
 .file-list::-webkit-scrollbar-track {
-  background: rgba(184, 184, 184, 0.1);
-  border-radius: 4px;
+  background: transparent;
 }
 
 .file-list::-webkit-scrollbar-thumb {
-  background: rgba(144, 144, 144, 0.4);
-  border-radius: 4px;
-  transition: background 0.3s ease;
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 2px;
 }
 
-.file-list::-webkit-scrollbar-thumb:hover {
-  background: rgba(144, 144, 144, 0.6);
-}
-
-/* Firefox scrollbar styling */
 .file-list {
   scrollbar-width: thin;
-  scrollbar-color: rgba(144, 144, 144, 0.4) rgba(184, 184, 184, 0.1);
+  scrollbar-color: rgba(148, 163, 184, 0.3) transparent;
 }
 
 .file-item {
   background: var(--card-background);
-  border: 1px solid rgba(184, 184, 184, 0.2);
-  border-radius: 12px;
-  padding: 1rem;
-  transition: all 0.3s ease;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 8px;
+  padding: 0.75rem;
+  transition: all 0.2s ease;
 }
 
 .file-item:hover {
-  transform: translateX(4px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .file-item.completed {
-  border-left: 4px solid var(--success-color);
+  border-left: 3px solid var(--success-color);
 }
 
 .file-item.error {
-  border-left: 4px solid var(--error-color);
+  border-left: 3px solid var(--error-color);
 }
 
 .file-item.converting {
-  border-left: 4px solid var(--primary-color);
+  border-left: 3px solid var(--primary-color);
 }
 
 .file-item-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .file-item-info {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
   flex: 1;
   min-width: 0;
 }
 
 .file-icon {
-  font-size: 1.5rem;
+  font-size: 1.1rem;
   color: var(--primary-color);
   flex-shrink: 0;
 }
@@ -223,13 +210,14 @@ function removeFile(fileId) {
 .file-details {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.1rem;
   min-width: 0;
   flex: 1;
 }
 
 .file-name {
   font-weight: 500;
+  font-size: 0.85rem;
   color: var(--text-color);
   white-space: nowrap;
   overflow: hidden;
@@ -237,56 +225,56 @@ function removeFile(fileId) {
 }
 
 .file-size {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   color: var(--text-secondary);
 }
 
 .file-item-status {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
   flex-shrink: 0;
 }
 
 .status-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.375rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.875rem;
+  gap: 0.3rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
   font-weight: 500;
   white-space: nowrap;
 }
 
 .status-badge.completed {
-  background: rgba(76, 175, 80, 0.1);
+  background: rgba(16, 185, 129, 0.1);
   color: var(--success-color);
 }
 
 .status-badge.error {
-  background: rgba(244, 67, 54, 0.1);
+  background: rgba(239, 68, 68, 0.1);
   color: var(--error-color);
 }
 
 .status-badge.converting {
-  background: rgba(144, 144, 144, 0.1);
+  background: rgba(99, 102, 241, 0.1);
   color: var(--primary-color);
 }
 
 .progress-bar-small {
-  width: 80px;
-  height: 6px;
-  background: rgba(184, 184, 184, 0.2);
-  border-radius: 3px;
+  width: 50px;
+  height: 4px;
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 2px;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
   background: var(--accent-gradient);
-  border-radius: 3px;
-  transition: width 0.3s ease;
+  border-radius: 2px;
+  transition: width 0.2s ease;
 }
 
 .btn-icon {
@@ -294,20 +282,23 @@ function removeFile(fileId) {
   border: none;
   color: var(--text-secondary);
   cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 6px;
-  transition: all 0.2s ease;
+  padding: 0.35rem;
+  border-radius: 4px;
+  transition: all 0.15s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 0.8rem;
 }
 
 .btn-icon:hover {
-  background: rgba(144, 144, 144, 0.1);
+  background: rgba(148, 163, 184, 0.1);
 }
-.btn-icon i {                    /* ← NEU! Diese 3 Zeilen einfügen! */
+
+.btn-icon i {
   pointer-events: none;
 }
+
 .btn-download:hover {
   color: var(--success-color);
 }
@@ -321,21 +312,18 @@ function removeFile(fileId) {
 }
 
 .file-error {
-  margin-top: 0.75rem;
-  padding: 0.75rem;
-  background: rgba(244, 67, 54, 0.1);
-  border-radius: 8px;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(239, 68, 68, 0.08);
+  border-radius: 4px;
   color: var(--error-color);
-  font-size: 0.875rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  font-size: 0.75rem;
 }
 
 @keyframes slideInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -345,22 +333,18 @@ function removeFile(fileId) {
 
 @media (max-width: 768px) {
   .file-list {
-    max-height: 400px;
+    max-height: 250px;
   }
 
   .file-item-content {
     flex-direction: column;
     align-items: flex-start;
+    gap: 0.5rem;
   }
 
   .file-item-status {
     width: 100%;
-    justify-content: space-between;
-  }
-
-  .status-badge {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
+    justify-content: flex-end;
   }
 }
 </style>

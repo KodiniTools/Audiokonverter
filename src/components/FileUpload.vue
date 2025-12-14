@@ -1,6 +1,6 @@
 <template>
   <div class="file-upload-section">
-    <div 
+    <div
       class="drop-area"
       :class="{ 'drag-over': isDragging }"
       @drop.prevent="handleDrop"
@@ -16,16 +16,15 @@
         @change="handleFileSelect"
         style="display: none"
       >
-      
+
       <div class="upload-icon">
         <i class="fas fa-cloud-upload-alt"></i>
       </div>
-      
+
       <h3 class="upload-title">{{ t('upload.dragDrop') }}</h3>
       <p class="upload-subtitle">{{ t('upload.supportedFormats') }}</p>
-      
+
       <button class="btn btn-primary upload-btn" @click.stop="triggerFileInput">
-        <i class="fas fa-folder-open"></i>
         {{ t('upload.selectFiles') }}
       </button>
     </div>
@@ -78,7 +77,7 @@ function processFiles(files) {
     // Check file type
     const isAudio = SUPPORTED_FORMATS.some(format => file.type.includes(format.split('/')[1])) ||
                     /\.(mp3|wav|flac|ogg|aac|m4a)$/i.test(file.name)
-    
+
     if (!isAudio) {
       errors.push(`${file.name}: ${t('errors.unsupportedFile')}`)
       return
@@ -104,64 +103,60 @@ function processFiles(files) {
 
 <style scoped>
 .file-upload-section {
-  margin: 2rem 0;
-  animation: fadeIn 0.6s ease;
+  margin: 1rem 0;
+  animation: slideInUp 0.4s ease;
 }
 
 .drop-area {
-  border: 3px dashed rgba(144, 144, 144, 0.3);
-  border-radius: 16px;
-  padding: 3rem 2rem;
+  border: 2px dashed rgba(148, 163, 184, 0.3);
+  border-radius: 12px;
+  padding: 2rem 1.5rem;
   text-align: center;
   background: var(--card-background);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .drop-area:hover {
   border-color: var(--primary-color);
-  background: rgba(144, 144, 144, 0.05);
-  transform: translateY(-2px);
+  background: rgba(99, 102, 241, 0.03);
 }
 
 .drop-area.drag-over {
   border-color: var(--primary-color);
-  background: rgba(144, 144, 144, 0.1);
-  transform: scale(1.02);
+  background: rgba(99, 102, 241, 0.08);
+  transform: scale(1.01);
 }
 
 .upload-icon {
-  font-size: 4rem;
+  font-size: 2.5rem;
   color: var(--primary-color);
-  margin-bottom: 1.5rem;
-  animation: bounce 2s infinite;
+  margin-bottom: 0.75rem;
+  animation: float 3s ease-in-out infinite;
 }
 
 .upload-title {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 500;
   color: var(--text-color);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
 }
 
 .upload-subtitle {
-  font-size: 1rem;
+  font-size: 0.8rem;
   color: var(--text-secondary);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .upload-btn {
-  padding: 0.875rem 2rem;
-  font-size: 1.125rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
+  padding: 0.6rem 1.5rem;
+  font-size: 0.9rem;
 }
 
-@keyframes fadeIn {
+@keyframes slideInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(15px);
   }
   to {
     opacity: 1;
@@ -169,30 +164,30 @@ function processFiles(files) {
   }
 }
 
-@keyframes bounce {
+@keyframes float {
   0%, 100% {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-6px);
   }
 }
 
 @media (max-width: 768px) {
   .drop-area {
-    padding: 2rem 1rem;
+    padding: 1.5rem 1rem;
   }
 
   .upload-icon {
-    font-size: 3rem;
+    font-size: 2rem;
   }
 
   .upload-title {
-    font-size: 1.25rem;
+    font-size: 0.9rem;
   }
 
   .upload-subtitle {
-    font-size: 0.875rem;
+    font-size: 0.75rem;
   }
 }
 </style>
