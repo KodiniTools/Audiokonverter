@@ -1,7 +1,5 @@
 <template>
   <div id="app" class="app-container">
-    <HeaderNav />
-    
     <main class="main-content">
       <div class="container">
         <HeaderTitle />
@@ -21,7 +19,6 @@
 <script setup>
 import { onMounted } from 'vue'
 import { useThemeStore } from '@/stores/themeStore'
-import HeaderNav from '@/components/HeaderNav.vue'
 import HeaderTitle from '@/components/HeaderTitle.vue'
 import FileUpload from '@/components/FileUpload.vue'
 import FileList from '@/components/FileList.vue'
