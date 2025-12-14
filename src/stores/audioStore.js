@@ -10,13 +10,10 @@ export const useAudioStore = defineStore('audio', () => {
   const currentFormat = ref('mp3')
   const currentQuality = ref(7)
   const conversionProgress = ref({})
-  const history = ref({ past: [], future: [] })
 
   // Computed
   const hasFiles = computed(() => audioFiles.value.length > 0)
   const hasConvertedFiles = computed(() => convertedFiles.value.length > 0)
-  const canUndo = computed(() => history.value.past.length > 0)
-  const canRedo = computed(() => history.value.future.length > 0)
   
   const fileCount = computed(() => audioFiles.value.length)
   const totalSize = computed(() => {
@@ -38,13 +35,11 @@ export const useAudioStore = defineStore('audio', () => {
       error: null
     }))
     
-    saveState()
     audioFiles.value.push(...newFiles)
     return newFiles
   }
 
   function removeFile(fileId) {
-    saveState()
     const index = audioFiles.value.findIndex(f => f.id === fileId)
     if (index !== -1) {
       audioFiles.value.splice(index, 1)
@@ -52,7 +47,6 @@ export const useAudioStore = defineStore('audio', () => {
   }
 
   function clearAllFiles() {
-    saveState()
     audioFiles.value = []
     convertedFiles.value = []
     conversionProgress.value = {}
@@ -192,68 +186,6 @@ export const useAudioStore = defineStore('audio', () => {
     }
   }
 
-  // History Management
-  function saveState() {
-    const serializableState = audioFiles.value.map(f => ({
-      id: f.id,
-      name: f.name,
-      size: f.size,
-      type: f.type,
-      status: f.status,
-      progress: f.progress,
-      convertedUrl: f.convertedUrl,
-      convertedName: f.convertedName,
-      error: f.error
-    }))
-    
-    history.value.past.push(JSON.stringify(serializableState))
-    history.value.future = []
-    
-    if (history.value.past.length > 20) {
-      history.value.past.shift()
-    }
-  }
-
-  function undo() {
-    if (!canUndo.value) return
-    
-    const currentSerializable = audioFiles.value.map(f => ({
-      id: f.id,
-      name: f.name,
-      size: f.size,
-      type: f.type,
-      status: f.status,
-      progress: f.progress,
-      convertedUrl: f.convertedUrl,
-      convertedName: f.convertedName,
-      error: f.error
-    }))
-    
-    history.value.future.push(JSON.stringify(currentSerializable))
-    const previousState = history.value.past.pop()
-    audioFiles.value = JSON.parse(previousState)
-  }
-
-  function redo() {
-    if (!canRedo.value) return
-    
-    const currentSerializable = audioFiles.value.map(f => ({
-      id: f.id,
-      name: f.name,
-      size: f.size,
-      type: f.type,
-      status: f.status,
-      progress: f.progress,
-      convertedUrl: f.convertedUrl,
-      convertedName: f.convertedName,
-      error: f.error
-    }))
-    
-    history.value.past.push(JSON.stringify(currentSerializable))
-    const nextState = history.value.future.pop()
-    audioFiles.value = JSON.parse(nextState)
-  }
-
   function setFormat(format) {
     currentFormat.value = format
   }
@@ -282,11 +214,9 @@ export const useAudioStore = defineStore('audio', () => {
     // Computed
     hasFiles,
     hasConvertedFiles,
-    canUndo,
-    canRedo,
     fileCount,
     totalSize,
-    
+
     // Actions
     addFiles,
     removeFile,
@@ -296,8 +226,6 @@ export const useAudioStore = defineStore('audio', () => {
     convertAllFiles,
     downloadFile,
     downloadAllFiles,
-    undo,
-    redo,
     setFormat,
     setQuality,
     formatFileSize

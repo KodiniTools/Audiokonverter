@@ -11,50 +11,32 @@
         <span>{{ t('actions.clearAll') }}</span>
       </button>
 
-      <!-- Download All -->
+      <!-- Download All as ZIP -->
       <button
         v-if="audioStore.hasConvertedFiles"
         class="action-btn btn-success"
-        @click="downloadAll"
-        :title="t('actions.downloadAll')"
+        @click="downloadAllAsZip"
+        :disabled="isDownloading"
+        :title="t('actions.downloadAllAsZip')"
       >
-        <i class="fas fa-download"></i>
-        <span>{{ t('actions.downloadAll') }}</span>
-      </button>
-
-      <!-- Undo -->
-      <button
-        class="action-btn btn-secondary"
-        @click="audioStore.undo()"
-        :disabled="!audioStore.canUndo"
-        :title="t('actions.undo')"
-      >
-        <i class="fas fa-undo"></i>
-        <span>{{ t('actions.undo') }}</span>
-      </button>
-
-      <!-- Redo -->
-      <button
-        class="action-btn btn-secondary"
-        @click="audioStore.redo()"
-        :disabled="!audioStore.canRedo"
-        :title="t('actions.redo')"
-      >
-        <i class="fas fa-redo"></i>
-        <span>{{ t('actions.redo') }}</span>
+        <i :class="isDownloading ? 'fas fa-spinner fa-spin' : 'fas fa-file-archive'"></i>
+        <span>{{ isDownloading ? t('actions.creatingZip') : t('actions.downloadAllAsZip') }}</span>
       </button>
     </div>
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAudioStore } from '@/stores/audioStore'
 import { useToast } from '@/composables/useToast'
+import JSZip from 'jszip'
 
 const { t } = useI18n()
 const audioStore = useAudioStore()
 const { showToast, showConfirmToast } = useToast()
+const isDownloading = ref(false)
 
 async function clearAll() {
   const confirmed = await showConfirmToast(
@@ -62,19 +44,52 @@ async function clearAll() {
     t('actions.clearAll'),
     'Möchten Sie wirklich alle Dateien löschen?'
   )
-  
+
   if (confirmed) {
     audioStore.clearAllFiles()
     showToast('info', t('toast.allFilesCleared'))
   }
 }
 
-async function downloadAll() {
+async function downloadAllAsZip() {
+  const completedFiles = audioStore.audioFiles.filter(f => f.status === 'completed' && f.convertedUrl)
+
+  if (completedFiles.length === 0) {
+    showToast('warning', t('toast.noFilesToDownload'))
+    return
+  }
+
+  isDownloading.value = true
+
   try {
-    await audioStore.downloadAllFiles()
-    showToast('success', 'Download gestartet')
+    const zip = new JSZip()
+
+    for (const fileData of completedFiles) {
+      const response = await fetch(fileData.convertedUrl)
+      const blob = await response.blob()
+      zip.file(fileData.convertedName || `converted-${fileData.name}`, blob)
+    }
+
+    const zipBlob = await zip.generateAsync({ type: 'blob' })
+
+    const url = window.URL.createObjectURL(zipBlob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'converted-audio-files.zip'
+    link.style.display = 'none'
+
+    document.body.appendChild(link)
+    link.click()
+
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+
+    showToast('success', t('toast.zipDownloadStarted'))
   } catch (error) {
-    showToast('error', 'Download fehlgeschlagen', { message: error.message })
+    console.error('ZIP download failed:', error)
+    showToast('error', t('toast.zipDownloadFailed'), { message: error.message })
+  } finally {
+    isDownloading.value = false
   }
 }
 </script>
