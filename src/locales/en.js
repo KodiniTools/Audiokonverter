@@ -37,11 +37,10 @@ export default {
   },
   actions: {
     clearAll: 'Clear All',
-    downloadAll: 'Download All',
+    downloadAllAsZip: 'Download All as ZIP',
+    creatingZip: 'Creating ZIP...',
     downloadOptions: 'Download Options',
     exportMetadata: 'Export Metadata',
-    undo: 'Undo',
-    redo: 'Redo',
     download: 'Download',
     retry: 'Retry'
   },
@@ -62,7 +61,10 @@ export default {
     conversionComplete: 'Conversion complete',
     conversionFailed: 'Conversion failed',
     allFilesCleared: 'All files cleared',
-    unsupportedFormat: 'Unsupported format'
+    unsupportedFormat: 'Unsupported format',
+    noFilesToDownload: 'No converted files to download',
+    zipDownloadStarted: 'ZIP download started',
+    zipDownloadFailed: 'ZIP download failed'
   },
   errors: {
     uploadFailed: 'Upload failed',
