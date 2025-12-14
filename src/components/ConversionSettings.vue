@@ -1,15 +1,11 @@
 <template>
   <div v-if="audioStore.hasFiles" class="conversion-settings">
-    <h3 class="settings-title">
-      <i class="fas fa-cog"></i>
-      {{ t('conversion.title') }}
-    </h3>
+    <h3 class="settings-title">{{ t('conversion.title') }}</h3>
 
     <div class="settings-grid">
       <!-- Format Selection -->
       <div class="setting-group">
         <label for="format-select" class="setting-label">
-          <i class="fas fa-file-audio"></i>
           {{ t('conversion.format') }}
         </label>
         <select
@@ -20,7 +16,7 @@
           <option value="mp3">MP3</option>
           <option value="wav">WAV</option>
           <option value="flac">FLAC</option>
-          <option value="ogg">OGG Vorbis</option>
+          <option value="ogg">OGG</option>
           <option value="aac">AAC</option>
           <option value="m4a">M4A</option>
         </select>
@@ -29,7 +25,6 @@
       <!-- Quality Slider -->
       <div class="setting-group">
         <label for="quality-slider" class="setting-label">
-          <i class="fas fa-sliders-h"></i>
           {{ t('conversion.quality') }}: <strong>{{ qualityLabel }}</strong>
         </label>
         <div class="quality-control">
@@ -42,10 +37,8 @@
             class="quality-slider"
           >
           <div class="quality-markers">
-            <span class="marker">{{ t('conversion.qualityLevels.low') }}</span>
-            <span class="marker">{{ t('conversion.qualityLevels.medium') }}</span>
-            <span class="marker">{{ t('conversion.qualityLevels.high') }}</span>
-            <span class="marker">{{ t('conversion.qualityLevels.maximum') }}</span>
+            <span>{{ t('conversion.qualityLevels.low') }}</span>
+            <span>{{ t('conversion.qualityLevels.maximum') }}</span>
           </div>
         </div>
         <p class="quality-info">{{ qualityInfo }}</p>
@@ -58,7 +51,7 @@
       :disabled="audioStore.isConverting || !hasPendingFiles"
       @click="startConversion"
     >
-      <i :class="audioStore.isConverting ? 'fas fa-spinner fa-spin' : 'fas fa-sync-alt'"></i>
+      <i :class="audioStore.isConverting ? 'fas fa-spinner fa-spin' : 'fas fa-bolt'"></i>
       {{ audioStore.isConverting ? t('conversion.converting') : t('conversion.convert') }}
     </button>
   </div>
@@ -89,7 +82,7 @@ const qualityLabel = computed(() => {
 const qualityInfo = computed(() => {
   const quality = audioStore.currentQuality
   const format = audioStore.currentFormat
-  
+
   const bitrates = {
     mp3: [64, 96, 128, 160, 192, 224, 256, 320, 320, 320],
     aac: [64, 96, 128, 160, 192, 224, 256, 320, 320, 320]
@@ -101,17 +94,17 @@ const qualityInfo = computed(() => {
   }
 
   if (format === 'flac') {
-    return `Lossless (Compression Level ${Math.min(8, quality - 2)})`
+    return `Lossless (Level ${Math.min(8, quality - 2)})`
   }
 
   if (format === 'wav') {
-    if (quality <= 4) return '16-bit PCM (CD Quality)'
-    if (quality <= 7) return '24-bit PCM (Studio Quality)'
-    return '32-bit Float (Maximum Quality)'
+    if (quality <= 4) return '16-bit PCM'
+    if (quality <= 7) return '24-bit PCM'
+    return '32-bit Float'
   }
 
   if (format === 'ogg') {
-    return `Quality Level ${quality}`
+    return `Q${quality}`
   }
 
   return ''
@@ -132,54 +125,48 @@ async function startConversion() {
 <style scoped>
 .conversion-settings {
   background: var(--card-background);
-  border: 1px solid rgba(184, 184, 184, 0.2);
-  border-radius: 16px;
-  padding: 2rem;
-  margin: 2rem 0;
-  animation: fadeInUp 0.5s ease;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin: 1rem 0;
+  animation: slideInUp 0.35s ease;
 }
 
 .settings-title {
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--text-color);
-  margin-bottom: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .settings-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
 }
 
 .setting-group {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .setting-label {
   font-weight: 500;
   color: var(--text-color);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1rem;
+  font-size: 0.85rem;
 }
 
 .setting-select {
-  padding: 0.75rem 1rem;
-  border: 2px solid rgba(184, 184, 184, 0.2);
-  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 6px;
   background: var(--background);
   color: var(--text-color);
-  font-size: 1rem;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .setting-select:hover,
@@ -191,85 +178,67 @@ async function startConversion() {
 .quality-control {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.35rem;
 }
 
 .quality-slider {
   width: 100%;
-  height: 6px;
+  height: 5px;
   border-radius: 3px;
-  background: rgba(184, 184, 184, 0.2);
+  background: rgba(148, 163, 184, 0.2);
   outline: none;
   -webkit-appearance: none;
 }
 
 .quality-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: var(--primary-color);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3);
 }
 
 .quality-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
-  box-shadow: 0 0 0 8px rgba(144, 144, 144, 0.1);
+  transform: scale(1.15);
 }
 
 .quality-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: var(--primary-color);
   cursor: pointer;
   border: none;
-  transition: all 0.2s ease;
-}
-
-.quality-slider::-moz-range-thumb:hover {
-  transform: scale(1.2);
-  box-shadow: 0 0 0 8px rgba(144, 144, 144, 0.1);
+  transition: all 0.15s ease;
 }
 
 .quality-markers {
   display: flex;
   justify-content: space-between;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--text-secondary);
 }
 
-.marker {
-  text-align: center;
-}
-
 .quality-info {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   color: var(--text-secondary);
   font-style: italic;
 }
 
 .btn-convert {
   width: 100%;
-  padding: 1rem 2rem;
-  font-size: 1.125rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem;
+  gap: 0.5rem;
 }
 
-.btn-convert:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-@keyframes fadeInUp {
+@keyframes slideInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -279,12 +248,12 @@ async function startConversion() {
 
 @media (max-width: 768px) {
   .conversion-settings {
-    padding: 1.5rem;
+    padding: 1rem;
   }
 
   .settings-grid {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 1rem;
   }
 }
 </style>

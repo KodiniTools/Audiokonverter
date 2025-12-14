@@ -1,17 +1,18 @@
 <template>
   <div class="faq-section">
     <h2 class="faq-title">{{ t('faq.title') }}</h2>
-    
+
     <div class="faq-grid">
       <div
         v-for="(faq, key) in faqs"
         :key="key"
         class="faq-item"
+        :class="{ active: activeFaq === key }"
         @click="toggleFaq(key)"
       >
         <div class="faq-question">
-          <h4>{{ faq.q }}</h4>
-          <i :class="activeFaq === key ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
+          <span>{{ faq.q }}</span>
+          <i :class="activeFaq === key ? 'fas fa-minus' : 'fas fa-plus'"></i>
         </div>
         <Transition name="faq">
           <div v-if="activeFaq === key" class="faq-answer">
@@ -27,10 +28,9 @@
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-const { t, tm } = useI18n() // <-- Änderung 1: 'tm' importieren
+const { t, tm } = useI18n()
 const activeFaq = ref(null)
 
-// <-- Änderung 2: 'tm' statt 't' verwenden, um das Objekt abzurufen
 const faqs = computed(() => tm('faq.questions'))
 
 function toggleFaq(key) {
@@ -40,103 +40,104 @@ function toggleFaq(key) {
 
 <style scoped>
 .faq-section {
-  margin: 4rem 0 2rem;
-  padding: 2rem 0;
-  animation: fadeIn 0.8s ease;
+  margin: 2rem 0 1rem;
+  padding: 1.5rem 0;
+  animation: fadeIn 0.5s ease;
 }
 
 .faq-title {
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: 1.25rem;
+  font-weight: 600;
   color: var(--text-color);
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.25rem;
 }
 
 .faq-grid {
   display: grid;
-  gap: 1rem;
-  max-width: 800px;
+  gap: 0.6rem;
+  max-width: 700px;
   margin: 0 auto;
 }
 
 .faq-item {
   background: var(--card-background);
-  border: 1px solid rgba(184, 184, 184, 0.2);
-  border-radius: 12px;
-  padding: 1.5rem;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 8px;
+  padding: 1rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .faq-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary-color);
+}
+
+.faq-item.active {
+  border-color: var(--primary-color);
+  box-shadow: 0 2px 12px rgba(99, 102, 241, 0.1);
 }
 
 .faq-question {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
-.faq-question h4 {
-  font-size: 1.125rem;
-  font-weight: 600;
+.faq-question span {
+  font-size: 0.9rem;
+  font-weight: 500;
   color: var(--text-color);
-  margin: 0;
 }
 
 .faq-question i {
   color: var(--primary-color);
-  font-size: 1rem;
-  transition: transform 0.3s ease;
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
 }
 
 .faq-answer {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid rgba(184, 184, 184, 0.1);
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.1);
 }
 
 .faq-answer p {
   color: var(--text-secondary);
-  line-height: 1.6;
+  line-height: 1.5;
   margin: 0;
+  font-size: 0.85rem;
 }
 
 .faq-enter-active,
 .faq-leave-active {
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .faq-enter-from,
 .faq-leave-to {
   opacity: 0;
-  transform: translateY(-10px);
+  transform: translateY(-8px);
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @media (max-width: 768px) {
   .faq-title {
-    font-size: 1.5rem;
+    font-size: 1.1rem;
   }
 
   .faq-item {
-    padding: 1.25rem;
+    padding: 0.85rem;
   }
 
-  .faq-question h4 {
-    font-size: 1rem;
+  .faq-question span {
+    font-size: 0.85rem;
   }
 }
 </style>
