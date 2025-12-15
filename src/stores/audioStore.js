@@ -21,6 +21,25 @@ export const useAudioStore = defineStore('audio', () => {
   })
 
   // Actions
+  // Helper: Erstellt Download-Namen aus Original-Namen mit neuer Endung
+  function getConvertedFileName(originalName, newFormat) {
+    const lastDotIndex = originalName.lastIndexOf('.')
+    const baseName = lastDotIndex > 0 ? originalName.substring(0, lastDotIndex) : originalName
+    return `${baseName}.${newFormat}`
+  }
+
+  // Helper: Holt Dateigröße vom Server via HEAD-Request
+  async function fetchFileSize(url) {
+    try {
+      const response = await fetch(url, { method: 'HEAD' })
+      const contentLength = response.headers.get('content-length')
+      return contentLength ? parseInt(contentLength, 10) : null
+    } catch (error) {
+      console.warn('Konnte Dateigröße nicht abrufen:', error)
+      return null
+    }
+  }
+
   function addFiles(files) {
     const newFiles = Array.from(files).map(file => ({
       id: `${file.name}-${Date.now()}-${Math.random()}`,
@@ -32,6 +51,8 @@ export const useAudioStore = defineStore('audio', () => {
       progress: 0,
       convertedUrl: null,
       convertedName: null,
+      convertedSize: null,
+      convertedFormat: null,
       error: null
     }))
     
@@ -106,22 +127,31 @@ export const useAudioStore = defineStore('audio', () => {
 
       updateFileProgress(fileData.id, 100, 'completed')
       const file = audioFiles.value.find(f => f.id === fileData.id)
-      
+
       if (file) {
         // Verwende url statt output
-        const urlPath = response.data.url.startsWith('/') 
-          ? response.data.url 
+        const urlPath = response.data.url.startsWith('/')
+          ? response.data.url
           : '/' + response.data.url
-        
+
         file.convertedUrl = '/audiokonverter' + urlPath
-        file.convertedName = response.data.filename
+        // Behalte ursprünglichen Namen, nur mit neuer Endung
+        file.convertedName = getConvertedFileName(fileData.name, currentFormat.value)
+        file.convertedFormat = currentFormat.value.toUpperCase()
         file.status = 'completed'
-        
+
+        // Hole Dateigröße vom Server
+        const convertedSize = await fetchFileSize(file.convertedUrl)
+        if (convertedSize) {
+          file.convertedSize = convertedSize
+        }
+
         console.log('✅ Konvertierung erfolgreich:', {
           url: file.convertedUrl,
-          name: file.convertedName
+          name: file.convertedName,
+          size: file.convertedSize ? formatFileSize(file.convertedSize) : 'unbekannt'
         })
-        
+
         convertedFiles.value.push(file)
       }
       return { success: true, data: response.data }

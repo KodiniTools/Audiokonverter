@@ -19,7 +19,17 @@
             <i class="fas fa-music file-icon"></i>
             <div class="file-details">
               <span class="file-name" :title="file.name">{{ file.name }}</span>
-              <span class="file-size">{{ audioStore.formatFileSize(file.size) }}</span>
+              <div class="file-size-info">
+                <span class="file-size" :class="{ 'original': file.status === 'completed' }">
+                  {{ audioStore.formatFileSize(file.size) }}
+                </span>
+                <template v-if="file.status === 'completed' && file.convertedSize">
+                  <span class="size-arrow">→</span>
+                  <span class="file-size converted">
+                    {{ file.convertedFormat }} {{ audioStore.formatFileSize(file.convertedSize) }}
+                  </span>
+                </template>
+              </div>
             </div>
           </div>
 
@@ -224,9 +234,32 @@ function removeFile(fileId) {
   text-overflow: ellipsis;
 }
 
+.file-size-info {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
 .file-size {
   font-size: 0.75rem;
   color: var(--text-secondary);
+}
+
+.file-size.original {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+.size-arrow {
+  font-size: 0.7rem;
+  color: var(--success-color);
+  font-weight: bold;
+}
+
+.file-size.converted {
+  color: var(--success-color);
+  font-weight: 500;
 }
 
 .file-item-status {
