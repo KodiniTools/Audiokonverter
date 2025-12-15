@@ -81,7 +81,7 @@ audio-converter-vue/
 │   └── main.js              # Entry Point
 │
 ├── public/                  # Öffentliche Assets
-│   └── favicon.svg
+│   └── favicon1.svg
 │
 ├── index.html               # HTML Template
 ├── vite.config.js           # Vite Config
