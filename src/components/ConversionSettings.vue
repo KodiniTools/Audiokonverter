@@ -125,7 +125,7 @@ async function startConversion() {
 <style scoped>
 .conversion-settings {
   background: var(--card-background);
-  border: 1px solid rgba(148, 163, 184, 0.15);
+  border: 1px solid rgba(96, 145, 152, 0.15);
   border-radius: 12px;
   padding: 1.25rem;
   margin: 1rem 0;
@@ -160,7 +160,7 @@ async function startConversion() {
 
 .setting-select {
   padding: 0.6rem 0.9rem;
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid rgba(96, 145, 152, 0.25);
   border-radius: 6px;
   background: var(--background);
   color: var(--text-color);
@@ -185,7 +185,7 @@ async function startConversion() {
   width: 100%;
   height: 5px;
   border-radius: 3px;
-  background: rgba(148, 163, 184, 0.2);
+  background: rgba(96, 145, 152, 0.25);
   outline: none;
   -webkit-appearance: none;
 }
@@ -198,7 +198,7 @@ async function startConversion() {
   background: var(--primary-color);
   cursor: pointer;
   transition: all 0.15s ease;
-  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 2px 6px rgba(96, 145, 152, 0.4);
 }
 
 .quality-slider::-webkit-slider-thumb:hover {

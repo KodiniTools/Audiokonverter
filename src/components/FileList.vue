@@ -162,18 +162,18 @@ function removeFile(fileId) {
 }
 
 .file-list::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.3);
+  background: rgba(96, 145, 152, 0.35);
   border-radius: 2px;
 }
 
 .file-list {
   scrollbar-width: thin;
-  scrollbar-color: rgba(148, 163, 184, 0.3) transparent;
+  scrollbar-color: rgba(96, 145, 152, 0.35) transparent;
 }
 
 .file-item {
   background: var(--card-background);
-  border: 1px solid rgba(148, 163, 184, 0.15);
+  border: 1px solid rgba(96, 145, 152, 0.15);
   border-radius: 8px;
   padding: 0.75rem;
   transition: all 0.2s ease;
@@ -291,14 +291,14 @@ function removeFile(fileId) {
 }
 
 .status-badge.converting {
-  background: rgba(99, 102, 241, 0.1);
+  background: rgba(96, 145, 152, 0.15);
   color: var(--primary-color);
 }
 
 .progress-bar-small {
   width: 50px;
   height: 4px;
-  background: rgba(148, 163, 184, 0.2);
+  background: rgba(96, 145, 152, 0.2);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -325,7 +325,7 @@ function removeFile(fileId) {
 }
 
 .btn-icon:hover {
-  background: rgba(148, 163, 184, 0.1);
+  background: rgba(96, 145, 152, 0.12);
 }
 
 .btn-icon i {
