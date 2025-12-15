@@ -85,7 +85,7 @@ Eine **vollständig funktionale Vue 3-Anwendung** mit moderner Architektur und i
 ### Dokumentation (3)
 24. `README.md` - Projekt-Dokumentation
 25. `INSTALLATION.md` - Detaillierte Installationsanleitung
-26. `public/favicon.svg` - App-Icon
+26. `public/favicon1.svg` - App-Icon
 
 ---
 
