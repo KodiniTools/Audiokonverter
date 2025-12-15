@@ -115,9 +115,9 @@ function addStyles() {
     }
 
     .nav-controls .nav-btn:hover {
-      background: var(--primary-color, #6366f1);
+      background: var(--primary-color, #609198);
       color: white;
-      border-color: var(--primary-color, #6366f1);
+      border-color: var(--primary-color, #609198);
       transform: translateY(-2px);
     }
 

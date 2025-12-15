@@ -62,7 +62,7 @@ function toggleFaq(key) {
 
 .faq-item {
   background: var(--card-background);
-  border: 1px solid rgba(148, 163, 184, 0.15);
+  border: 1px solid rgba(96, 145, 152, 0.15);
   border-radius: 8px;
   padding: 1rem;
   cursor: pointer;
@@ -75,7 +75,7 @@ function toggleFaq(key) {
 
 .faq-item.active {
   border-color: var(--primary-color);
-  box-shadow: 0 2px 12px rgba(99, 102, 241, 0.1);
+  box-shadow: 0 2px 12px rgba(96, 145, 152, 0.15);
 }
 
 .faq-question {
@@ -101,7 +101,7 @@ function toggleFaq(key) {
 .faq-answer {
   margin-top: 0.75rem;
   padding-top: 0.75rem;
-  border-top: 1px solid rgba(148, 163, 184, 0.1);
+  border-top: 1px solid rgba(96, 145, 152, 0.12);
 }
 
 .faq-answer p {
