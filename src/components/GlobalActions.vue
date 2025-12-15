@@ -11,6 +11,18 @@
         <span>{{ t('actions.clearAll') }}</span>
       </button>
 
+      <!-- Download All Separately -->
+      <button
+        v-if="audioStore.hasConvertedFiles"
+        class="action-btn btn-primary"
+        @click="downloadAllSeparately"
+        :disabled="isDownloadingSeparate"
+        :title="t('actions.downloadAll')"
+      >
+        <i :class="isDownloadingSeparate ? 'fas fa-spinner fa-spin' : 'fas fa-download'"></i>
+        <span>{{ isDownloadingSeparate ? t('actions.downloading') : t('actions.downloadAll') }}</span>
+      </button>
+
       <!-- Download All as ZIP -->
       <button
         v-if="audioStore.hasConvertedFiles"
@@ -37,6 +49,7 @@ const { t } = useI18n()
 const audioStore = useAudioStore()
 const { showToast, showConfirmToast } = useToast()
 const isDownloading = ref(false)
+const isDownloadingSeparate = ref(false)
 
 async function clearAll() {
   const confirmed = await showConfirmToast(
@@ -48,6 +61,31 @@ async function clearAll() {
   if (confirmed) {
     audioStore.clearAllFiles()
     showToast('info', t('toast.allFilesCleared'))
+  }
+}
+
+async function downloadAllSeparately() {
+  const completedFiles = audioStore.audioFiles.filter(f => f.status === 'completed' && f.convertedUrl)
+
+  if (completedFiles.length === 0) {
+    showToast('warning', t('toast.noFilesToDownload'))
+    return
+  }
+
+  isDownloadingSeparate.value = true
+
+  try {
+    for (const fileData of completedFiles) {
+      await audioStore.downloadFile(fileData)
+      // Kurze Pause zwischen Downloads für bessere Browser-Kompatibilität
+      await new Promise(resolve => setTimeout(resolve, 500))
+    }
+    showToast('success', t('toast.allFilesDownloaded'))
+  } catch (error) {
+    console.error('Download failed:', error)
+    showToast('error', t('toast.downloadFailed'))
+  } finally {
+    isDownloadingSeparate.value = false
   }
 }
 
@@ -140,6 +178,16 @@ async function downloadAllAsZip() {
 
 .btn-secondary:hover:not(:disabled) {
   background: rgba(96, 145, 152, 0.2);
+}
+
+.btn-primary {
+  background: var(--accent-gradient);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.btn-primary:hover:not(:disabled) {
+  filter: brightness(1.05);
 }
 
 .btn-success {

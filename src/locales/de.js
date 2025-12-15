@@ -37,6 +37,8 @@ export default {
   },
   actions: {
     clearAll: '🗑️ Leeren',
+    downloadAll: '⬇️ Alle laden',
+    downloading: '⏳ Lädt...',
     downloadAllAsZip: '📦 ZIP Download',
     creatingZip: '⏳ Erstelle ZIP...',
     downloadOptions: '⬇️ Download',
@@ -64,7 +66,9 @@ export default {
     unsupportedFormat: '⚠️ Format nicht unterstützt',
     noFilesToDownload: '📭 Keine Dateien zum Download',
     zipDownloadStarted: '📦 ZIP-Download gestartet',
-    zipDownloadFailed: '❌ ZIP-Download fehlgeschlagen'
+    zipDownloadFailed: '❌ ZIP-Download fehlgeschlagen',
+    allFilesDownloaded: '✅ Alle Dateien heruntergeladen',
+    downloadFailed: '❌ Download fehlgeschlagen'
   },
   errors: {
     uploadFailed: '❌ Upload fehlgeschlagen',
