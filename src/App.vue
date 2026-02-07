@@ -10,6 +10,7 @@
         <GlobalActions />
         <StatusDisplay />
         <DownloadSection />
+        <ToolCards />
         <FaqSection />
       </div>
     </main>
@@ -29,6 +30,7 @@ import ConversionSettings from '@/components/ConversionSettings.vue'
 import GlobalActions from '@/components/GlobalActions.vue'
 import StatusDisplay from '@/components/StatusDisplay.vue'
 import DownloadSection from '@/components/DownloadSection.vue'
+import ToolCards from '@/components/ToolCards.vue'
 import FaqSection from '@/components/FaqSection.vue'
 import ToastContainer from '@/components/ToastContainer.vue'
 

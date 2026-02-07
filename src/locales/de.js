@@ -95,6 +95,22 @@ export default {
     },
     note: 'Alle Downloads sind virenfrei und digital signiert.'
   },
+  tools: {
+    title: '🛠️ Unsere Audio-Tools',
+    visitTool: 'Zum Tool',
+    visualizer: {
+      title: 'Audio Visualizer',
+      description: 'Verwandle deine Musik in ein visuelles Erlebnis! Dieses moderne Tool bietet eine professionelle Echtzeit-Visualisierung deiner Audiodaten direkt im Browser.'
+    },
+    normalizer: {
+      title: 'Audio Normalisierer',
+      description: 'Mit dem Audio Normalizer bringst du deine gesamte Musikbibliothek auf ein einheitliches Lautstärkeniveau, ohne die Klangqualität zu beeinträchtigen.'
+    },
+    equalizer: {
+      title: 'Equalizer 19',
+      description: 'Der Equalizer 19 ist ein leistungsstarker 19-Band-Equalizer, der auf der Web Audio API basiert und eine chirurgisch genaue Frequenzkontrolle ermöglicht.'
+    }
+  },
   faq: {
     title: '❓ FAQ',
     questions: {
