@@ -171,18 +171,18 @@ async function downloadAllAsZip() {
 }
 
 .btn-secondary {
-  background: rgba(96, 145, 152, 0.1);
+  background: rgba(1, 79, 153, 0.1);
   color: var(--text-color);
-  border: 1px solid rgba(96, 145, 152, 0.15);
+  border: 1px solid rgba(1, 79, 153, 0.15);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: rgba(96, 145, 152, 0.2);
+  background: rgba(1, 79, 153, 0.2);
 }
 
 .btn-primary {
   background: var(--accent-gradient);
-  color: #ffffff;
+  color: #F5F4D6;
   font-weight: 600;
 }
 
