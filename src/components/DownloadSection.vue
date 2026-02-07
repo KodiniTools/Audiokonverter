@@ -95,7 +95,7 @@ const baseUrl = '/audiokonverter/downloads/'
 
 .download-card {
   background: var(--card-background);
-  border: 1px solid rgba(96, 145, 152, 0.15);
+  border: 1px solid rgba(1, 79, 153, 0.15);
   border-radius: 12px;
   padding: 1.25rem;
   transition: all 0.2s ease;
@@ -103,7 +103,7 @@ const baseUrl = '/audiokonverter/downloads/'
 
 .download-card:hover {
   border-color: var(--primary-color);
-  box-shadow: 0 4px 16px rgba(96, 145, 152, 0.15);
+  box-shadow: 0 4px 16px rgba(1, 79, 153, 0.15);
 }
 
 .download-card-header {
@@ -163,7 +163,7 @@ const baseUrl = '/audiokonverter/downloads/'
 
 .download-btn.primary {
   background: var(--primary-color);
-  color: white;
+  color: #F5F4D6;
 }
 
 .download-btn.primary:hover {
@@ -172,13 +172,13 @@ const baseUrl = '/audiokonverter/downloads/'
 }
 
 .download-btn.secondary {
-  background: rgba(96, 145, 152, 0.1);
+  background: rgba(1, 79, 153, 0.1);
   color: var(--primary-color);
-  border: 1px solid rgba(96, 145, 152, 0.2);
+  border: 1px solid rgba(1, 79, 153, 0.2);
 }
 
 .download-btn.secondary:hover {
-  background: rgba(96, 145, 152, 0.2);
+  background: rgba(1, 79, 153, 0.2);
   transform: translateY(-1px);
 }
 

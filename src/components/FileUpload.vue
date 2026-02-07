@@ -108,7 +108,7 @@ function processFiles(files) {
 }
 
 .drop-area {
-  border: 2px dashed rgba(96, 145, 152, 0.35);
+  border: 2px dashed rgba(1, 79, 153, 0.35);
   border-radius: 12px;
   padding: 2rem 1.5rem;
   text-align: center;
@@ -119,12 +119,12 @@ function processFiles(files) {
 
 .drop-area:hover {
   border-color: var(--primary-color);
-  background: rgba(96, 145, 152, 0.05);
+  background: rgba(1, 79, 153, 0.05);
 }
 
 .drop-area.drag-over {
   border-color: var(--primary-color);
-  background: rgba(96, 145, 152, 0.12);
+  background: rgba(1, 79, 153, 0.12);
   transform: scale(1.01);
 }
 

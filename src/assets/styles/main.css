@@ -1,21 +1,21 @@
 /* ===== GLOBAL VARIABLES ===== */
 :root {
   /* Colors - Light Theme */
-  /* Farbpalette: #BCE5E5, #A8A992, #9EBEC1, #E9E9EB, #C5DEB0, #609198 */
-  --background: #E9E9EB;
+  /* Farbpalette: #c9984d, #014f99, #003971, #f8e1a9, #f9f2d5 */
+  --background: #f9f2d5;
   --card-background: #ffffff;
-  --text-color: #2d3a3a;
-  --text-secondary: #5a6868;
-  --primary-color: #609198;
-  --primary-hover: #4a7a80;
-  --secondary-color: #BCE5E5;
-  --accent-color: #9EBEC1;
+  --text-color: #003971;
+  --text-secondary: #4a6e94;
+  --primary-color: #014f99;
+  --primary-hover: #003971;
+  --secondary-color: #f8e1a9;
+  --accent-color: #c9984d;
   --success-color: #10b981;
   --error-color: #ef4444;
   --warning-color: #f59e0b;
 
   /* Gradients */
-  --accent-gradient: linear-gradient(135deg, #609198 0%, #9EBEC1 50%, #BCE5E5 100%);
+  --accent-gradient: linear-gradient(135deg, #003971 0%, #014f99 50%, #c9984d 100%);
 
   /* Transitions */
   --transition-speed: 0.2s;
@@ -125,15 +125,15 @@ a:hover {
 
 .btn-primary {
   background: var(--accent-gradient);
-  color: #ffffff;
+  color: #F5F4D6;
   font-weight: 600;
-  box-shadow: 0 2px 8px rgba(96, 145, 152, 0.35);
+  box-shadow: 0 2px 8px rgba(1, 79, 153, 0.35);
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-1px) scale(1.02);
-  box-shadow: 0 4px 16px rgba(96, 145, 152, 0.45);
+  box-shadow: 0 4px 16px rgba(1, 79, 153, 0.45);
 }
 
 [data-theme="dark"] .btn-primary {
@@ -145,7 +145,7 @@ a:hover {
   background: var(--secondary-color);
   color: var(--text-color);
   font-weight: 500;
-  border: 1px solid rgba(96, 145, 152, 0.25);
+  border: 1px solid rgba(1, 79, 153, 0.25);
 }
 
 .btn-secondary:hover:not(:disabled) {
@@ -188,7 +188,7 @@ a:hover {
 }
 
 .btn-icon:hover {
-  background: rgba(96, 145, 152, 0.15);
+  background: rgba(1, 79, 153, 0.15);
   color: var(--primary-color);
   transform: scale(1.1);
 }
@@ -196,14 +196,14 @@ a:hover {
 /* ===== CARDS ===== */
 .card {
   background: var(--card-background);
-  border: 1px solid rgba(96, 145, 152, 0.15);
+  border: 1px solid rgba(1, 79, 153, 0.15);
   border-radius: 12px;
   padding: 1.25rem;
   transition: all var(--transition-speed);
 }
 
 .card:hover {
-  box-shadow: 0 4px 20px rgba(96, 145, 152, 0.12);
+  box-shadow: 0 4px 20px rgba(1, 79, 153, 0.12);
   transform: translateY(-1px);
 }
 
@@ -215,7 +215,7 @@ select,
 textarea {
   width: 100%;
   padding: 0.6rem 0.9rem;
-  border: 1px solid rgba(96, 145, 152, 0.25);
+  border: 1px solid rgba(1, 79, 153, 0.25);
   border-radius: 6px;
   background: var(--background);
   color: var(--text-color);
@@ -229,7 +229,7 @@ select:focus,
 textarea:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(96, 145, 152, 0.2);
+  box-shadow: 0 0 0 3px rgba(1, 79, 153, 0.2);
 }
 
 /* ===== UTILITIES ===== */
@@ -311,12 +311,12 @@ textarea:focus {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(96, 145, 152, 0.35);
+  background: rgba(1, 79, 153, 0.35);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(96, 145, 152, 0.55);
+  background: rgba(1, 79, 153, 0.55);
 }
 
 /* ===== RESPONSIVE ===== */
