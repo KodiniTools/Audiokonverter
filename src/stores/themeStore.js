@@ -2,7 +2,8 @@ import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 
 export const useThemeStore = defineStore('theme', () => {
-  const savedTheme = localStorage.getItem('audio-converter-theme') || 'light'
+  // Nutze gleichen Key wie die globale SSI-Navigation
+  const savedTheme = localStorage.getItem('theme') || 'light'
   const theme = ref(savedTheme)
 
   // Wende gespeichertes Theme beim Start an
@@ -12,7 +13,7 @@ export const useThemeStore = defineStore('theme', () => {
 
   watch(theme, (newTheme) => {
     document.documentElement.setAttribute('data-theme', newTheme)
-    localStorage.setItem('audio-converter-theme', newTheme)
+    localStorage.setItem('theme', newTheme)
   })
 
   function toggleTheme() {
