@@ -22,43 +22,15 @@ function onThemeChanged(e) {
 }
 
 // --- Language Bridge ---
-// Überschreibt die Sprach-Buttons der globalen Navigation,
-// damit vue-i18n reaktiv aktualisiert wird (ohne Page-Reload)
-function interceptLanguageButtons() {
-  const langBtns = document.querySelectorAll('.global-nav-lang-btn')
-  if (!langBtns.length) return
-
-  langBtns.forEach(btn => {
-    // Button klonen, um die Event-Listener der globalen Nav zu entfernen
-    // (die globale Nav macht window.location.reload() beim Sprachwechsel)
-    const newBtn = btn.cloneNode(true)
-    btn.parentNode.replaceChild(newBtn, btn)
-
-    newBtn.addEventListener('click', function (e) {
-      e.preventDefault()
-      e.stopPropagation()
-
-      const targetLang = this.getAttribute('data-lang')
-      if (targetLang === locale.value) return
-
-      // Vue-i18n reaktiv aktualisieren (kein Page-Reload!)
-      setLocale(targetLang)
-
-      // Active-Status der Buttons aktualisieren
-      updateLanguageButtons(targetLang)
-    })
-  })
-
-  // Initialen Active-State setzen (synchron mit Vue-Locale)
-  updateLanguageButtons(locale.value)
-}
-
-function updateLanguageButtons(lang) {
-  const langBtns = document.querySelectorAll('.global-nav-lang-btn')
-  langBtns.forEach(btn => {
-    const btnLang = btn.getAttribute('data-lang')
-    btn.classList.toggle('active', btnLang === lang)
-  })
+// Fängt das 'language-changed' Event der globalen Navigation ab
+// und synchronisiert vue-i18n reaktiv (ohne Page-Reload).
+// Die globale Nav übersetzt sich selbst via translateNav() und
+// dispatcht dann dieses Event – wir müssen nur vue-i18n updaten.
+function onLanguageChanged(e) {
+  const newLang = e.detail?.lang
+  if (newLang && newLang !== locale.value) {
+    setLocale(newLang)
+  }
 }
 
 // --- Initialisierung ---
@@ -72,8 +44,15 @@ function initBridge() {
   // Theme-Events der globalen Navigation abfangen
   window.addEventListener('theme-changed', onThemeChanged)
 
-  // Sprach-Buttons der globalen Navigation überschreiben
-  interceptLanguageButtons()
+  // Language-Events der globalen Navigation abfangen
+  window.addEventListener('language-changed', onLanguageChanged)
+
+  // Initialen Locale synchronisieren (falls localStorage
+  // von globaler Nav bereits gesetzt wurde bevor Vue mountet)
+  const storedLocale = localStorage.getItem('locale')
+  if (storedLocale && storedLocale !== locale.value) {
+    setLocale(storedLocale)
+  }
 }
 
 onMounted(() => {
@@ -87,6 +66,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('theme-changed', onThemeChanged)
+  window.removeEventListener('language-changed', onLanguageChanged)
   window.removeEventListener('load', initBridge)
 })
 </script>
