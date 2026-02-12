@@ -140,4 +140,42 @@ function toggleFaq(key) {
     font-size: 0.85rem;
   }
 }
+
+@media (max-width: 480px) {
+  .faq-section {
+    margin: 1.5rem 0 0.75rem;
+    padding: 1rem 0;
+  }
+
+  .faq-title {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .faq-grid {
+    gap: 0.5rem;
+  }
+
+  .faq-item {
+    padding: 0.75rem;
+    border-radius: 6px;
+  }
+
+  .faq-question span {
+    font-size: 0.8rem;
+  }
+
+  .faq-question i {
+    font-size: 0.7rem;
+  }
+
+  .faq-answer {
+    margin-top: 0.6rem;
+    padding-top: 0.6rem;
+  }
+
+  .faq-answer p {
+    font-size: 0.78rem;
+  }
+}
 </style>

@@ -380,4 +380,52 @@ function removeFile(fileId) {
     justify-content: flex-end;
   }
 }
+
+@media (max-width: 480px) {
+  .file-list-section {
+    margin: 0.75rem 0;
+  }
+
+  .file-list {
+    max-height: 220px;
+    gap: 0.4rem;
+  }
+
+  .file-item {
+    padding: 0.6rem;
+    border-radius: 6px;
+  }
+
+  .file-item-info {
+    gap: 0.5rem;
+  }
+
+  .file-icon {
+    font-size: 0.95rem;
+  }
+
+  .file-name {
+    font-size: 0.8rem;
+  }
+
+  .file-size {
+    font-size: 0.7rem;
+  }
+
+  .status-badge {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.65rem;
+  }
+
+  .btn-icon {
+    padding: 0.4rem;
+    min-width: 32px;
+    min-height: 32px;
+  }
+
+  .file-error {
+    font-size: 0.7rem;
+    padding: 0.4rem;
+  }
+}
 </style>

@@ -161,4 +161,49 @@ const tools = [
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+@media (max-width: 480px) {
+  .tools-section {
+    margin: 1.5rem 0;
+    padding: 1rem 0;
+  }
+
+  .tools-title {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .tools-grid {
+    gap: 0.75rem;
+  }
+
+  .tool-card {
+    padding: 1rem 0.85rem;
+    border-radius: 10px;
+  }
+
+  .tool-card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    margin-bottom: 0.75rem;
+  }
+
+  .tool-card-icon i {
+    font-size: 1.1rem;
+  }
+
+  .tool-card-title {
+    font-size: 0.9rem;
+  }
+
+  .tool-card-desc {
+    font-size: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .tool-card-link {
+    font-size: 0.75rem;
+  }
+}
 </style>
