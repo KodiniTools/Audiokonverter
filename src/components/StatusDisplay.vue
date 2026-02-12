@@ -75,4 +75,51 @@ const completedCount = computed(() => {
     transform: scale(1);
   }
 }
+
+@media (max-width: 768px) {
+  .status-display {
+    margin: 1.5rem 0;
+  }
+
+  .completion-message {
+    padding: 1.25rem;
+    gap: 0.75rem;
+  }
+
+  .success-icon {
+    font-size: 2.25rem;
+  }
+
+  .completion-text h3 {
+    font-size: 1.25rem;
+  }
+
+  .completion-text p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .status-display {
+    margin: 1rem 0;
+  }
+
+  .completion-message {
+    padding: 1rem;
+    gap: 0.6rem;
+    border-radius: 10px;
+  }
+
+  .success-icon {
+    font-size: 1.75rem;
+  }
+
+  .completion-text h3 {
+    font-size: 1.1rem;
+  }
+
+  .completion-text p {
+    font-size: 0.8rem;
+  }
+}
 </style>

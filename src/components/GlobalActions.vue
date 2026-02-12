@@ -205,13 +205,28 @@ async function downloadAllAsZip() {
 }
 
 @media (max-width: 768px) {
-  .actions-grid {
-    flex-direction: row;
-  }
-
   .action-btn {
     font-size: 0.8rem;
     padding: 0.55rem 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .global-actions {
+    margin: 0.75rem 0;
+  }
+
+  .actions-grid {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .action-btn {
+    width: 100%;
+    min-width: unset;
+    font-size: 0.8rem;
+    padding: 0.6rem 0.9rem;
+    min-height: 44px;
   }
 }
 </style>

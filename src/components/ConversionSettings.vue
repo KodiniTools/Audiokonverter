@@ -255,5 +255,62 @@ async function startConversion() {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
+
+  /* Larger touch targets for mobile slider */
+  .quality-slider::-webkit-slider-thumb {
+    width: 24px;
+    height: 24px;
+  }
+
+  .quality-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+  }
+
+  .quality-slider {
+    height: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .conversion-settings {
+    padding: 0.85rem;
+    margin: 0.75rem 0;
+    border-radius: 10px;
+  }
+
+  .settings-title {
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .settings-grid {
+    gap: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .setting-label {
+    font-size: 0.8rem;
+  }
+
+  .setting-select {
+    padding: 0.55rem 0.75rem;
+    font-size: 0.85rem;
+    min-height: 44px;
+  }
+
+  .btn-convert {
+    padding: 0.65rem 1.25rem;
+    font-size: 0.9rem;
+    min-height: 44px;
+  }
+
+  .quality-markers {
+    font-size: 0.65rem;
+  }
+
+  .quality-info {
+    font-size: 0.7rem;
+  }
 }
 </style>

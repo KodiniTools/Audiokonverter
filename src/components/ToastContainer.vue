@@ -258,5 +258,57 @@ function getToastIcon(type) {
   .toast-message {
     font-size: 0.9rem;
   }
+
+  /* On mobile, slide from top instead of right to avoid horizontal overflow */
+  .toast-enter-from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+
+  .toast-leave-to {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+}
+
+@media (max-width: 480px) {
+  .toast-container {
+    top: 8px;
+    right: 8px;
+    left: 8px;
+    gap: 0.5rem;
+  }
+
+  .toast {
+    padding: 0.75rem;
+    border-radius: 10px;
+  }
+
+  .toast-icon {
+    font-size: 1.1rem;
+  }
+
+  .toast-content {
+    gap: 0.6rem;
+  }
+
+  .toast-message {
+    font-size: 0.85rem;
+  }
+
+  .toast-title {
+    font-size: 0.85rem;
+    margin-bottom: 0.15rem;
+  }
+
+  .toast-text {
+    font-size: 0.78rem;
+  }
+
+  .toast-action-btn {
+    padding: 0.45rem 0.65rem;
+    font-size: 0.8rem;
+    min-height: 36px;
+  }
 }
 </style>

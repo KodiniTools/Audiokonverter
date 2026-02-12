@@ -329,6 +329,12 @@ textarea:focus {
 }
 
 /* ===== RESPONSIVE ===== */
+
+/* Prevent horizontal scrollbar from animations on mobile */
+html, body {
+  overflow-x: hidden;
+}
+
 @media (max-width: 768px) {
   html {
     font-size: 14px;
@@ -341,12 +347,38 @@ textarea:focus {
   .main-content {
     padding: 0.75rem 0;
   }
+
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.2rem; }
+  h3 { font-size: 1rem; }
+  h4 { font-size: 0.9rem; }
 }
 
 @media (max-width: 480px) {
+  html {
+    font-size: 13px;
+  }
+
+  .container {
+    padding: 0 0.75rem;
+  }
+
+  .main-content {
+    padding: 0.5rem 0;
+  }
+
+  h1 { font-size: 1.35rem; }
+  h2 { font-size: 1.1rem; }
+
   .btn {
     padding: 0.5rem 1rem;
     font-size: 0.85rem;
+    min-height: 44px;
+  }
+
+  .card {
+    padding: 1rem;
+    border-radius: 10px;
   }
 }
 

@@ -223,4 +223,50 @@ const baseUrl = '/audiokonverter/downloads/'
     padding: 1rem;
   }
 }
+
+@media (max-width: 480px) {
+  .download-section {
+    margin: 1.5rem 0;
+    padding: 1rem 0;
+  }
+
+  .download-title {
+    font-size: 1rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .download-subtitle {
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .download-card {
+    padding: 0.85rem;
+    border-radius: 10px;
+  }
+
+  .download-card-header i {
+    font-size: 1.25rem;
+  }
+
+  .download-card-header h3 {
+    font-size: 0.9rem;
+  }
+
+  .download-card-desc {
+    font-size: 0.8rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .download-btn {
+    padding: 0.6rem 0.85rem;
+    font-size: 0.8rem;
+    min-height: 44px;
+  }
+
+  .download-note {
+    font-size: 0.75rem;
+    margin-top: 1rem;
+  }
+}
 </style>

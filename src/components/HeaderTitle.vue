@@ -62,4 +62,19 @@ const { t } = useI18n()
     font-size: 0.85rem;
   }
 }
+
+@media (max-width: 480px) {
+  .header-title {
+    margin: 0.75rem 0 0.5rem;
+  }
+
+  .main-title {
+    font-size: 1.35rem;
+    word-break: break-word;
+  }
+
+  .main-subtitle {
+    font-size: 0.8rem;
+  }
+}
 </style>

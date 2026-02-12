@@ -190,4 +190,35 @@ function processFiles(files) {
     font-size: 0.75rem;
   }
 }
+
+@media (max-width: 480px) {
+  .file-upload-section {
+    margin: 0.75rem 0;
+  }
+
+  .drop-area {
+    padding: 1.25rem 0.75rem;
+    border-radius: 10px;
+  }
+
+  .upload-icon {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .upload-title {
+    font-size: 0.85rem;
+  }
+
+  .upload-subtitle {
+    font-size: 0.7rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .upload-btn {
+    padding: 0.55rem 1.25rem;
+    font-size: 0.85rem;
+    min-height: 44px;
+  }
+}
 </style>
