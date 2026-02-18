@@ -52,7 +52,7 @@ async function clearAll() {
   const confirmed = await showConfirmToast(
     'warning',
     t('actions.clearAll'),
-    'Möchten Sie wirklich alle Dateien löschen?'
+    t('actions.confirmDeleteAll')
   )
 
   if (confirmed) {

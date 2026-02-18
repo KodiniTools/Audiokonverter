@@ -44,7 +44,10 @@ export default {
     downloadOptions: 'Download',
     exportMetadata: 'Metadata',
     download: 'Download',
-    retry: 'Retry'
+    retry: 'Retry',
+    confirm: 'Confirm',
+    cancel: 'Cancel',
+    confirmDeleteAll: 'Are you sure you want to delete all files?'
   },
   status: {
     processing: 'Processing...',

@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import { i18n } from '@/locales/index.js'
 
 const toasts = ref([])
 let toastIdCounter = 0
@@ -44,14 +45,14 @@ export function useToast() {
         closeable: true,
         actions: [
           {
-            label: 'Bestätigen',
+            label: i18n.global.t('actions.confirm'),
             callback: () => {
               removeToast(toast.id)
               resolve(true)
             }
           },
           {
-            label: 'Abbrechen',
+            label: i18n.global.t('actions.cancel'),
             callback: () => {
               removeToast(toast.id)
               resolve(false)
