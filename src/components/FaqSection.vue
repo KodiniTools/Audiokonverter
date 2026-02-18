@@ -13,7 +13,7 @@
       >
         <div class="faq-question">
           <span>{{ faq.q }}</span>
-          <i :class="activeFaq === key ? 'fas fa-minus' : 'fas fa-plus'"></i>
+          <span class="faq-toggle">{{ activeFaq === key ? '&minus;' : '+' }}</span>
         </div>
         <Transition name="faq">
           <div v-if="activeFaq === key" class="faq-answer">
@@ -96,15 +96,15 @@ function toggleFaq(key) {
   color: var(--text-color);
 }
 
-.faq-question i {
+.faq-toggle {
   color: var(--primary-color);
-  font-size: 0.75rem;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1;
   flex-shrink: 0;
-}
-
-.faq-item.active .faq-question i {
-  transform: rotate(180deg);
+  width: 1.25rem;
+  text-align: center;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .faq-answer {
@@ -171,8 +171,8 @@ function toggleFaq(key) {
     font-size: 0.8rem;
   }
 
-  .faq-question i {
-    font-size: 0.7rem;
+  .faq-toggle {
+    font-size: 0.9rem;
   }
 
   .faq-answer {

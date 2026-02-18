@@ -7,7 +7,6 @@
         @click="clearAll"
         :title="t('actions.clearAll')"
       >
-        <i class="fas fa-trash-alt"></i>
         <span>{{ t('actions.clearAll') }}</span>
       </button>
 
@@ -19,7 +18,6 @@
         :disabled="isDownloadingSeparate"
         :title="t('actions.downloadAll')"
       >
-        <i :class="isDownloadingSeparate ? 'fas fa-spinner fa-spin' : 'fas fa-download'"></i>
         <span>{{ isDownloadingSeparate ? t('actions.downloading') : t('actions.downloadAll') }}</span>
       </button>
 
@@ -31,7 +29,6 @@
         :disabled="isDownloading"
         :title="t('actions.downloadAllAsZip')"
       >
-        <i :class="isDownloading ? 'fas fa-spinner fa-spin' : 'fas fa-file-archive'"></i>
         <span>{{ isDownloading ? t('actions.creatingZip') : t('actions.downloadAllAsZip') }}</span>
       </button>
     </div>

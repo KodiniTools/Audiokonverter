@@ -8,22 +8,18 @@
       <!-- Windows Installer -->
       <div class="download-card">
         <div class="download-card-header">
-          <i class="fab fa-windows"></i>
           <h3>{{ t('download.installer.title') }}</h3>
         </div>
         <p class="download-card-desc">{{ t('download.installer.description') }}</p>
         <div class="download-buttons">
           <a :href="baseUrl + 'AudioConverter-Setup.exe'" class="download-btn primary">
-            <i class="fas fa-download"></i>
             {{ t('download.installer.exe') }}
           </a>
           <div class="download-alt">
             <a :href="baseUrl + 'AudioConverter-Setup-x64.msi'" class="download-btn secondary">
-              <i class="fas fa-download"></i>
               MSI (64-bit)
             </a>
             <a :href="baseUrl + 'AudioConverter-Setup-x86.msi'" class="download-btn secondary">
-              <i class="fas fa-download"></i>
               MSI (32-bit)
             </a>
           </div>
@@ -33,17 +29,14 @@
       <!-- Portable Version -->
       <div class="download-card">
         <div class="download-card-header">
-          <i class="fas fa-folder-open"></i>
           <h3>{{ t('download.portable.title') }}</h3>
         </div>
         <p class="download-card-desc">{{ t('download.portable.description') }}</p>
         <div class="download-buttons">
           <a :href="baseUrl + 'AudioConverter-Portable-x64.zip'" class="download-btn primary">
-            <i class="fas fa-download"></i>
             {{ t('download.portable.x64') }}
           </a>
           <a :href="baseUrl + 'AudioConverter-Portable-x86.zip'" class="download-btn secondary">
-            <i class="fas fa-download"></i>
             {{ t('download.portable.x86') }}
           </a>
         </div>
@@ -51,7 +44,6 @@
     </div>
 
     <p class="download-note">
-      <i class="fas fa-info-circle"></i>
       {{ t('download.note') }}
     </p>
   </div>
@@ -115,19 +107,6 @@ const baseUrl = '/audiokonverter/downloads/'
   align-items: center;
   gap: 0.75rem;
   margin-bottom: 0.75rem;
-}
-
-.download-card-header i {
-  font-size: 1.5rem;
-  background: var(--accent-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  transition: transform 0.3s ease;
-}
-
-.download-card:hover .download-card-header i {
-  transform: scale(1.15);
 }
 
 .download-card-header h3 {
@@ -194,10 +173,6 @@ const baseUrl = '/audiokonverter/downloads/'
   transform: translateY(-1px);
 }
 
-.download-btn i {
-  font-size: 0.9rem;
-}
-
 .download-note {
   text-align: center;
   font-size: 0.8rem;
@@ -207,10 +182,6 @@ const baseUrl = '/audiokonverter/downloads/'
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-}
-
-.download-note i {
-  color: var(--primary-color);
 }
 
 @media (max-width: 768px) {
@@ -245,10 +216,6 @@ const baseUrl = '/audiokonverter/downloads/'
   .download-card {
     padding: 1rem;
     border-radius: 12px;
-  }
-
-  .download-card-header i {
-    font-size: 1.25rem;
   }
 
   .download-card-header h3 {

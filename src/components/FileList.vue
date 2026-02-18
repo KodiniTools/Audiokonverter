@@ -16,7 +16,6 @@
       >
         <div class="file-item-content">
           <div class="file-item-info">
-            <i class="fas fa-music file-icon"></i>
             <div class="file-details">
               <span class="file-name" :title="file.name">{{ file.name }}</span>
               <div class="file-size-info">
@@ -36,7 +35,6 @@
           <div class="file-item-status">
             <!-- Status Badge -->
             <span v-if="file.status !== 'pending'" class="status-badge" :class="file.status">
-              <i :class="getStatusIcon(file.status)"></i>
               {{ t(`status.${file.status}`) }}
             </span>
 
@@ -55,9 +53,8 @@
               class="btn-icon btn-download"
               @click="audioStore.downloadFile(file)"
               :title="t('actions.download')"
-            >
-              <i class="fas fa-download"></i>
-            </button>
+              aria-label="Download"
+            >&#8595;</button>
 
             <!-- Retry Button -->
             <button
@@ -65,18 +62,16 @@
               class="btn-icon btn-retry"
               @click="audioStore.convertFile(file)"
               :title="t('actions.retry')"
-            >
-              <i class="fas fa-redo"></i>
-            </button>
+              aria-label="Retry"
+            >&#8635;</button>
 
             <!-- Remove Button -->
             <button
               class="btn-icon btn-remove"
               @click="removeFile(file.id)"
               :title="t('fileList.remove')"
-            >
-              <i class="fas fa-times"></i>
-            </button>
+              aria-label="Remove"
+            >&times;</button>
           </div>
         </div>
 
@@ -102,16 +97,6 @@ const { showToast } = useToast()
 const formattedTotalSize = computed(() => {
   return audioStore.formatFileSize(audioStore.totalSize)
 })
-
-function getStatusIcon(status) {
-  const icons = {
-    converting: 'fas fa-spinner fa-spin',
-    completed: 'fas fa-check',
-    error: 'fas fa-exclamation',
-    pending: 'fas fa-clock'
-  }
-  return icons[status] || 'fas fa-circle'
-}
 
 function removeFile(fileId) {
   audioStore.removeFile(fileId)
@@ -212,12 +197,6 @@ function removeFile(fileId) {
   gap: 0.75rem;
   flex: 1;
   min-width: 0;
-}
-
-.file-icon {
-  font-size: 1.1rem;
-  color: var(--primary-color);
-  flex-shrink: 0;
 }
 
 .file-details {
@@ -354,10 +333,6 @@ function removeFile(fileId) {
   background: rgba(1, 79, 153, 0.12);
 }
 
-.btn-icon i {
-  pointer-events: none;
-}
-
 .btn-download:hover {
   color: var(--success-color);
 }
@@ -424,10 +399,6 @@ function removeFile(fileId) {
 
   .file-item-info {
     gap: 0.5rem;
-  }
-
-  .file-icon {
-    font-size: 0.95rem;
   }
 
   .file-name {

@@ -24,11 +24,6 @@
         <div class="wave wave-3"></div>
       </div>
 
-      <div class="upload-icon">
-        <div class="upload-icon-ring"></div>
-        <i class="fas fa-cloud-upload-alt"></i>
-      </div>
-
       <h3 class="upload-title">{{ t('upload.dragDrop') }}</h3>
       <p class="upload-subtitle">{{ t('upload.supportedFormats') }}</p>
 
@@ -185,28 +180,11 @@ function processFiles(files) {
   opacity: 0.8;
 }
 
-.upload-icon {
-  font-size: 2.5rem;
-  color: #F5F4D6;
-  margin-bottom: 0.75rem;
-  position: relative;
-  display: inline-block;
-  animation: float 3s ease-in-out infinite;
-}
-
-.upload-icon-ring {
-  position: absolute;
-  inset: -8px;
-  border: 2px solid rgba(245, 244, 214, 0.2);
-  border-radius: 50%;
-  animation: ringPulse 2s ease-in-out infinite;
-}
-
 .upload-title {
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: 1.1rem;
+  font-weight: 600;
   color: #F5F4D6;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.35rem;
   position: relative;
 }
 
@@ -246,15 +224,6 @@ function processFiles(files) {
   }
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-6px);
-  }
-}
-
 @keyframes waveFloat {
   0%, 100% {
     transform: translateY(0) rotate(0deg);
@@ -264,28 +233,13 @@ function processFiles(files) {
   }
 }
 
-@keyframes ringPulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.3;
-  }
-  50% {
-    transform: scale(1.2);
-    opacity: 0;
-  }
-}
-
 @media (max-width: 768px) {
   .drop-area {
     padding: 1.5rem 1rem;
   }
 
-  .upload-icon {
-    font-size: 2rem;
-  }
-
   .upload-title {
-    font-size: 0.9rem;
+    font-size: 1rem;
   }
 
   .upload-subtitle {
@@ -299,13 +253,8 @@ function processFiles(files) {
     border-radius: 12px;
   }
 
-  .upload-icon {
-    font-size: 1.75rem;
-    margin-bottom: 0.5rem;
-  }
-
   .upload-title {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
   }
 
   .upload-subtitle {

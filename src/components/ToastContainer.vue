@@ -7,8 +7,6 @@
         :class="['toast', `toast-${toast.type}`]"
       >
         <div class="toast-content">
-          <i :class="getToastIcon(toast.type)" class="toast-icon"></i>
-          
           <div class="toast-message">
             <strong class="toast-title">{{ toast.title }}</strong>
             <p v-if="toast.message" class="toast-text">{{ toast.message }}</p>
@@ -18,9 +16,8 @@
             v-if="toast.closeable"
             class="toast-close"
             @click="removeToast(toast.id)"
-          >
-            <i class="fas fa-times"></i>
-          </button>
+            aria-label="Close"
+          >&times;</button>
         </div>
 
         <div v-if="toast.actions && toast.actions.length" class="toast-actions">
@@ -49,16 +46,6 @@
 import { useToast } from '@/composables/useToast'
 
 const { toasts, removeToast } = useToast()
-
-function getToastIcon(type) {
-  const icons = {
-    success: 'fas fa-check-circle',
-    error: 'fas fa-exclamation-circle',
-    warning: 'fas fa-exclamation-triangle',
-    info: 'fas fa-info-circle'
-  }
-  return icons[type] || icons.info
-}
 </script>
 
 <style scoped>
@@ -106,28 +93,6 @@ function getToastIcon(type) {
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
-}
-
-.toast-icon {
-  font-size: 1.25rem;
-  margin-top: 0.1rem;
-  flex-shrink: 0;
-}
-
-.toast-success .toast-icon {
-  color: var(--success-color);
-}
-
-.toast-error .toast-icon {
-  color: var(--error-color);
-}
-
-.toast-warning .toast-icon {
-  color: #ffa726;
-}
-
-.toast-info .toast-icon {
-  color: var(--primary-color);
 }
 
 .toast-message {
@@ -282,10 +247,6 @@ function getToastIcon(type) {
   .toast {
     padding: 0.75rem;
     border-radius: 10px;
-  }
-
-  .toast-icon {
-    font-size: 1.1rem;
   }
 
   .toast-content {

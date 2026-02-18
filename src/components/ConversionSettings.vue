@@ -51,7 +51,6 @@
       :disabled="audioStore.isConverting || !hasPendingFiles"
       @click="startConversion"
     >
-      <i :class="audioStore.isConverting ? 'fas fa-spinner fa-spin' : 'fas fa-bolt'"></i>
       {{ audioStore.isConverting ? t('conversion.converting') : t('conversion.convert') }}
     </button>
   </div>
