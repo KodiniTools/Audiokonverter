@@ -1,13 +1,15 @@
 <template>
   <div class="tools-section">
     <h2 class="tools-title">{{ t('tools.title') }}</h2>
+    <div class="section-divider"></div>
 
     <div class="tools-grid">
       <a
-        v-for="tool in tools"
+        v-for="(tool, index) in tools"
         :key="tool.key"
         :href="tool.link"
-        class="tool-card"
+        class="tool-card glass-card"
+        :style="{ '--stagger': index }"
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -50,9 +52,8 @@ const tools = [
 
 <style scoped>
 .tools-section {
-  margin: 2rem 0;
-  padding: 1.5rem 0;
-  animation: fadeIn 0.5s ease;
+  margin: 0;
+  padding: 0;
 }
 
 .tools-title {
@@ -60,34 +61,43 @@ const tools = [
   font-weight: 600;
   color: var(--text-color);
   text-align: center;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.5rem;
 }
 
 .tools-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.25rem;
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
 }
 
 .tool-card {
-  background: var(--card-background);
-  border: 1px solid rgba(1, 79, 153, 0.15);
-  border-radius: 12px;
   padding: 1.5rem 1.25rem;
   text-decoration: none;
-  transition: all 0.2s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  animation: staggerIn 0.5s ease both;
+  animation-delay: calc(var(--stagger, 0) * 0.1s);
 }
 
 .tool-card:hover {
   border-color: var(--primary-color);
-  box-shadow: 0 4px 20px rgba(1, 79, 153, 0.15);
-  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(1, 79, 153, 0.15);
+  transform: translateY(-6px) scale(1.02);
+}
+
+@keyframes staggerIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .tool-card-icon {
@@ -104,6 +114,15 @@ const tools = [
 .tool-card-icon i {
   font-size: 1.25rem;
   color: #F5F4D6;
+  transition: transform 0.3s ease;
+}
+
+.tool-card:hover .tool-card-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.tool-card:hover .tool-card-icon i {
+  transform: scale(1.05);
 }
 
 .tool-card-title {
@@ -136,11 +155,6 @@ const tools = [
   color: var(--accent-color);
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
 @media (max-width: 768px) {
   .tools-grid {
     grid-template-columns: 1fr;
@@ -163,11 +177,6 @@ const tools = [
 }
 
 @media (max-width: 480px) {
-  .tools-section {
-    margin: 1.5rem 0;
-    padding: 1rem 0;
-  }
-
   .tools-title {
     font-size: 1rem;
     margin-bottom: 1rem;
@@ -179,7 +188,6 @@ const tools = [
 
   .tool-card {
     padding: 1rem 0.85rem;
-    border-radius: 10px;
   }
 
   .tool-card-icon {

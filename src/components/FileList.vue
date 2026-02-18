@@ -1,5 +1,5 @@
 <template>
-  <div v-if="audioStore.hasFiles" class="file-list-section">
+  <div class="file-list-section glass-card">
     <div class="file-list-header">
       <h3 class="file-list-title">
         {{ t('upload.filesSelected', { count: audioStore.fileCount }) }}
@@ -40,9 +40,13 @@
               {{ t(`status.${file.status}`) }}
             </span>
 
-            <!-- Progress Bar -->
-            <div v-if="file.status === 'converting'" class="progress-bar-small">
-              <div class="progress-fill" :style="{ width: file.progress + '%' }"></div>
+            <!-- Circular Progress -->
+            <div v-if="file.status === 'converting'" class="progress-circle">
+              <svg viewBox="0 0 36 36" class="progress-ring">
+                <path class="progress-ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path class="progress-ring-fill" :stroke-dasharray="`${file.progress}, 100`" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              </svg>
+              <span class="progress-text">{{ file.progress }}%</span>
             </div>
 
             <!-- Download Button -->
@@ -117,7 +121,7 @@ function removeFile(fileId) {
 
 <style scoped>
 .file-list-section {
-  margin: 1rem 0;
+  padding: 1.25rem;
   animation: slideInUp 0.35s ease;
 }
 
@@ -126,7 +130,6 @@ function removeFile(fileId) {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.75rem;
-  padding: 0 0.25rem;
 }
 
 .file-list-title {
@@ -295,19 +298,42 @@ function removeFile(fileId) {
   color: var(--primary-color);
 }
 
-.progress-bar-small {
-  width: 50px;
-  height: 4px;
-  background: rgba(1, 79, 153, 0.2);
-  border-radius: 2px;
-  overflow: hidden;
+.progress-circle {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
 }
 
-.progress-fill {
+.progress-ring {
+  width: 100%;
   height: 100%;
-  background: var(--accent-gradient);
-  border-radius: 2px;
-  transition: width 0.2s ease;
+  transform: rotate(-90deg);
+}
+
+.progress-ring-bg {
+  fill: none;
+  stroke: rgba(1, 79, 153, 0.15);
+  stroke-width: 3;
+}
+
+.progress-ring-fill {
+  fill: none;
+  stroke: var(--primary-color);
+  stroke-width: 3;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.3s ease;
+}
+
+.progress-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.55rem;
+  font-weight: 600;
+  color: var(--primary-color);
 }
 
 .btn-icon {
@@ -383,7 +409,7 @@ function removeFile(fileId) {
 
 @media (max-width: 480px) {
   .file-list-section {
-    margin: 0.75rem 0;
+    padding: 1rem;
   }
 
   .file-list {

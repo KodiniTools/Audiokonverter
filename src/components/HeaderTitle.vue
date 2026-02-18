@@ -14,24 +14,24 @@ const { t } = useI18n()
 <style scoped>
 .header-title {
   text-align: center;
-  margin: 1.5rem 0 1rem;
-  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  margin: 0 0 1.25rem;
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  z-index: 1;
 }
 
 .main-title {
-  font-size: 2rem;
+  font-size: 2.25rem;
   font-weight: 700;
-  background: var(--accent-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 0.25rem;
+  color: #F5F4D6;
+  margin-bottom: 0.35rem;
   letter-spacing: -0.02em;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .main-subtitle {
-  font-size: 0.95rem;
-  color: var(--text-secondary);
+  font-size: 1rem;
+  color: rgba(245, 244, 214, 0.75);
   font-weight: 400;
 }
 
@@ -51,25 +51,25 @@ const { t } = useI18n()
 
 @media (max-width: 768px) {
   .header-title {
-    margin: 1rem 0 0.75rem;
+    margin: 0 0 1rem;
   }
 
   .main-title {
-    font-size: 1.6rem;
+    font-size: 1.75rem;
   }
 
   .main-subtitle {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
   }
 }
 
 @media (max-width: 480px) {
   .header-title {
-    margin: 0.75rem 0 0.5rem;
+    margin: 0 0 0.75rem;
   }
 
   .main-title {
-    font-size: 1.35rem;
+    font-size: 1.5rem;
     word-break: break-word;
   }
 
