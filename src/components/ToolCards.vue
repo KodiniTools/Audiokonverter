@@ -13,13 +13,10 @@
         target="_blank"
         rel="noopener noreferrer"
       >
-        <div class="tool-card-icon">
-          <i :class="tool.icon"></i>
-        </div>
         <h3 class="tool-card-title">{{ t(`tools.${tool.key}.title`) }}</h3>
         <p class="tool-card-desc">{{ t(`tools.${tool.key}.description`) }}</p>
         <span class="tool-card-link">
-          {{ t('tools.visitTool') }} <i class="fas fa-arrow-right"></i>
+          {{ t('tools.visitTool') }} &rarr;
         </span>
       </a>
     </div>
@@ -34,17 +31,14 @@ const { t } = useI18n()
 const tools = [
   {
     key: 'visualizer',
-    icon: 'fas fa-wave-square',
     link: 'https://kodinitools.com/visualizer/'
   },
   {
     key: 'normalizer',
-    icon: 'fas fa-sliders-h',
     link: 'https://kodinitools.com/audionormalisierer/'
   },
   {
     key: 'equalizer',
-    icon: 'fas fa-music',
     link: 'https://kodinitools.com/equaliser19/'
   }
 ]
@@ -98,31 +92,6 @@ const tools = [
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.tool-card-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: var(--accent-gradient);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1rem;
-}
-
-.tool-card-icon i {
-  font-size: 1.25rem;
-  color: #F5F4D6;
-  transition: transform 0.3s ease;
-}
-
-.tool-card:hover .tool-card-icon {
-  transform: scale(1.1) rotate(5deg);
-}
-
-.tool-card:hover .tool-card-icon i {
-  transform: scale(1.05);
 }
 
 .tool-card-title {
@@ -188,17 +157,6 @@ const tools = [
 
   .tool-card {
     padding: 1rem 0.85rem;
-  }
-
-  .tool-card-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    margin-bottom: 0.75rem;
-  }
-
-  .tool-card-icon i {
-    font-size: 1.1rem;
   }
 
   .tool-card-title {

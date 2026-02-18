@@ -1,7 +1,6 @@
 <template>
   <div v-if="audioStore.hasConvertedFiles" class="status-display">
     <div class="completion-message">
-      <i class="fas fa-check-circle success-icon"></i>
       <div class="completion-text">
         <h3>{{ t('status.completed') }}!</h3>
         <p>{{ completedCount }} {{ t('upload.filesSelected', { count: completedCount }) }}</p>
@@ -42,12 +41,6 @@ const completedCount = computed(() => {
   box-shadow: 0 8px 32px rgba(16, 185, 129, 0.1);
 }
 
-.success-icon {
-  font-size: 3rem;
-  color: var(--success-color);
-  animation: scaleIn 0.5s ease;
-}
-
 .completion-text h3 {
   font-size: 1.5rem;
   color: var(--success-color);
@@ -70,15 +63,6 @@ const completedCount = computed(() => {
   }
 }
 
-@keyframes scaleIn {
-  from {
-    transform: scale(0);
-  }
-  to {
-    transform: scale(1);
-  }
-}
-
 @media (max-width: 768px) {
   .status-display {
     margin: 1.5rem 0;
@@ -87,10 +71,6 @@ const completedCount = computed(() => {
   .completion-message {
     padding: 1.25rem;
     gap: 0.75rem;
-  }
-
-  .success-icon {
-    font-size: 2.25rem;
   }
 
   .completion-text h3 {
@@ -111,10 +91,6 @@ const completedCount = computed(() => {
     padding: 1rem;
     gap: 0.6rem;
     border-radius: 10px;
-  }
-
-  .success-icon {
-    font-size: 1.75rem;
   }
 
   .completion-text h3 {
