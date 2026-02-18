@@ -91,7 +91,7 @@ export const useAudioStore = defineStore('audio', () => {
     updateFileProgress(fileData.id, 0, 'converting')
 
     try {
-      console.log('🔄 Starte Konvertierung:', fileData.name)
+      console.log('Starte Konvertierung:', fileData.name)
       
       const response = await axios.post('/audiokonverter/api/convert', formData, {
         headers: {
@@ -100,12 +100,12 @@ export const useAudioStore = defineStore('audio', () => {
         timeout: 600000, // 10 Minuten Timeout
         onUploadProgress: (progressEvent) => {
           const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-          console.log('📤 Upload Progress:', percentCompleted + '%')
+          console.log('Upload Progress:', percentCompleted + '%')
           updateFileProgress(fileData.id, Math.min(percentCompleted, 90))
         }
       })
 
-      console.log('📥 Server Response:', response.data)
+      console.log('Server Response:', response.data)
 
       if (!response.data) {
         throw new Error('Keine Antwort vom Server')
@@ -116,12 +116,12 @@ export const useAudioStore = defineStore('audio', () => {
       }
 
       if (!response.data.url) {
-        console.error('❌ Server Response hat kein url Feld:', response.data)
+        console.error('Server Response hat kein url Feld:', response.data)
         throw new Error('Server-Antwort unvollständig: url fehlt')
       }
 
       if (!response.data.filename) {
-        console.error('❌ Server Response hat kein filename Feld:', response.data)
+        console.error('Server Response hat kein filename Feld:', response.data)
         throw new Error('Server-Antwort unvollständig: filename fehlt')
       }
 
@@ -146,7 +146,7 @@ export const useAudioStore = defineStore('audio', () => {
           file.convertedSize = convertedSize
         }
 
-        console.log('✅ Konvertierung erfolgreich:', {
+        console.log('Konvertierung erfolgreich:', {
           url: file.convertedUrl,
           name: file.convertedName,
           size: file.convertedSize ? formatFileSize(file.convertedSize) : 'unbekannt'

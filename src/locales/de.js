@@ -1,86 +1,86 @@
 export default {
   app: {
-    title: '🎵 Audio Konverter',
+    title: 'Audio Konverter',
     subtitle: 'Schnell & einfach konvertieren'
   },
   nav: {
-    home: '🏠 Start',
-    toggleTheme: '🎨 Design',
-    language: '🌍 Sprache'
+    home: 'Start',
+    toggleTheme: 'Design',
+    language: 'Sprache'
   },
   upload: {
-    title: '📁 Upload',
-    dragDrop: '📂 Dateien hierher ziehen oder klicken',
+    title: 'Upload',
+    dragDrop: 'Dateien hierher ziehen oder klicken',
     supportedFormats: 'MP3 • WAV • FLAC • OGG • AAC • M4A',
-    selectFiles: '📁 Dateien wählen',
+    selectFiles: 'Dateien wählen',
     filesSelected: '{count} Datei | {count} Dateien'
   },
   conversion: {
-    title: '⚙️ Einstellungen',
-    format: '🎯 Format',
-    quality: '✨ Qualität',
+    title: 'Einstellungen',
+    format: 'Format',
+    quality: 'Qualität',
     qualityLevels: {
-      low: '📉 Niedrig',
-      medium: '📊 Mittel',
-      high: '📈 Hoch',
-      maximum: '🚀 Maximum'
+      low: 'Niedrig',
+      medium: 'Mittel',
+      high: 'Hoch',
+      maximum: 'Maximum'
     },
-    convert: '🔄 Konvertieren',
-    converting: '⏳ Läuft...',
-    progress: '📊 Fortschritt'
+    convert: 'Konvertieren',
+    converting: 'Läuft...',
+    progress: 'Fortschritt'
   },
   fileList: {
-    title: '📋 Dateien',
+    title: 'Dateien',
     empty: 'Noch keine Dateien',
-    remove: '🗑️',
-    size: '📦 Größe'
+    remove: 'Entfernen',
+    size: 'Größe'
   },
   actions: {
-    clearAll: '🗑️ Leeren',
-    downloadAll: '⬇️ Alle laden',
-    downloading: '⏳ Lädt...',
-    downloadAllAsZip: '📦 ZIP Download',
-    creatingZip: '⏳ Erstelle ZIP...',
-    downloadOptions: '⬇️ Download',
-    exportMetadata: '📄 Metadaten',
-    download: '⬇️',
-    retry: '🔄'
+    clearAll: 'Leeren',
+    downloadAll: 'Alle laden',
+    downloading: 'Lädt...',
+    downloadAllAsZip: 'ZIP Download',
+    creatingZip: 'Erstelle ZIP...',
+    downloadOptions: 'Download',
+    exportMetadata: 'Metadaten',
+    download: 'Download',
+    retry: 'Wiederholen'
   },
   status: {
-    processing: '⏳ Läuft...',
-    completed: '✅ Fertig',
-    error: '❌ Fehler',
-    ready: '🟢 Bereit',
-    waiting: '⏸️ Wartet...'
+    processing: 'Läuft...',
+    completed: 'Fertig',
+    error: 'Fehler',
+    ready: 'Bereit',
+    waiting: 'Wartet...'
   },
   toast: {
-    success: '✅ Erfolg',
-    error: '❌ Fehler',
-    warning: '⚠️ Warnung',
-    info: 'ℹ️ Info',
-    fileAdded: '✅ Hinzugefügt',
-    fileRemoved: '🗑️ Entfernt',
-    conversionComplete: '🎉 Fertig!',
-    conversionFailed: '❌ Fehlgeschlagen',
-    allFilesCleared: '🗑️ Alle gelöscht',
-    unsupportedFormat: '⚠️ Format nicht unterstützt',
-    noFilesToDownload: '📭 Keine Dateien zum Download',
-    zipDownloadStarted: '📦 ZIP-Download gestartet',
-    zipDownloadFailed: '❌ ZIP-Download fehlgeschlagen',
-    allFilesDownloaded: '✅ Alle Dateien heruntergeladen',
-    downloadFailed: '❌ Download fehlgeschlagen'
+    success: 'Erfolg',
+    error: 'Fehler',
+    warning: 'Warnung',
+    info: 'Info',
+    fileAdded: 'Hinzugefügt',
+    fileRemoved: 'Entfernt',
+    conversionComplete: 'Fertig!',
+    conversionFailed: 'Fehlgeschlagen',
+    allFilesCleared: 'Alle gelöscht',
+    unsupportedFormat: 'Format nicht unterstützt',
+    noFilesToDownload: 'Keine Dateien zum Download',
+    zipDownloadStarted: 'ZIP-Download gestartet',
+    zipDownloadFailed: 'ZIP-Download fehlgeschlagen',
+    allFilesDownloaded: 'Alle Dateien heruntergeladen',
+    downloadFailed: 'Download fehlgeschlagen'
   },
   errors: {
-    uploadFailed: '❌ Upload fehlgeschlagen',
-    conversionFailed: '❌ Konvertierung fehlgeschlagen',
-    noFiles: '📭 Keine Dateien',
-    fileTooLarge: '📦 Zu groß (max. 300MB)',
-    networkError: '🌐 Netzwerkfehler',
-    serverError: '🖥️ Serverfehler',
-    unsupportedFile: '⚠️ Nicht unterstützt'
+    uploadFailed: 'Upload fehlgeschlagen',
+    conversionFailed: 'Konvertierung fehlgeschlagen',
+    noFiles: 'Keine Dateien',
+    fileTooLarge: 'Zu groß (max. 300MB)',
+    networkError: 'Netzwerkfehler',
+    serverError: 'Serverfehler',
+    unsupportedFile: 'Nicht unterstützt'
   },
   download: {
-    title: '⬇️ Download',
+    title: 'Download',
     subtitle: 'Laden Sie die Desktop-Version herunter',
     installer: {
       title: 'Windows Installer',
@@ -96,7 +96,7 @@ export default {
     note: 'Alle Downloads sind virenfrei und digital signiert.'
   },
   tools: {
-    title: '🛠️ Unsere Audio-Tools',
+    title: 'Unsere Audio-Tools',
     visitTool: 'Zum Tool',
     visualizer: {
       title: 'Audio Visualizer',
@@ -112,22 +112,22 @@ export default {
     }
   },
   faq: {
-    title: '❓ FAQ',
+    title: 'FAQ',
     questions: {
       formats: {
-        q: '🎵 Welche Formate?',
+        q: 'Welche Formate werden unterstützt?',
         a: 'MP3, WAV, FLAC, OGG, AAC und M4A werden unterstützt.'
       },
       quality: {
-        q: '✨ Was bedeutet Qualität?',
+        q: 'Was bedeutet die Qualitätseinstellung?',
         a: 'Höhere Qualität = besserer Sound, größere Datei.'
       },
       privacy: {
-        q: '🔒 Sind meine Dateien sicher?',
+        q: 'Sind meine Dateien sicher?',
         a: 'Ja! Dateien werden nach Konvertierung automatisch gelöscht.'
       },
       batch: {
-        q: '📚 Mehrere Dateien gleichzeitig?',
+        q: 'Kann ich mehrere Dateien gleichzeitig konvertieren?',
         a: 'Klar! Einfach mehrere Dateien hochladen.'
       }
     }

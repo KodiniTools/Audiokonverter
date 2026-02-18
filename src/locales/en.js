@@ -1,86 +1,86 @@
 export default {
   app: {
-    title: '🎵 Audio Converter',
+    title: 'Audio Converter',
     subtitle: 'Fast & easy conversion'
   },
   nav: {
-    home: '🏠 Home',
-    toggleTheme: '🎨 Theme',
-    language: '🌍 Language'
+    home: 'Home',
+    toggleTheme: 'Theme',
+    language: 'Language'
   },
   upload: {
-    title: '📁 Upload',
-    dragDrop: '📂 Drop files here or click to browse',
+    title: 'Upload',
+    dragDrop: 'Drop files here or click to browse',
     supportedFormats: 'MP3 • WAV • FLAC • OGG • AAC • M4A',
-    selectFiles: '📁 Choose files',
+    selectFiles: 'Choose files',
     filesSelected: '{count} file | {count} files'
   },
   conversion: {
-    title: '⚙️ Settings',
-    format: '🎯 Format',
-    quality: '✨ Quality',
+    title: 'Settings',
+    format: 'Format',
+    quality: 'Quality',
     qualityLevels: {
-      low: '📉 Low',
-      medium: '📊 Medium',
-      high: '📈 High',
-      maximum: '🚀 Maximum'
+      low: 'Low',
+      medium: 'Medium',
+      high: 'High',
+      maximum: 'Maximum'
     },
-    convert: '🔄 Convert',
-    converting: '⏳ Converting...',
-    progress: '📊 Progress'
+    convert: 'Convert',
+    converting: 'Converting...',
+    progress: 'Progress'
   },
   fileList: {
-    title: '📋 Files',
+    title: 'Files',
     empty: 'No files yet',
-    remove: '🗑️',
-    size: '📦 Size'
+    remove: 'Remove',
+    size: 'Size'
   },
   actions: {
-    clearAll: '🗑️ Clear',
-    downloadAll: '⬇️ Download All',
-    downloading: '⏳ Downloading...',
-    downloadAllAsZip: '📦 ZIP Download',
-    creatingZip: '⏳ Creating ZIP...',
-    downloadOptions: '⬇️ Download',
-    exportMetadata: '📄 Metadata',
-    download: '⬇️',
-    retry: '🔄'
+    clearAll: 'Clear',
+    downloadAll: 'Download All',
+    downloading: 'Downloading...',
+    downloadAllAsZip: 'ZIP Download',
+    creatingZip: 'Creating ZIP...',
+    downloadOptions: 'Download',
+    exportMetadata: 'Metadata',
+    download: 'Download',
+    retry: 'Retry'
   },
   status: {
-    processing: '⏳ Processing...',
-    completed: '✅ Done',
-    error: '❌ Error',
-    ready: '🟢 Ready',
-    waiting: '⏸️ Waiting...'
+    processing: 'Processing...',
+    completed: 'Done',
+    error: 'Error',
+    ready: 'Ready',
+    waiting: 'Waiting...'
   },
   toast: {
-    success: '✅ Success',
-    error: '❌ Error',
-    warning: '⚠️ Warning',
-    info: 'ℹ️ Info',
-    fileAdded: '✅ Added',
-    fileRemoved: '🗑️ Removed',
-    conversionComplete: '🎉 Done!',
-    conversionFailed: '❌ Failed',
-    allFilesCleared: '🗑️ All cleared',
-    unsupportedFormat: '⚠️ Format not supported',
-    noFilesToDownload: '📭 No files to download',
-    zipDownloadStarted: '📦 ZIP download started',
-    zipDownloadFailed: '❌ ZIP download failed',
-    allFilesDownloaded: '✅ All files downloaded',
-    downloadFailed: '❌ Download failed'
+    success: 'Success',
+    error: 'Error',
+    warning: 'Warning',
+    info: 'Info',
+    fileAdded: 'Added',
+    fileRemoved: 'Removed',
+    conversionComplete: 'Done!',
+    conversionFailed: 'Failed',
+    allFilesCleared: 'All cleared',
+    unsupportedFormat: 'Format not supported',
+    noFilesToDownload: 'No files to download',
+    zipDownloadStarted: 'ZIP download started',
+    zipDownloadFailed: 'ZIP download failed',
+    allFilesDownloaded: 'All files downloaded',
+    downloadFailed: 'Download failed'
   },
   errors: {
-    uploadFailed: '❌ Upload failed',
-    conversionFailed: '❌ Conversion failed',
-    noFiles: '📭 No files',
-    fileTooLarge: '📦 Too large (max. 300MB)',
-    networkError: '🌐 Network error',
-    serverError: '🖥️ Server error',
-    unsupportedFile: '⚠️ Not supported'
+    uploadFailed: 'Upload failed',
+    conversionFailed: 'Conversion failed',
+    noFiles: 'No files',
+    fileTooLarge: 'Too large (max. 300MB)',
+    networkError: 'Network error',
+    serverError: 'Server error',
+    unsupportedFile: 'Not supported'
   },
   download: {
-    title: '⬇️ Download',
+    title: 'Download',
     subtitle: 'Download the desktop version',
     installer: {
       title: 'Windows Installer',
@@ -96,7 +96,7 @@ export default {
     note: 'All downloads are virus-free and digitally signed.'
   },
   tools: {
-    title: '🛠️ Our Audio Tools',
+    title: 'Our Audio Tools',
     visitTool: 'Open Tool',
     visualizer: {
       title: 'Audio Visualizer',
@@ -112,22 +112,22 @@ export default {
     }
   },
   faq: {
-    title: '❓ FAQ',
+    title: 'FAQ',
     questions: {
       formats: {
-        q: '🎵 Which formats?',
+        q: 'Which formats are supported?',
         a: 'MP3, WAV, FLAC, OGG, AAC and M4A are supported.'
       },
       quality: {
-        q: '✨ What does quality mean?',
+        q: 'What does the quality setting mean?',
         a: 'Higher quality = better sound, larger file.'
       },
       privacy: {
-        q: '🔒 Are my files safe?',
+        q: 'Are my files safe?',
         a: 'Yes! Files are automatically deleted after conversion.'
       },
       batch: {
-        q: '📚 Multiple files at once?',
+        q: 'Can I convert multiple files at once?',
         a: 'Sure! Just upload multiple files.'
       }
     }
