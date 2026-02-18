@@ -68,7 +68,10 @@ export default {
     zipDownloadStarted: 'ZIP-Download gestartet',
     zipDownloadFailed: 'ZIP-Download fehlgeschlagen',
     allFilesDownloaded: 'Alle Dateien heruntergeladen',
-    downloadFailed: 'Download fehlgeschlagen'
+    downloadFailed: 'Download fehlgeschlagen',
+    confirm: 'Bestätigen',
+    cancel: 'Abbrechen',
+    clearAllConfirm: 'Möchten Sie wirklich alle Dateien löschen?'
   },
   errors: {
     uploadFailed: 'Upload fehlgeschlagen',

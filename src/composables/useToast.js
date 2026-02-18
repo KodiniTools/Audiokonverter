@@ -33,7 +33,7 @@ export function useToast() {
     }
   }
 
-  function showConfirmToast(type, title, message) {
+  function showConfirmToast(type, title, message, { confirmLabel = 'Confirm', cancelLabel = 'Cancel' } = {}) {
     return new Promise((resolve) => {
       const toast = {
         id: ++toastIdCounter,
@@ -44,14 +44,14 @@ export function useToast() {
         closeable: true,
         actions: [
           {
-            label: 'Bestätigen',
+            label: confirmLabel,
             callback: () => {
               removeToast(toast.id)
               resolve(true)
             }
           },
           {
-            label: 'Abbrechen',
+            label: cancelLabel,
             callback: () => {
               removeToast(toast.id)
               resolve(false)
