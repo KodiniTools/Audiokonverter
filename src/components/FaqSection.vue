@@ -1,6 +1,7 @@
 <template>
   <div class="faq-section">
     <h2 class="faq-title">{{ t('faq.title') }}</h2>
+    <div class="section-divider"></div>
 
     <div class="faq-grid">
       <div
@@ -40,9 +41,8 @@ function toggleFaq(key) {
 
 <style scoped>
 .faq-section {
-  margin: 2rem 0 1rem;
-  padding: 1.5rem 0;
-  animation: fadeIn 0.5s ease;
+  margin: 0;
+  padding: 0;
 }
 
 .faq-title {
@@ -50,32 +50,37 @@ function toggleFaq(key) {
   font-weight: 600;
   color: var(--text-color);
   text-align: center;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.5rem;
 }
 
 .faq-grid {
   display: grid;
   gap: 0.6rem;
-  max-width: 700px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
 .faq-item {
-  background: var(--card-background);
-  border: 1px solid rgba(1, 79, 153, 0.15);
-  border-radius: 8px;
-  padding: 1rem;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--glass-shadow);
 }
 
 .faq-item:hover {
   border-color: var(--primary-color);
+  transform: translateX(4px);
 }
 
 .faq-item.active {
   border-color: var(--primary-color);
-  box-shadow: 0 2px 12px rgba(1, 79, 153, 0.15);
+  box-shadow: 0 4px 20px rgba(1, 79, 153, 0.12);
+  background: var(--card-background);
 }
 
 .faq-question {
@@ -94,8 +99,12 @@ function toggleFaq(key) {
 .faq-question i {
   color: var(--primary-color);
   font-size: 0.75rem;
-  transition: transform 0.2s ease;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
+}
+
+.faq-item.active .faq-question i {
+  transform: rotate(180deg);
 }
 
 .faq-answer {
@@ -113,18 +122,20 @@ function toggleFaq(key) {
 
 .faq-enter-active,
 .faq-leave-active {
-  transition: all 0.2s ease;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
 }
 
 .faq-enter-from,
 .faq-leave-to {
   opacity: 0;
   transform: translateY(-8px);
+  max-height: 0;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.faq-enter-to,
+.faq-leave-from {
+  max-height: 200px;
 }
 
 @media (max-width: 768px) {
@@ -142,11 +153,6 @@ function toggleFaq(key) {
 }
 
 @media (max-width: 480px) {
-  .faq-section {
-    margin: 1.5rem 0 0.75rem;
-    padding: 1rem 0;
-  }
-
   .faq-title {
     font-size: 1rem;
     margin-bottom: 1rem;
@@ -157,8 +163,8 @@ function toggleFaq(key) {
   }
 
   .faq-item {
-    padding: 0.75rem;
-    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
   }
 
   .faq-question span {

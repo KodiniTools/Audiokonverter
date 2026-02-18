@@ -1,5 +1,5 @@
 <template>
-  <div v-if="audioStore.hasFiles" class="global-actions">
+  <div class="global-actions">
     <div class="actions-grid">
       <!-- Clear All -->
       <button
@@ -134,14 +134,14 @@ async function downloadAllAsZip() {
 
 <style scoped>
 .global-actions {
-  margin: 1rem 0;
+  margin: 0.75rem 0 0;
   animation: fadeIn 0.35s ease;
 }
 
 .actions-grid {
   display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .action-btn {
@@ -213,12 +213,7 @@ async function downloadAllAsZip() {
 
 @media (max-width: 480px) {
   .global-actions {
-    margin: 0.75rem 0;
-  }
-
-  .actions-grid {
-    flex-direction: column;
-    gap: 0.5rem;
+    margin: 0.5rem 0 0;
   }
 
   .action-btn {

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="audioStore.hasFiles" class="conversion-settings">
+  <div class="conversion-settings glass-card">
     <h3 class="settings-title">{{ t('conversion.title') }}</h3>
 
     <div class="settings-grid">
@@ -124,11 +124,7 @@ async function startConversion() {
 
 <style scoped>
 .conversion-settings {
-  background: var(--card-background);
-  border: 1px solid rgba(1, 79, 153, 0.15);
-  border-radius: 12px;
   padding: 1.25rem;
-  margin: 1rem 0;
   animation: slideInUp 0.35s ease;
 }
 
@@ -140,8 +136,8 @@ async function startConversion() {
 }
 
 .settings-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 1.25rem;
   margin-bottom: 1.25rem;
 }
@@ -252,7 +248,6 @@ async function startConversion() {
   }
 
   .settings-grid {
-    grid-template-columns: 1fr;
     gap: 1rem;
   }
 
@@ -275,8 +270,6 @@ async function startConversion() {
 @media (max-width: 480px) {
   .conversion-settings {
     padding: 0.85rem;
-    margin: 0.75rem 0;
-    border-radius: 10px;
   }
 
   .settings-title {

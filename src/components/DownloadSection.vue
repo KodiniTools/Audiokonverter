@@ -1,6 +1,7 @@
 <template>
   <div class="download-section">
     <h2 class="download-title">{{ t('download.title') }}</h2>
+    <div class="section-divider"></div>
     <p class="download-subtitle">{{ t('download.subtitle') }}</p>
 
     <div class="download-grid">
@@ -65,9 +66,8 @@ const baseUrl = '/audiokonverter/downloads/'
 
 <style scoped>
 .download-section {
-  margin: 2rem 0;
-  padding: 1.5rem 0;
-  animation: fadeIn 0.5s ease;
+  margin: 0;
+  padding: 0;
 }
 
 .download-title {
@@ -89,21 +89,25 @@ const baseUrl = '/audiokonverter/downloads/'
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.25rem;
-  max-width: 700px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
 .download-card {
-  background: var(--card-background);
-  border: 1px solid rgba(1, 79, 153, 0.15);
-  border-radius: 12px;
-  padding: 1.25rem;
-  transition: all 0.2s ease;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--glass-shadow);
 }
 
 .download-card:hover {
   border-color: var(--primary-color);
-  box-shadow: 0 4px 16px rgba(1, 79, 153, 0.15);
+  box-shadow: 0 12px 40px rgba(1, 79, 153, 0.15);
+  transform: translateY(-4px);
 }
 
 .download-card-header {
@@ -115,7 +119,15 @@ const baseUrl = '/audiokonverter/downloads/'
 
 .download-card-header i {
   font-size: 1.5rem;
-  color: var(--primary-color);
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: transform 0.3s ease;
+}
+
+.download-card:hover .download-card-header i {
+  transform: scale(1.15);
 }
 
 .download-card-header h3 {
@@ -201,11 +213,6 @@ const baseUrl = '/audiokonverter/downloads/'
   color: var(--primary-color);
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
 @media (max-width: 768px) {
   .download-title {
     font-size: 1.1rem;
@@ -225,11 +232,6 @@ const baseUrl = '/audiokonverter/downloads/'
 }
 
 @media (max-width: 480px) {
-  .download-section {
-    margin: 1.5rem 0;
-    padding: 1rem 0;
-  }
-
   .download-title {
     font-size: 1rem;
     margin-bottom: 0.35rem;
@@ -241,8 +243,8 @@ const baseUrl = '/audiokonverter/downloads/'
   }
 
   .download-card {
-    padding: 0.85rem;
-    border-radius: 10px;
+    padding: 1rem;
+    border-radius: 12px;
   }
 
   .download-card-header i {
