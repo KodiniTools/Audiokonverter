@@ -98,8 +98,8 @@
             min="0"
             max="1"
             step="0.05"
-            :value="volume"
-            @input="updateVolume($event.target.value)"
+            :value="getFileVolume(file.id)"
+            @input="updateVolume(file.id, $event.target.value)"
             :title="t('actions.volume')"
           />
         </div>
@@ -114,7 +114,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onUnmounted } from 'vue'
+import { computed, ref, reactive, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAudioStore } from '@/stores/audioStore'
 import { useToast } from '@/composables/useToast'
@@ -130,11 +130,13 @@ const formattedTotalSize = computed(() => {
 // Audio Player
 const currentPlayingId = ref(null)
 const isPlaying = ref(false)
-const volume = ref(0.7)
+const fileVolumes = reactive({})
 const audioEl = new Audio()
 const objectUrls = new Map()
 
-audioEl.volume = volume.value
+function getFileVolume(fileId) {
+  return fileVolumes[fileId] ?? 0.7
+}
 
 function getAudioSrc(file) {
   if (file.status === 'completed' && file.convertedUrl) {
@@ -162,15 +164,19 @@ function togglePlay(file) {
     audioEl.src = src
     currentPlayingId.value = file.id
   }
+  audioEl.volume = getFileVolume(file.id)
   audioEl.play().catch(() => {
     isPlaying.value = false
   })
   isPlaying.value = true
 }
 
-function updateVolume(val) {
-  volume.value = parseFloat(val)
-  audioEl.volume = volume.value
+function updateVolume(fileId, val) {
+  const v = parseFloat(val)
+  fileVolumes[fileId] = v
+  if (currentPlayingId.value === fileId) {
+    audioEl.volume = v
+  }
 }
 
 audioEl.addEventListener('ended', () => {
@@ -188,6 +194,7 @@ function removeFile(fileId) {
     URL.revokeObjectURL(objectUrls.get(fileId))
     objectUrls.delete(fileId)
   }
+  delete fileVolumes[fileId]
   audioStore.removeFile(fileId)
   showToast('info', t('toast.fileRemoved'))
 }
