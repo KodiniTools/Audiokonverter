@@ -57,7 +57,8 @@ export default {
     completed: 'Fertig',
     error: 'Fehler',
     ready: 'Bereit',
-    waiting: 'Wartet...'
+    waiting: 'Wartet...',
+    completedOf: '{completed} von {total} Dateien konvertiert'
   },
   toast: {
     success: 'Erfolg',
