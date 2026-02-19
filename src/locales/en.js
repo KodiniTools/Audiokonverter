@@ -47,7 +47,10 @@ export default {
     retry: 'Retry',
     confirm: 'Confirm',
     cancel: 'Cancel',
-    confirmDeleteAll: 'Are you sure you want to delete all files?'
+    confirmDeleteAll: 'Are you sure you want to delete all files?',
+    play: 'Play',
+    pause: 'Pause',
+    volume: 'Volume'
   },
   status: {
     processing: 'Processing...',

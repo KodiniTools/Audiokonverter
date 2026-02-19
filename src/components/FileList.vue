@@ -75,6 +75,35 @@
           </div>
         </div>
 
+        <!-- Audio Controls -->
+        <div class="audio-controls">
+          <button
+            class="btn-icon btn-play"
+            @click="togglePlay(file)"
+            :title="isPlayingFile(file.id) ? t('actions.pause') : t('actions.play')"
+          >
+            <svg v-if="!isPlayingFile(file.id)" viewBox="0 0 24 24" width="14" height="14">
+              <path d="M8 5v14l11-7z" fill="currentColor"/>
+            </svg>
+            <svg v-else viewBox="0 0 24 24" width="14" height="14">
+              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" fill="currentColor"/>
+            </svg>
+          </button>
+          <svg class="volume-icon" viewBox="0 0 24 24" width="12" height="12">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" fill="currentColor"/>
+          </svg>
+          <input
+            type="range"
+            class="volume-slider"
+            min="0"
+            max="1"
+            step="0.05"
+            :value="volume"
+            @input="updateVolume($event.target.value)"
+            :title="t('actions.volume')"
+          />
+        </div>
+
         <!-- Error Message -->
         <div v-if="file.error" class="file-error">
           {{ file.error }}
@@ -85,7 +114,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAudioStore } from '@/stores/audioStore'
 import { useToast } from '@/composables/useToast'
@@ -98,10 +127,77 @@ const formattedTotalSize = computed(() => {
   return audioStore.formatFileSize(audioStore.totalSize)
 })
 
+// Audio Player
+const currentPlayingId = ref(null)
+const isPlaying = ref(false)
+const volume = ref(0.7)
+const audioEl = new Audio()
+const objectUrls = new Map()
+
+audioEl.volume = volume.value
+
+function getAudioSrc(file) {
+  if (file.status === 'completed' && file.convertedUrl) {
+    return file.convertedUrl
+  }
+  if (!objectUrls.has(file.id)) {
+    objectUrls.set(file.id, URL.createObjectURL(file.file))
+  }
+  return objectUrls.get(file.id)
+}
+
+function isPlayingFile(fileId) {
+  return currentPlayingId.value === fileId && isPlaying.value
+}
+
+function togglePlay(file) {
+  if (currentPlayingId.value === file.id && isPlaying.value) {
+    audioEl.pause()
+    isPlaying.value = false
+    return
+  }
+
+  const src = getAudioSrc(file)
+  if (currentPlayingId.value !== file.id) {
+    audioEl.src = src
+    currentPlayingId.value = file.id
+  }
+  audioEl.play().catch(() => {
+    isPlaying.value = false
+  })
+  isPlaying.value = true
+}
+
+function updateVolume(val) {
+  volume.value = parseFloat(val)
+  audioEl.volume = volume.value
+}
+
+audioEl.addEventListener('ended', () => {
+  isPlaying.value = false
+})
+
 function removeFile(fileId) {
+  if (currentPlayingId.value === fileId) {
+    audioEl.pause()
+    audioEl.src = ''
+    currentPlayingId.value = null
+    isPlaying.value = false
+  }
+  if (objectUrls.has(fileId)) {
+    URL.revokeObjectURL(objectUrls.get(fileId))
+    objectUrls.delete(fileId)
+  }
   audioStore.removeFile(fileId)
   showToast('info', t('toast.fileRemoved'))
 }
+
+onUnmounted(() => {
+  audioEl.pause()
+  audioEl.src = ''
+  objectUrls.forEach(url => URL.revokeObjectURL(url))
+  objectUrls.clear()
+})
 </script>
 
 <style scoped>
@@ -345,6 +441,61 @@ function removeFile(fileId) {
   color: var(--error-color);
 }
 
+.audio-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.4rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid rgba(1, 79, 153, 0.08);
+}
+
+.btn-play {
+  color: var(--primary-color);
+  padding: 0.2rem;
+  flex-shrink: 0;
+}
+
+.btn-play:hover {
+  color: var(--primary-color);
+  background: rgba(1, 79, 153, 0.12);
+}
+
+.volume-icon {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.volume-slider {
+  width: 80px;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(1, 79, 153, 0.15);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  background: var(--primary-color);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: var(--primary-color);
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
+
 .file-error {
   margin-top: 0.5rem;
   padding: 0.5rem;
@@ -423,6 +574,10 @@ function removeFile(fileId) {
   .file-error {
     font-size: 0.7rem;
     padding: 0.4rem;
+  }
+
+  .volume-slider {
+    width: 60px;
   }
 }
 </style>

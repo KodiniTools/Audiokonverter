@@ -47,7 +47,10 @@ export default {
     retry: 'Wiederholen',
     confirm: 'Bestätigen',
     cancel: 'Abbrechen',
-    confirmDeleteAll: 'Möchten Sie wirklich alle Dateien löschen?'
+    confirmDeleteAll: 'Möchten Sie wirklich alle Dateien löschen?',
+    play: 'Abspielen',
+    pause: 'Pause',
+    volume: 'Lautstärke'
   },
   status: {
     processing: 'Läuft...',
