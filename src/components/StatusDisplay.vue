@@ -3,7 +3,7 @@
     <div class="completion-message">
       <div class="completion-text">
         <h3>{{ t('status.completed') }}!</h3>
-        <p>{{ completedCount }} {{ t('upload.filesSelected', { count: completedCount }) }}</p>
+        <p>{{ t('status.completedOf', { completed: completedCount, total: audioStore.fileCount }) }}</p>
       </div>
     </div>
   </div>
