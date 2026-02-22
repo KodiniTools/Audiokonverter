@@ -11,21 +11,312 @@
   })(window,document,'script','dataLayer','GTM-T7NS656K');</script>
   <!-- End Google Tag Manager -->
 
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Audio Konverter - Konvertiere deine Audiodateien schnell und einfach">
-  <meta name="keywords" content="audio, converter, mp3, wav, flac, ogg, konverter">
-  <meta name="author" content="Audio Converter Team">
-  
-  <!-- Title -->
+  <meta name="description" content="Audio Konverter - Konvertiere deine Audiodateien schnell und einfach. MP3, WAV, FLAC, OGG, AAC, M4A. Kostenlos, sicher und direkt im Browser.">
+  <meta name="keywords" content="audio, converter, mp3, wav, flac, ogg, aac, m4a, konverter, online, kostenlos">
+  <meta name="author" content="KodiniTools">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Audio Konverter - Schnell & Einfach">
+  <meta property="og:description" content="Konvertiere deine Audiodateien schnell und einfach. MP3, WAV, FLAC, OGG, AAC, M4A.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:locale:alternate" content="en_US">
+
   <title>Audio Konverter - Schnell & Einfach</title>
-  
+
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="./favicon1.svg">
   <link rel="shortcut icon" type="image/svg+xml" href="./favicon1.svg">
   <link rel="apple-touch-icon" href="./favicon1.svg">
-  
+
+  <!-- Global CSS (shared with Vue) -->
+  <link rel="stylesheet" href="/src/assets/styles/main.css">
+
+  <!-- Structured Data (SEO) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Audio Konverter",
+    "description": "Konvertiere deine Audiodateien schnell und einfach zwischen MP3, WAV, FLAC, OGG, AAC und M4A.",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Web, Windows",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+    "featureList": ["MP3", "WAV", "FLAC", "OGG", "AAC", "M4A", "Batch Conversion", "Quality Control"]
+  }
+  </script>
+
+  <style>
+    /* =============================================================
+       LANDING PAGE STYLES
+       Anchor-Nav, Features, Download, Tools, FAQ — static sections
+       Global styles (variables, hero, glass-card, etc.) from main.css
+       ============================================================= */
+
+    /* Scroll offset for sticky navs */
+    html {
+      scroll-padding-top: calc(var(--nav-height, 60px) + 56px);
+    }
+
+    /* ===== ANCHOR NAVIGATION ===== */
+    .anchor-nav {
+      position: sticky;
+      top: var(--nav-height, 60px);
+      z-index: 90;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border-bottom: 1px solid var(--glass-border);
+      height: 44px;
+      transition: box-shadow 0.3s ease;
+    }
+    .anchor-nav.scrolled {
+      box-shadow: 0 2px 12px rgba(0, 57, 113, 0.1);
+    }
+    [data-theme="dark"] .anchor-nav.scrolled {
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+    }
+    .anchor-nav__list {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem;
+      height: 100%;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .anchor-nav__link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      white-space: nowrap;
+    }
+    .anchor-nav__link:hover {
+      color: var(--primary-color);
+      background: rgba(1, 79, 153, 0.08);
+    }
+    [data-theme="dark"] .anchor-nav__link:hover {
+      background: rgba(158, 190, 193, 0.1);
+    }
+    .anchor-nav__link.active {
+      color: #F5F4D6;
+      background: var(--primary-color);
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(1, 79, 153, 0.3);
+    }
+    [data-theme="dark"] .anchor-nav__link.active {
+      color: #1a2f2f;
+    }
+    .anchor-nav__icon {
+      font-size: 0.9rem;
+      line-height: 1;
+    }
+
+    /* ===== FEATURES ===== */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .feature-card {
+      padding: 1.5rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+      line-height: 1;
+    }
+    .feature-card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-color);
+      margin: 0 0 0.4rem;
+    }
+    .feature-card-desc {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* ===== SECTION TITLE (static sections) ===== */
+    .landing-section-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-color);
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+
+    /* ===== DOWNLOAD ===== */
+    .download-subtitle {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+    .download-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .download-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--glass-shadow);
+    }
+    .download-card:hover {
+      border-color: var(--primary-color);
+      box-shadow: 0 12px 40px rgba(1, 79, 153, 0.15);
+      transform: translateY(-4px);
+    }
+    .download-card-header { margin-bottom: 0.75rem; }
+    .download-card-header h3 { font-size: 1rem; font-weight: 600; color: var(--text-color); margin: 0; }
+    .download-card-desc { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.5; }
+    .download-buttons { display: flex; flex-direction: column; gap: 0.5rem; }
+    .download-alt { display: flex; gap: 0.5rem; }
+    .download-alt .download-btn { flex: 1; }
+    .download-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      padding: 0.65rem 1rem; border-radius: 8px; font-size: 0.85rem; font-weight: 500;
+      text-decoration: none; transition: all 0.2s ease; cursor: pointer;
+    }
+    .download-btn.primary { background: var(--primary-color); color: #F5F4D6; }
+    .download-btn.primary:hover { background: var(--primary-hover); transform: translateY(-2px); }
+    .download-btn.secondary { background: rgba(1, 79, 153, 0.1); color: var(--primary-color); border: 1px solid rgba(1, 79, 153, 0.2); }
+    .download-btn.secondary:hover { background: rgba(1, 79, 153, 0.2); transform: translateY(-1px); }
+    .download-note { text-align: center; font-size: 0.8rem; color: var(--text-secondary); margin-top: 1.25rem; }
+
+    /* ===== TOOL CARDS ===== */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .tool-card {
+      padding: 1.5rem 1.25rem;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .tool-card:hover {
+      border-color: var(--primary-color);
+      box-shadow: 0 12px 40px rgba(1, 79, 153, 0.15);
+      transform: translateY(-6px) scale(1.02);
+    }
+    .tool-card-title { font-size: 1rem; font-weight: 600; color: var(--text-color); margin: 0 0 0.5rem; }
+    .tool-card-desc { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; margin: 0 0 1rem; flex: 1; }
+    .tool-card-link {
+      font-size: 0.8rem; font-weight: 600; color: var(--primary-color);
+      display: inline-flex; align-items: center; gap: 0.35rem; transition: gap 0.2s ease;
+    }
+    .tool-card:hover .tool-card-link { gap: 0.6rem; color: var(--accent-color); }
+
+    /* ===== FAQ ===== */
+    .faq-grid { display: grid; gap: 0.6rem; max-width: 800px; margin: 0 auto; }
+    .faq-item {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--glass-shadow);
+    }
+    .faq-item:hover { border-color: var(--primary-color); transform: translateX(4px); }
+    .faq-item.active {
+      border-color: var(--primary-color);
+      box-shadow: 0 4px 20px rgba(1, 79, 153, 0.12);
+      background: var(--card-background);
+    }
+    .faq-question { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; }
+    .faq-question span { font-size: 0.9rem; font-weight: 500; color: var(--text-color); }
+    .faq-toggle {
+      color: var(--primary-color); font-size: 1rem; font-weight: 600;
+      line-height: 1; flex-shrink: 0; width: 1.25rem; text-align: center;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .faq-answer {
+      margin-top: 0.75rem; padding-top: 0.75rem;
+      border-top: 1px solid rgba(1, 79, 153, 0.12);
+      max-height: 0; overflow: hidden; opacity: 0;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .faq-item.active .faq-answer { max-height: 200px; opacity: 1; }
+    .faq-answer p { color: var(--text-secondary); line-height: 1.5; margin: 0; font-size: 0.85rem; }
+
+    /* ===== LANDING RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .anchor-nav__link { padding: 0.35rem 0.75rem; font-size: 0.78rem; }
+      .anchor-nav__list { gap: 0.15rem; }
+      .features-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+      .landing-section-title { font-size: 1.1rem; }
+      .download-grid { grid-template-columns: 1fr; }
+      .download-alt { flex-direction: column; }
+      .download-card { padding: 1rem; }
+      .tools-grid { grid-template-columns: 1fr; gap: 1rem; }
+      .tool-card { padding: 1.25rem 1rem; }
+      .faq-item { padding: 0.85rem; }
+      .faq-question span { font-size: 0.85rem; }
+    }
+    @media (min-width: 769px) and (max-width: 960px) {
+      .tools-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .anchor-nav__link { padding: 0.3rem 0.6rem; font-size: 0.72rem; }
+      .anchor-nav__icon { display: none; }
+      .features-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+      .feature-card { padding: 1rem 0.85rem; }
+      .feature-card-title { font-size: 0.85rem; }
+      .feature-card-desc { font-size: 0.75rem; }
+      .feature-icon { font-size: 1.5rem; }
+      .download-card { padding: 1rem; border-radius: 12px; }
+      .download-card-header h3 { font-size: 0.9rem; }
+      .download-card-desc { font-size: 0.8rem; margin-bottom: 0.75rem; }
+      .download-btn { padding: 0.6rem 0.85rem; font-size: 0.8rem; min-height: 44px; }
+      .download-note { font-size: 0.75rem; margin-top: 1rem; }
+      .tools-grid { gap: 0.75rem; }
+      .tool-card { padding: 1rem 0.85rem; }
+      .tool-card-title { font-size: 0.9rem; }
+      .tool-card-desc { font-size: 0.75rem; margin-bottom: 0.75rem; }
+      .tool-card-link { font-size: 0.75rem; }
+      .faq-grid { gap: 0.5rem; }
+      .faq-item { padding: 0.75rem 1rem; border-radius: 10px; }
+      .faq-question span { font-size: 0.8rem; }
+      .faq-toggle { font-size: 0.9rem; }
+      .faq-answer { margin-top: 0.6rem; padding-top: 0.6rem; }
+      .faq-answer p { font-size: 0.78rem; }
+    }
+  </style>
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -33,10 +324,480 @@
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
+<!-- ===== SSI: Global Navigation (Theme, Language) ===== -->
 <!--#include virtual="/partials/nav.html" -->
-  <div id="app"></div>
-  <script type="module" src="/src/main.js"></script>
-  <!--#include virtual="/partials/footer.html" -->
-  <!--#include virtual="/partials/cookie-banner.html" -->
+
+<!-- =============================================================
+     ANCHOR NAVIGATION — Interne Seitennavigation
+     App | Features | Download | FAQ
+     ============================================================= -->
+<nav class="anchor-nav" id="anchor-nav" aria-label="Seitennavigation">
+  <div class="container">
+    <ul class="anchor-nav__list">
+      <li>
+        <a href="#converter" class="anchor-nav__link active" data-anchor="converter">
+          <span class="anchor-nav__icon" aria-hidden="true">&#9654;</span>
+          <span data-i18n="nav.anchorApp">App</span>
+        </a>
+      </li>
+      <li>
+        <a href="#features" class="anchor-nav__link" data-anchor="features">
+          <span class="anchor-nav__icon" aria-hidden="true">&#10024;</span>
+          <span data-i18n="nav.anchorFeatures">Features</span>
+        </a>
+      </li>
+      <li>
+        <a href="#download" class="anchor-nav__link" data-anchor="download">
+          <span class="anchor-nav__icon" aria-hidden="true">&#11015;</span>
+          <span data-i18n="nav.anchorDownload">Download</span>
+        </a>
+      </li>
+      <li>
+        <a href="#faq" class="anchor-nav__link" data-anchor="faq">
+          <span class="anchor-nav__icon" aria-hidden="true">&#10067;</span>
+          <span data-i18n="nav.anchorFaq">FAQ</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<!-- =============================================================
+     VUE APP (Island) — Hero + Converter
+     Rendered by Vue: HeaderTitle, FileUpload, FileList,
+     ConversionSettings, GlobalActions, StatusDisplay, Toasts
+     ============================================================= -->
+<div id="app"></div>
+<script type="module" src="/src/main.js"></script>
+
+<!-- =============================================================
+     FEATURES SECTION — Statisches HTML
+     ============================================================= -->
+<section class="full-width-section" id="features" data-reveal>
+  <div class="container">
+    <h2 class="landing-section-title" data-i18n="landing.features.title">Features</h2>
+    <div class="section-divider"></div>
+    <div class="features-grid">
+
+      <div class="feature-card glass-card">
+        <div class="feature-icon" aria-hidden="true">&#127925;</div>
+        <h3 class="feature-card-title" data-i18n="landing.features.formats.title">6 Audio-Formate</h3>
+        <p class="feature-card-desc" data-i18n="landing.features.formats.desc">MP3, WAV, FLAC, OGG, AAC und M4A werden vollständig unterstützt.</p>
+      </div>
+
+      <div class="feature-card glass-card">
+        <div class="feature-icon" aria-hidden="true">&#9878;&#65039;</div>
+        <h3 class="feature-card-title" data-i18n="landing.features.quality.title">Qualitätskontrolle</h3>
+        <p class="feature-card-desc" data-i18n="landing.features.quality.desc">Von niedrig bis Maximum – wähle die Qualität, die zu dir passt.</p>
+      </div>
+
+      <div class="feature-card glass-card">
+        <div class="feature-icon" aria-hidden="true">&#128274;</div>
+        <h3 class="feature-card-title" data-i18n="landing.features.privacy.title">100% Privatsphäre</h3>
+        <p class="feature-card-desc" data-i18n="landing.features.privacy.desc">Dateien werden nach Konvertierung automatisch gelöscht.</p>
+      </div>
+
+      <div class="feature-card glass-card">
+        <div class="feature-icon" aria-hidden="true">&#9889;</div>
+        <h3 class="feature-card-title" data-i18n="landing.features.batch.title">Batch-Konvertierung</h3>
+        <p class="feature-card-desc" data-i18n="landing.features.batch.desc">Mehrere Dateien gleichzeitig konvertieren – schnell und effizient.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- =============================================================
+     DOWNLOAD SECTION — Statisches HTML (aus DownloadSection.vue)
+     ============================================================= -->
+<section class="full-width-section full-width-section--alt" id="download" data-reveal>
+  <div class="container">
+    <h2 class="landing-section-title" data-i18n="download.title">Download</h2>
+    <div class="section-divider"></div>
+    <p class="download-subtitle" data-i18n="download.subtitle">Laden Sie die Desktop-Version herunter</p>
+
+    <div class="download-grid">
+      <!-- Windows Installer -->
+      <div class="download-card">
+        <div class="download-card-header">
+          <h3 data-i18n="download.installer.title">Windows Installer</h3>
+        </div>
+        <p class="download-card-desc" data-i18n="download.installer.description">Empfohlen für die meisten Benutzer. Automatische Installation mit Startmenü-Einträgen.</p>
+        <div class="download-buttons">
+          <a href="/audiokonverter/downloads/AudioConverter-Setup.exe" class="download-btn primary" data-i18n="download.installer.exe">Download (.exe)</a>
+          <div class="download-alt">
+            <a href="/audiokonverter/downloads/AudioConverter-Setup-x64.msi" class="download-btn secondary">MSI (64-bit)</a>
+            <a href="/audiokonverter/downloads/AudioConverter-Setup-x86.msi" class="download-btn secondary">MSI (32-bit)</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Portable Version -->
+      <div class="download-card">
+        <div class="download-card-header">
+          <h3 data-i18n="download.portable.title">Portable Version</h3>
+        </div>
+        <p class="download-card-desc" data-i18n="download.portable.description">Keine Installation erforderlich. Ideal für USB-Sticks oder eingeschränkte Systeme.</p>
+        <div class="download-buttons">
+          <a href="/audiokonverter/downloads/AudioConverter-Portable-x64.zip" class="download-btn primary" data-i18n="download.portable.x64">ZIP (64-bit)</a>
+          <a href="/audiokonverter/downloads/AudioConverter-Portable-x86.zip" class="download-btn secondary" data-i18n="download.portable.x86">ZIP (32-bit)</a>
+        </div>
+      </div>
+    </div>
+
+    <p class="download-note" data-i18n="download.note">Alle Downloads sind virenfrei und digital signiert.</p>
+  </div>
+</section>
+
+<!-- =============================================================
+     TOOL CARDS — Statisches HTML (aus ToolCards.vue)
+     ============================================================= -->
+<section class="full-width-section" data-reveal>
+  <div class="container">
+    <h2 class="landing-section-title" data-i18n="tools.title">Unsere Audio-Tools</h2>
+    <div class="section-divider"></div>
+
+    <div class="tools-grid">
+      <a href="https://kodinitools.com/visualizer/"
+         class="tool-card glass-card"
+         target="_blank"
+         rel="noopener noreferrer">
+        <h3 class="tool-card-title" data-i18n="tools.visualizer.title">Audio Visualizer</h3>
+        <p class="tool-card-desc" data-i18n="tools.visualizer.description">Verwandle deine Musik in ein visuelles Erlebnis! Dieses moderne Tool bietet eine professionelle Echtzeit-Visualisierung deiner Audiodaten direkt im Browser.</p>
+        <span class="tool-card-link"><span data-i18n="tools.visitTool">Zum Tool</span> &rarr;</span>
+      </a>
+
+      <a href="https://kodinitools.com/audionormalisierer/"
+         class="tool-card glass-card"
+         target="_blank"
+         rel="noopener noreferrer">
+        <h3 class="tool-card-title" data-i18n="tools.normalizer.title">Audio Normalisierer</h3>
+        <p class="tool-card-desc" data-i18n="tools.normalizer.description">Mit dem Audio Normalizer bringst du deine gesamte Musikbibliothek auf ein einheitliches Lautstärkeniveau, ohne die Klangqualität zu beeinträchtigen.</p>
+        <span class="tool-card-link"><span data-i18n="tools.visitTool">Zum Tool</span> &rarr;</span>
+      </a>
+
+      <a href="https://kodinitools.com/equaliser19/"
+         class="tool-card glass-card"
+         target="_blank"
+         rel="noopener noreferrer">
+        <h3 class="tool-card-title" data-i18n="tools.equalizer.title">Equalizer 19</h3>
+        <p class="tool-card-desc" data-i18n="tools.equalizer.description">Der Equalizer 19 ist ein leistungsstarker 19-Band-Equalizer, der auf der Web Audio API basiert und eine chirurgisch genaue Frequenzkontrolle ermöglicht.</p>
+        <span class="tool-card-link"><span data-i18n="tools.visitTool">Zum Tool</span> &rarr;</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- =============================================================
+     FAQ SECTION — Statisches HTML + Vanilla JS Accordion
+     ============================================================= -->
+<section class="full-width-section full-width-section--alt" id="faq" data-reveal>
+  <div class="container">
+    <h2 class="landing-section-title" data-i18n="faq.title">FAQ</h2>
+    <div class="section-divider"></div>
+
+    <div class="faq-grid" id="faq-grid">
+
+      <div class="faq-item" data-faq="formats">
+        <div class="faq-question">
+          <span data-i18n="faq.questions.formats.q">Welche Formate werden unterstützt?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <p data-i18n="faq.questions.formats.a">MP3, WAV, FLAC, OGG, AAC und M4A werden unterstützt.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-faq="quality">
+        <div class="faq-question">
+          <span data-i18n="faq.questions.quality.q">Was bedeutet die Qualitätseinstellung?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <p data-i18n="faq.questions.quality.a">Höhere Qualität = besserer Sound, größere Datei.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-faq="privacy">
+        <div class="faq-question">
+          <span data-i18n="faq.questions.privacy.q">Sind meine Dateien sicher?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <p data-i18n="faq.questions.privacy.a">Ja! Dateien werden nach Konvertierung automatisch gelöscht.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-faq="batch">
+        <div class="faq-question">
+          <span data-i18n="faq.questions.batch.q">Kann ich mehrere Dateien gleichzeitig konvertieren?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <p data-i18n="faq.questions.batch.a">Klar! Einfach mehrere Dateien hochladen.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== SSI: Footer & Cookie Banner ===== -->
+<!--#include virtual="/partials/footer.html" -->
+<!--#include virtual="/partials/cookie-banner.html" -->
+
+<!-- =============================================================
+     PAGE-LEVEL i18n + INTERACTION SCRIPT
+     - Übersetzt alle [data-i18n] Elemente der statischen Sektionen
+     - FAQ Accordion (Vanilla JS)
+     - Scroll Reveal (IntersectionObserver)
+     - Anchor-Nav Active State (folgt Scroll-Position)
+     - locale-changed Event (kein page reload)
+     ============================================================= -->
+<script>
+(function() {
+  'use strict';
+
+  /* ---------------------------------------------------------------
+     TRANSLATION DATA (nur statische Landing-Sektionen)
+     Vue-Komponenten nutzen weiterhin vue-i18n.
+     --------------------------------------------------------------- */
+  var translations = {
+    de: {
+      nav: { anchorApp: 'App', anchorFeatures: 'Features', anchorDownload: 'Download', anchorFaq: 'FAQ' },
+      landing: {
+        features: {
+          title: 'Features',
+          formats: { title: '6 Audio-Formate', desc: 'MP3, WAV, FLAC, OGG, AAC und M4A werden vollständig unterstützt.' },
+          quality: { title: 'Qualitätskontrolle', desc: 'Von niedrig bis Maximum \u2013 wähle die Qualität, die zu dir passt.' },
+          privacy: { title: '100% Privatsphäre', desc: 'Dateien werden nach Konvertierung automatisch gelöscht.' },
+          batch: { title: 'Batch-Konvertierung', desc: 'Mehrere Dateien gleichzeitig konvertieren \u2013 schnell und effizient.' }
+        }
+      },
+      download: {
+        title: 'Download',
+        subtitle: 'Laden Sie die Desktop-Version herunter',
+        installer: { title: 'Windows Installer', description: 'Empfohlen für die meisten Benutzer. Automatische Installation mit Startmenü-Einträgen.', exe: 'Download (.exe)' },
+        portable: { title: 'Portable Version', description: 'Keine Installation erforderlich. Ideal für USB-Sticks oder eingeschränkte Systeme.', x64: 'ZIP (64-bit)', x86: 'ZIP (32-bit)' },
+        note: 'Alle Downloads sind virenfrei und digital signiert.'
+      },
+      tools: {
+        title: 'Unsere Audio-Tools', visitTool: 'Zum Tool',
+        visualizer: { title: 'Audio Visualizer', description: 'Verwandle deine Musik in ein visuelles Erlebnis! Dieses moderne Tool bietet eine professionelle Echtzeit-Visualisierung deiner Audiodaten direkt im Browser.' },
+        normalizer: { title: 'Audio Normalisierer', description: 'Mit dem Audio Normalizer bringst du deine gesamte Musikbibliothek auf ein einheitliches Lautstärkeniveau, ohne die Klangqualität zu beeinträchtigen.' },
+        equalizer: { title: 'Equalizer 19', description: 'Der Equalizer 19 ist ein leistungsstarker 19-Band-Equalizer, der auf der Web Audio API basiert und eine chirurgisch genaue Frequenzkontrolle ermöglicht.' }
+      },
+      faq: {
+        title: 'FAQ',
+        questions: {
+          formats: { q: 'Welche Formate werden unterstützt?', a: 'MP3, WAV, FLAC, OGG, AAC und M4A werden unterstützt.' },
+          quality: { q: 'Was bedeutet die Qualitätseinstellung?', a: 'Höhere Qualität = besserer Sound, größere Datei.' },
+          privacy: { q: 'Sind meine Dateien sicher?', a: 'Ja! Dateien werden nach Konvertierung automatisch gelöscht.' },
+          batch: { q: 'Kann ich mehrere Dateien gleichzeitig konvertieren?', a: 'Klar! Einfach mehrere Dateien hochladen.' }
+        }
+      }
+    },
+    en: {
+      nav: { anchorApp: 'App', anchorFeatures: 'Features', anchorDownload: 'Download', anchorFaq: 'FAQ' },
+      landing: {
+        features: {
+          title: 'Features',
+          formats: { title: '6 Audio Formats', desc: 'MP3, WAV, FLAC, OGG, AAC and M4A are fully supported.' },
+          quality: { title: 'Quality Control', desc: 'From low to maximum \u2013 choose the quality that suits you.' },
+          privacy: { title: '100% Privacy', desc: 'Files are automatically deleted after conversion.' },
+          batch: { title: 'Batch Conversion', desc: 'Convert multiple files at once \u2013 fast and efficient.' }
+        }
+      },
+      download: {
+        title: 'Download',
+        subtitle: 'Download the desktop version',
+        installer: { title: 'Windows Installer', description: 'Recommended for most users. Automatic installation with start menu entries.', exe: 'Download (.exe)' },
+        portable: { title: 'Portable Version', description: 'No installation required. Ideal for USB drives or restricted systems.', x64: 'ZIP (64-bit)', x86: 'ZIP (32-bit)' },
+        note: 'All downloads are virus-free and digitally signed.'
+      },
+      tools: {
+        title: 'Our Audio Tools', visitTool: 'Open Tool',
+        visualizer: { title: 'Audio Visualizer', description: 'Turn your music into a visual experience! This modern tool offers professional real-time visualization of your audio data right in the browser.' },
+        normalizer: { title: 'Audio Normalizer', description: 'With the Audio Normalizer, bring your entire music library to a consistent volume level without compromising sound quality.' },
+        equalizer: { title: 'Equalizer 19', description: 'Equalizer 19 is a powerful 19-band equalizer based on the Web Audio API that enables surgically precise frequency control.' }
+      },
+      faq: {
+        title: 'FAQ',
+        questions: {
+          formats: { q: 'Which formats are supported?', a: 'MP3, WAV, FLAC, OGG, AAC and M4A are supported.' },
+          quality: { q: 'What does the quality setting mean?', a: 'Higher quality = better sound, larger file.' },
+          privacy: { q: 'Are my files safe?', a: 'Yes! Files are automatically deleted after conversion.' },
+          batch: { q: 'Can I convert multiple files at once?', a: 'Sure! Just upload multiple files.' }
+        }
+      }
+    }
+  };
+
+  function getNestedValue(obj, keyPath) {
+    return keyPath.split('.').reduce(function(o, k) {
+      return o && o[k] !== undefined ? o[k] : null;
+    }, obj);
+  }
+
+  function getLocale() {
+    return localStorage.getItem('locale') || 'de';
+  }
+
+  /* ---------------------------------------------------------------
+     APPLY PAGE TRANSLATIONS
+     Übersetzt alle [data-i18n] Elemente (statische Sektionen).
+     Vue-Komponenten übersetzen sich selbst via vue-i18n.
+     --------------------------------------------------------------- */
+  function applyPageTranslations() {
+    var locale = getLocale();
+    var t = translations[locale] || translations.de;
+
+    document.querySelectorAll('[data-i18n]').forEach(function(el) {
+      var key = el.getAttribute('data-i18n');
+      var value = getNestedValue(t, key);
+      if (value !== null) {
+        el.textContent = value;
+      }
+    });
+
+    document.documentElement.lang = locale;
+  }
+
+  /* ---------------------------------------------------------------
+     FAQ ACCORDION (Vanilla JS)
+     --------------------------------------------------------------- */
+  function initFaqAccordion() {
+    var grid = document.getElementById('faq-grid');
+    if (!grid) return;
+
+    grid.addEventListener('click', function(e) {
+      var item = e.target.closest('.faq-item');
+      if (!item) return;
+
+      var wasActive = item.classList.contains('active');
+
+      grid.querySelectorAll('.faq-item.active').forEach(function(el) {
+        el.classList.remove('active');
+        el.querySelector('.faq-toggle').textContent = '+';
+      });
+
+      if (!wasActive) {
+        item.classList.add('active');
+        item.querySelector('.faq-toggle').textContent = '\u2212';
+      }
+    });
+  }
+
+  /* ---------------------------------------------------------------
+     SCROLL REVEAL (IntersectionObserver)
+     Für statische Sektionen (Features, Download, Tools, FAQ)
+     --------------------------------------------------------------- */
+  function initScrollReveal() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var delay = entry.target.getAttribute('data-reveal-delay');
+          if (delay) {
+            setTimeout(function() { entry.target.classList.add('revealed'); }, parseInt(delay, 10));
+          } else {
+            entry.target.classList.add('revealed');
+          }
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('[data-reveal]').forEach(function(el) {
+      observer.observe(el);
+    });
+  }
+
+  /* ---------------------------------------------------------------
+     ANCHOR NAV — Active state folgt Scroll-Position
+     --------------------------------------------------------------- */
+  function initAnchorNav() {
+    var nav = document.getElementById('anchor-nav');
+    var links = document.querySelectorAll('.anchor-nav__link[data-anchor]');
+    var sections = [];
+
+    links.forEach(function(link) {
+      var id = link.getAttribute('data-anchor');
+      var section = document.getElementById(id);
+      if (section) sections.push({ id: id, el: section, link: link });
+    });
+
+    if (!sections.length) return;
+
+    function updateNav() {
+      var scrollY = window.scrollY;
+
+      if (scrollY > 20) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+
+      // Welche Sektion ist gerade sichtbar?
+      var activeId = sections[0].id;
+      var offset = 140;
+
+      for (var i = sections.length - 1; i >= 0; i--) {
+        if (sections[i].el.getBoundingClientRect().top <= offset) {
+          activeId = sections[i].id;
+          break;
+        }
+      }
+
+      links.forEach(function(link) {
+        if (link.getAttribute('data-anchor') === activeId) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+    }
+
+    var ticking = false;
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        requestAnimationFrame(function() {
+          updateNav();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+
+    updateNav();
+  }
+
+  /* ---------------------------------------------------------------
+     EVENT LISTENERS
+     locale-changed: Nav speichert locale → dispatcht Event
+     Dieses Script + Footer + Cookie-Banner empfangen & übersetzen
+     --------------------------------------------------------------- */
+  window.addEventListener('locale-changed', function() {
+    applyPageTranslations();
+  });
+
+  window.addEventListener('language-changed', function(e) {
+    if (e.detail && e.detail.lang) {
+      localStorage.setItem('locale', e.detail.lang);
+    }
+    applyPageTranslations();
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    applyPageTranslations();
+    initFaqAccordion();
+    initScrollReveal();
+    initAnchorNav();
+  });
+
+})();
+</script>
+
 </body>
 </html>
