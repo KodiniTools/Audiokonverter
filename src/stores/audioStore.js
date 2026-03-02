@@ -230,34 +230,36 @@ export const useAudioStore = defineStore('audio', () => {
     if (isConverting.value) return
 
     isConverting.value = true
-    const pendingFiles = audioFiles.value.filter(f => f.status === 'pending' || f.status === 'error')
+    try {
+      const pendingFiles = audioFiles.value.filter(f => f.status === 'pending' || f.status === 'error')
 
-    // Separate local and remote files
-    const localFiles = pendingFiles.filter(f => shouldProcessLocally(f.file))
-    const remoteFiles = pendingFiles.filter(f => !shouldProcessLocally(f.file))
+      // Separate local and remote files
+      const localFiles = pendingFiles.filter(f => shouldProcessLocally(f.file))
+      const remoteFiles = pendingFiles.filter(f => !shouldProcessLocally(f.file))
 
-    // Pre-load WASM if needed for local files
-    if (localFiles.length > 0 && !wasmReady.value) {
-      try {
-        await preloadWasm()
-      } catch {
-        // All local files fallback to remote
-        remoteFiles.push(...localFiles)
-        localFiles.length = 0
+      // Pre-load WASM if needed for local files
+      if (localFiles.length > 0 && !wasmReady.value) {
+        try {
+          await preloadWasm()
+        } catch {
+          // All local files fallback to remote
+          remoteFiles.push(...localFiles)
+          localFiles.length = 0
+        }
       }
-    }
 
-    // Process local files first (no upload needed = instant start)
-    for (const fileData of localFiles) {
-      await convertFileLocally(fileData)
-    }
+      // Process local files first (no upload needed = instant start)
+      for (const fileData of localFiles) {
+        await convertFileLocally(fileData)
+      }
 
-    // Then process remote files
-    for (const fileData of remoteFiles) {
-      await convertFileRemotely(fileData)
+      // Then process remote files
+      for (const fileData of remoteFiles) {
+        await convertFileRemotely(fileData)
+      }
+    } finally {
+      isConverting.value = false
     }
-
-    isConverting.value = false
   }
 
   async function downloadFile(fileData) {
