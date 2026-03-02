@@ -27,7 +27,9 @@ export async function loadFFmpeg() {
     while (loading) {
       await new Promise(resolve => setTimeout(resolve, 100))
     }
-    return ffmpeg
+    // If the other load succeeded, return the instance; otherwise retry
+    if (loaded) return ffmpeg
+    // Fall through to retry loading from scratch
   }
 
   loading = true
@@ -41,11 +43,17 @@ export async function loadFFmpeg() {
       }
     })
 
+    const LOAD_TIMEOUT = 30000 // 30s timeout for CDN fetch
     const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd'
-    await ffmpeg.load({
-      coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-      wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm')
-    })
+    await Promise.race([
+      ffmpeg.load({
+        coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+        wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm')
+      }),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('FFmpeg.wasm Laden Timeout')), LOAD_TIMEOUT)
+      )
+    ])
 
     loaded = true
     return ffmpeg

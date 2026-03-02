@@ -91,6 +91,7 @@ export const useAudioStore = defineStore('audio', () => {
     audioFiles.value = []
     convertedFiles.value = []
     conversionProgress.value = {}
+    isConverting.value = false
   }
 
   function updateFileProgress(fileId, progress, status = null) {
@@ -107,14 +108,20 @@ export const useAudioStore = defineStore('audio', () => {
     updateFileProgress(fileData.id, 0, 'converting')
 
     try {
-      const blob = await convertLocally(
-        fileData.file,
-        currentFormat.value,
-        currentQuality.value,
-        (progress) => {
-          updateFileProgress(fileData.id, Math.min(progress, 99))
-        }
-      )
+      const LOCAL_TIMEOUT = 120000 // 2 minutes timeout for local conversion
+      const blob = await Promise.race([
+        convertLocally(
+          fileData.file,
+          currentFormat.value,
+          currentQuality.value,
+          (progress) => {
+            updateFileProgress(fileData.id, Math.min(progress, 99))
+          }
+        ),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Lokale Konvertierung Timeout')), LOCAL_TIMEOUT)
+        )
+      ])
 
       updateFileProgress(fileData.id, 100, 'completed')
       const file = audioFiles.value.find(f => f.id === fileData.id)
@@ -250,12 +257,30 @@ export const useAudioStore = defineStore('audio', () => {
 
       // Process local files first (no upload needed = instant start)
       for (const fileData of localFiles) {
-        await convertFileLocally(fileData)
+        try {
+          await convertFileLocally(fileData)
+        } catch (error) {
+          console.error('Unerwarteter Fehler bei lokaler Konvertierung:', error)
+          const file = audioFiles.value.find(f => f.id === fileData.id)
+          if (file && file.status === 'converting') {
+            file.status = 'error'
+            file.error = error.message || 'Konvertierung fehlgeschlagen'
+          }
+        }
       }
 
       // Then process remote files
       for (const fileData of remoteFiles) {
-        await convertFileRemotely(fileData)
+        try {
+          await convertFileRemotely(fileData)
+        } catch (error) {
+          console.error('Unerwarteter Fehler bei Server-Konvertierung:', error)
+          const file = audioFiles.value.find(f => f.id === fileData.id)
+          if (file && file.status === 'converting') {
+            file.status = 'error'
+            file.error = error.message || 'Konvertierung fehlgeschlagen'
+          }
+        }
       }
     } finally {
       isConverting.value = false
