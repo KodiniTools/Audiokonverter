@@ -91,6 +91,7 @@ export const useAudioStore = defineStore('audio', () => {
     audioFiles.value = []
     convertedFiles.value = []
     conversionProgress.value = {}
+    isConverting.value = false
   }
 
   function updateFileProgress(fileId, progress, status = null) {
@@ -239,10 +240,9 @@ export const useAudioStore = defineStore('audio', () => {
 
       // Pre-load WASM if needed for local files
       if (localFiles.length > 0 && !wasmReady.value) {
-        try {
-          await preloadWasm()
-        } catch {
-          // All local files fallback to remote
+        await preloadWasm()
+        // preloadWasm swallows errors — check if it actually succeeded
+        if (!wasmReady.value) {
           remoteFiles.push(...localFiles)
           localFiles.length = 0
         }

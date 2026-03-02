@@ -2,11 +2,15 @@ import { FFmpeg } from '@ffmpeg/ffmpeg'
 import { fetchFile, toBlobURL } from '@ffmpeg/util'
 
 const WASM_THRESHOLD = 20 * 1024 * 1024 // 20MB
+const LOAD_TIMEOUT = 15000 // 15s for loading WASM from CDN
+const EXEC_TIMEOUT = 120000 // 2min for conversion
 
 let ffmpeg = null
 let loaded = false
 let loading = false
 let currentProgressHandler = null
+let cachedCoreURL = null
+let cachedWasmURL = null
 
 /**
  * Determines whether a file should be processed locally via WebAssembly.
@@ -17,24 +21,41 @@ export function shouldProcessLocally(file) {
 }
 
 /**
+ * Race a promise against a timeout. Rejects with the given message on timeout.
+ */
+function withTimeout(promise, ms, msg) {
+  let timer
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error(msg)), ms)
+    })
+  ]).finally(() => clearTimeout(timer))
+}
+
+/**
  * Initializes FFmpeg.wasm (v0.12+ API). Loads core + wasm from CDN as blob URLs
- * to avoid CORS/SharedArrayBuffer issues.
+ * to avoid CORS/SharedArrayBuffer issues. All steps are guarded by timeouts.
  */
 export async function loadFFmpeg() {
   if (loaded) return ffmpeg
+
   if (loading) {
-    // Wait for existing load to finish
+    // Another call is already loading — wait with a deadline
+    const deadline = Date.now() + LOAD_TIMEOUT
     while (loading) {
+      if (Date.now() > deadline) throw new Error('wasm_load_timeout')
       await new Promise(resolve => setTimeout(resolve, 100))
     }
-    return ffmpeg
+    // The other caller finished — check if it succeeded
+    if (loaded) return ffmpeg
+    // It failed; fall through to try ourselves
   }
 
   loading = true
   try {
     ffmpeg = new FFmpeg()
 
-    // Single progress listener that delegates to the current handler
     ffmpeg.on('progress', ({ progress }) => {
       if (currentProgressHandler) {
         currentProgressHandler(Math.round(progress * 100))
@@ -42,15 +63,28 @@ export async function loadFFmpeg() {
     })
 
     const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd'
-    await ffmpeg.load({
-      coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-      wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm')
-    })
+
+    if (!cachedCoreURL) {
+      cachedCoreURL = await withTimeout(
+        toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+        LOAD_TIMEOUT, 'wasm_core_fetch_timeout'
+      )
+    }
+    if (!cachedWasmURL) {
+      cachedWasmURL = await withTimeout(
+        toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+        LOAD_TIMEOUT, 'wasm_binary_fetch_timeout'
+      )
+    }
+
+    await withTimeout(
+      ffmpeg.load({ coreURL: cachedCoreURL, wasmURL: cachedWasmURL }),
+      LOAD_TIMEOUT, 'wasm_init_timeout'
+    )
 
     loaded = true
     return ffmpeg
   } catch (e) {
-    // Reset state so next call retries from scratch
     ffmpeg = null
     loaded = false
     throw e
@@ -138,11 +172,12 @@ function buildFFmpegArgs(inputName, outputName, format, quality) {
 /**
  * Converts an audio file locally using FFmpeg.wasm.
  * Returns a Blob with the converted audio data.
+ * All operations are guarded by timeouts — a hang will throw, not freeze.
  */
 export async function convertLocally(file, targetFormat, quality, onProgress) {
   const instance = await loadFFmpeg()
+  if (!instance) throw new Error('wasm_not_loaded')
 
-  // Set progress handler for THIS conversion (replaces any previous handler)
   setProgressHandler(onProgress || null)
 
   const inputExt = file.name.split('.').pop() || 'mp3'
@@ -150,15 +185,13 @@ export async function convertLocally(file, targetFormat, quality, onProgress) {
   const outputName = `output.${targetFormat}`
 
   try {
-    // Write input file to virtual filesystem
     await instance.writeFile(inputName, await fetchFile(file))
 
-    // Run conversion
     const args = buildFFmpegArgs(inputName, outputName, targetFormat, quality)
-    await instance.exec(args)
+    await withTimeout(instance.exec(args), EXEC_TIMEOUT, 'wasm_exec_timeout')
 
-    // Read output
     const data = await instance.readFile(outputName)
+    if (!data || data.length === 0) throw new Error('wasm_empty_output')
 
     const mimeTypes = {
       mp3: 'audio/mpeg',
@@ -174,7 +207,6 @@ export async function convertLocally(file, targetFormat, quality, onProgress) {
 
     return new Blob([data.buffer], { type: mimeTypes[targetFormat] || 'audio/mpeg' })
   } finally {
-    // Always clean up virtual filesystem, even on error
     setProgressHandler(null)
     try { await instance.deleteFile(inputName) } catch (_) {}
     try { await instance.deleteFile(outputName) } catch (_) {}
