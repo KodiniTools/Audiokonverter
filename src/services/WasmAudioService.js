@@ -6,6 +6,7 @@ const WASM_THRESHOLD = 20 * 1024 * 1024 // 20MB
 let ffmpeg = null
 let loaded = false
 let loading = false
+let currentProgressHandler = null
 
 /**
  * Determines whether a file should be processed locally via WebAssembly.
@@ -19,7 +20,7 @@ export function shouldProcessLocally(file) {
  * Initializes FFmpeg.wasm (v0.12+ API). Loads core + wasm from CDN as blob URLs
  * to avoid CORS/SharedArrayBuffer issues.
  */
-export async function loadFFmpeg(onProgress) {
+export async function loadFFmpeg() {
   if (loaded) return ffmpeg
   if (loading) {
     // Wait for existing load to finish
@@ -33,11 +34,12 @@ export async function loadFFmpeg(onProgress) {
   try {
     ffmpeg = new FFmpeg()
 
-    if (onProgress) {
-      ffmpeg.on('progress', ({ progress }) => {
-        onProgress(Math.round(progress * 100))
-      })
-    }
+    // Single progress listener that delegates to the current handler
+    ffmpeg.on('progress', ({ progress }) => {
+      if (currentProgressHandler) {
+        currentProgressHandler(Math.round(progress * 100))
+      }
+    })
 
     const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd'
     await ffmpeg.load({
@@ -47,16 +49,28 @@ export async function loadFFmpeg(onProgress) {
 
     loaded = true
     return ffmpeg
+  } catch (e) {
+    // Reset state so next call retries from scratch
+    ffmpeg = null
+    loaded = false
+    throw e
   } finally {
     loading = false
   }
 }
 
 /**
+ * Sets the current progress callback for FFmpeg operations.
+ */
+export function setProgressHandler(handler) {
+  currentProgressHandler = handler
+}
+
+/**
  * Build FFmpeg arguments based on target format and quality (1-10).
  */
 function buildFFmpegArgs(inputName, outputName, format, quality) {
-  const args = ['-i', inputName]
+  const args = ['-y', '-i', inputName]
 
   switch (format) {
     case 'mp3': {
@@ -126,37 +140,43 @@ function buildFFmpegArgs(inputName, outputName, format, quality) {
  * Returns a Blob with the converted audio data.
  */
 export async function convertLocally(file, targetFormat, quality, onProgress) {
-  const instance = await loadFFmpeg(onProgress)
+  const instance = await loadFFmpeg()
+
+  // Set progress handler for THIS conversion (replaces any previous handler)
+  setProgressHandler(onProgress || null)
 
   const inputExt = file.name.split('.').pop() || 'mp3'
   const inputName = `input.${inputExt}`
   const outputName = `output.${targetFormat}`
 
-  // Write input file to virtual filesystem
-  await instance.writeFile(inputName, await fetchFile(file))
+  try {
+    // Write input file to virtual filesystem
+    await instance.writeFile(inputName, await fetchFile(file))
 
-  // Run conversion
-  const args = buildFFmpegArgs(inputName, outputName, targetFormat, quality)
-  await instance.exec(args)
+    // Run conversion
+    const args = buildFFmpegArgs(inputName, outputName, targetFormat, quality)
+    await instance.exec(args)
 
-  // Read output
-  const data = await instance.readFile(outputName)
+    // Read output
+    const data = await instance.readFile(outputName)
 
-  // Cleanup virtual filesystem
-  await instance.deleteFile(inputName)
-  await instance.deleteFile(outputName)
+    const mimeTypes = {
+      mp3: 'audio/mpeg',
+      wav: 'audio/wav',
+      flac: 'audio/flac',
+      ogg: 'audio/ogg',
+      aac: 'audio/aac',
+      m4a: 'audio/mp4',
+      opus: 'audio/opus',
+      aiff: 'audio/aiff',
+      wma: 'audio/x-ms-wma'
+    }
 
-  const mimeTypes = {
-    mp3: 'audio/mpeg',
-    wav: 'audio/wav',
-    flac: 'audio/flac',
-    ogg: 'audio/ogg',
-    aac: 'audio/aac',
-    m4a: 'audio/mp4',
-    opus: 'audio/opus',
-    aiff: 'audio/aiff',
-    wma: 'audio/x-ms-wma'
+    return new Blob([data.buffer], { type: mimeTypes[targetFormat] || 'audio/mpeg' })
+  } finally {
+    // Always clean up virtual filesystem, even on error
+    setProgressHandler(null)
+    try { await instance.deleteFile(inputName) } catch (_) {}
+    try { await instance.deleteFile(outputName) } catch (_) {}
   }
-
-  return new Blob([data.buffer], { type: mimeTypes[targetFormat] || 'audio/mpeg' })
 }
