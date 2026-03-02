@@ -13,13 +13,13 @@
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Audio Konverter - Konvertiere deine Audiodateien schnell und einfach. MP3, WAV, FLAC, OGG, AAC, M4A. Kostenlos, sicher und direkt im Browser.">
-  <meta name="keywords" content="audio, converter, mp3, wav, flac, ogg, aac, m4a, konverter, online, kostenlos">
+  <meta name="description" content="Audio Konverter - Konvertiere deine Audiodateien schnell und einfach. MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF, WMA. Kostenlos, sicher und direkt im Browser.">
+  <meta name="keywords" content="audio, converter, mp3, wav, flac, ogg, aac, m4a, opus, aiff, wma, konverter, online, kostenlos">
   <meta name="author" content="KodiniTools">
 
   <!-- Open Graph -->
   <meta property="og:title" content="Audio Konverter - Schnell & Einfach">
-  <meta property="og:description" content="Konvertiere deine Audiodateien schnell und einfach. MP3, WAV, FLAC, OGG, AAC, M4A.">
+  <meta property="og:description" content="Konvertiere deine Audiodateien schnell und einfach. MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF, WMA.">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="de_DE">
   <meta property="og:locale:alternate" content="en_US">
@@ -38,13 +38,34 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "WebApplication",
+    "@type": "SoftwareApplication",
     "name": "Audio Konverter",
-    "description": "Konvertiere deine Audiodateien schnell und einfach zwischen MP3, WAV, FLAC, OGG, AAC und M4A.",
+    "description": "Konvertiere deine Audiodateien schnell und einfach zwischen MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF und WMA. Kleine Dateien werden direkt im Browser verarbeitet.",
     "applicationCategory": "MultimediaApplication",
+    "applicationSubCategory": "Audio Converter",
     "operatingSystem": "Web, Windows",
+    "browserRequirements": "Requires WebAssembly support",
+    "softwareVersion": "2.0.0",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
-    "featureList": ["MP3", "WAV", "FLAC", "OGG", "AAC", "M4A", "Batch Conversion", "Quality Control"]
+    "featureList": [
+      "MP3 Conversion", "WAV Conversion", "FLAC Conversion",
+      "OGG Conversion", "AAC Conversion", "M4A Conversion",
+      "OPUS Conversion", "AIFF Conversion", "WMA Conversion",
+      "Browser-based Processing (WebAssembly)",
+      "Batch Conversion", "Quality Control", "Drag & Drop Upload"
+    ],
+    "potentialAction": {
+      "@type": "ConvertAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://kodinitools.com/audiokonverter/",
+        "actionPlatform": ["http://schema.org/DesktopWebPlatform", "http://schema.org/MobileWebPlatform"]
+      },
+      "object": {
+        "@type": "AudioObject",
+        "encodingFormat": ["audio/mpeg", "audio/wav", "audio/flac", "audio/ogg", "audio/aac", "audio/mp4", "audio/opus", "audio/aiff", "audio/x-ms-wma"]
+      }
+    }
   }
   </script>
 
@@ -381,8 +402,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <div class="feature-card glass-card">
         <div class="feature-icon" aria-hidden="true">&#127925;</div>
-        <h3 class="feature-card-title" data-i18n="landing.features.formats.title">6 Audio-Formate</h3>
-        <p class="feature-card-desc" data-i18n="landing.features.formats.desc">MP3, WAV, FLAC, OGG, AAC und M4A werden vollständig unterstützt.</p>
+        <h3 class="feature-card-title" data-i18n="landing.features.formats.title">9 Audio-Formate</h3>
+        <p class="feature-card-desc" data-i18n="landing.features.formats.desc">MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF und WMA werden vollständig unterstützt.</p>
       </div>
 
       <div class="feature-card glass-card">
@@ -504,7 +525,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <span class="faq-toggle">+</span>
         </div>
         <div class="faq-answer">
-          <p data-i18n="faq.questions.formats.a">MP3, WAV, FLAC, OGG, AAC und M4A werden unterstützt.</p>
+          <p data-i18n="faq.questions.formats.a">MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF und WMA werden unterstützt.</p>
         </div>
       </div>
 
@@ -568,9 +589,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       landing: {
         features: {
           title: 'Features',
-          formats: { title: '6 Audio-Formate', desc: 'MP3, WAV, FLAC, OGG, AAC und M4A werden vollständig unterstützt.' },
+          formats: { title: '9 Audio-Formate', desc: 'MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF und WMA werden vollständig unterstützt.' },
           quality: { title: 'Qualitätskontrolle', desc: 'Von niedrig bis Maximum \u2013 wähle die Qualität, die zu dir passt.' },
-          privacy: { title: '100% Privatsphäre', desc: 'Dateien werden nach Konvertierung automatisch gelöscht.' },
+          privacy: { title: '100% Privatsphäre', desc: 'Kleine Dateien werden direkt im Browser konvertiert. Größere Dateien werden nach Konvertierung automatisch gelöscht.' },
           batch: { title: 'Batch-Konvertierung', desc: 'Mehrere Dateien gleichzeitig konvertieren \u2013 schnell und effizient.' }
         }
       },
@@ -590,9 +611,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       faq: {
         title: 'FAQ',
         questions: {
-          formats: { q: 'Welche Formate werden unterstützt?', a: 'MP3, WAV, FLAC, OGG, AAC und M4A werden unterstützt.' },
+          formats: { q: 'Welche Formate werden unterstützt?', a: 'MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF und WMA werden unterstützt.' },
           quality: { q: 'Was bedeutet die Qualitätseinstellung?', a: 'Höhere Qualität = besserer Sound, größere Datei.' },
-          privacy: { q: 'Sind meine Dateien sicher?', a: 'Ja! Dateien werden nach Konvertierung automatisch gelöscht.' },
+          privacy: { q: 'Sind meine Dateien sicher?', a: 'Ja! Kleine Dateien (unter 20 MB) werden direkt im Browser konvertiert und verlassen nie dein Gerät. Größere Dateien werden sicher auf dem Server verarbeitet und nach der Konvertierung automatisch gelöscht.' },
           batch: { q: 'Kann ich mehrere Dateien gleichzeitig konvertieren?', a: 'Klar! Einfach mehrere Dateien hochladen.' }
         }
       }
@@ -602,9 +623,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       landing: {
         features: {
           title: 'Features',
-          formats: { title: '6 Audio Formats', desc: 'MP3, WAV, FLAC, OGG, AAC and M4A are fully supported.' },
+          formats: { title: '9 Audio Formats', desc: 'MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF and WMA are fully supported.' },
           quality: { title: 'Quality Control', desc: 'From low to maximum \u2013 choose the quality that suits you.' },
-          privacy: { title: '100% Privacy', desc: 'Files are automatically deleted after conversion.' },
+          privacy: { title: '100% Privacy', desc: 'Small files are converted directly in your browser. Larger files are automatically deleted after conversion.' },
           batch: { title: 'Batch Conversion', desc: 'Convert multiple files at once \u2013 fast and efficient.' }
         }
       },
@@ -624,9 +645,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       faq: {
         title: 'FAQ',
         questions: {
-          formats: { q: 'Which formats are supported?', a: 'MP3, WAV, FLAC, OGG, AAC and M4A are supported.' },
+          formats: { q: 'Which formats are supported?', a: 'MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF and WMA are supported.' },
           quality: { q: 'What does the quality setting mean?', a: 'Higher quality = better sound, larger file.' },
-          privacy: { q: 'Are my files safe?', a: 'Yes! Files are automatically deleted after conversion.' },
+          privacy: { q: 'Are my files safe?', a: 'Yes! Small files (under 20 MB) are converted directly in your browser and never leave your device. Larger files are securely processed on our server and automatically deleted after conversion.' },
           batch: { q: 'Can I convert multiple files at once?', a: 'Sure! Just upload multiple files.' }
         }
       }

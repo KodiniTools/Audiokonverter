@@ -11,7 +11,7 @@ export default {
   upload: {
     title: 'Upload',
     dragDrop: 'Dateien hierher ziehen oder klicken',
-    supportedFormats: 'MP3 • WAV • FLAC • OGG • AAC • M4A',
+    supportedFormats: 'MP3 • WAV • FLAC • OGG • AAC • M4A • OPUS • AIFF • WMA',
     selectFiles: 'Dateien wählen',
     filesSelected: '{count} Datei | {count} Dateien'
   },
@@ -58,7 +58,9 @@ export default {
     error: 'Fehler',
     ready: 'Bereit',
     waiting: 'Wartet...',
-    completedOf: '{completed} von {total} Dateien konvertiert'
+    completedOf: '{completed} von {total} Dateien konvertiert',
+    local: 'Lokal',
+    server: 'Server'
   },
   toast: {
     success: 'Erfolg',
@@ -123,7 +125,7 @@ export default {
     questions: {
       formats: {
         q: 'Welche Formate werden unterstützt?',
-        a: 'MP3, WAV, FLAC, OGG, AAC und M4A werden unterstützt.'
+        a: 'MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF und WMA werden unterstützt.'
       },
       quality: {
         q: 'Was bedeutet die Qualitätseinstellung?',
@@ -131,7 +133,7 @@ export default {
       },
       privacy: {
         q: 'Sind meine Dateien sicher?',
-        a: 'Ja! Dateien werden nach Konvertierung automatisch gelöscht.'
+        a: 'Ja! Kleine Dateien (unter 20 MB) werden direkt in deinem Browser konvertiert und verlassen nie dein Gerät. Größere Dateien werden sicher auf dem Server verarbeitet und nach der Konvertierung automatisch gelöscht.'
       },
       batch: {
         q: 'Kann ich mehrere Dateien gleichzeitig konvertieren?',

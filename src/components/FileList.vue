@@ -33,6 +33,11 @@
           </div>
 
           <div class="file-item-status">
+            <!-- Processing mode badge -->
+            <span v-if="file.status === 'pending'" class="mode-badge" :class="file.processedLocally ? 'local' : 'server'">
+              {{ file.processedLocally ? t('status.local') : t('status.server') }}
+            </span>
+
             <!-- Status Badge -->
             <span v-if="file.status !== 'pending'" class="status-badge" :class="file.status">
               {{ t(`status.${file.status}`) }}
@@ -377,6 +382,29 @@ onUnmounted(() => {
 
 .status-badge.converting {
   background: rgba(1, 79, 153, 0.15);
+  color: var(--primary-color);
+}
+
+.mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 10px;
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.mode-badge.local {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success-color);
+}
+
+.mode-badge.server {
+  background: rgba(1, 79, 153, 0.1);
   color: var(--primary-color);
 }
 

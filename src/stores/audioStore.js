@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import axios from 'axios'
+import { shouldProcessLocally, convertLocally, loadFFmpeg } from '@/services/WasmAudioService'
 
 export const useAudioStore = defineStore('audio', () => {
   // State
@@ -10,25 +11,25 @@ export const useAudioStore = defineStore('audio', () => {
   const currentFormat = ref('mp3')
   const currentQuality = ref(7)
   const conversionProgress = ref({})
+  const wasmReady = ref(false)
+  const wasmLoading = ref(false)
 
   // Computed
   const hasFiles = computed(() => audioFiles.value.length > 0)
   const hasConvertedFiles = computed(() => convertedFiles.value.length > 0)
-  
+
   const fileCount = computed(() => audioFiles.value.length)
   const totalSize = computed(() => {
     return audioFiles.value.reduce((sum, file) => sum + file.size, 0)
   })
 
   // Actions
-  // Helper: Erstellt Download-Namen aus Original-Namen mit neuer Endung
   function getConvertedFileName(originalName, newFormat) {
     const lastDotIndex = originalName.lastIndexOf('.')
     const baseName = lastDotIndex > 0 ? originalName.substring(0, lastDotIndex) : originalName
     return `${baseName}.${newFormat}`
   }
 
-  // Helper: Holt Dateigröße vom Server via HEAD-Request
   async function fetchFileSize(url) {
     try {
       const response = await fetch(url, { method: 'HEAD' })
@@ -53,11 +54,30 @@ export const useAudioStore = defineStore('audio', () => {
       convertedName: null,
       convertedSize: null,
       convertedFormat: null,
+      processedLocally: shouldProcessLocally(file),
       error: null
     }))
-    
+
     audioFiles.value.push(...newFiles)
+
+    // Pre-load FFmpeg.wasm if any file qualifies for local processing
+    if (newFiles.some(f => f.processedLocally) && !wasmReady.value && !wasmLoading.value) {
+      preloadWasm()
+    }
+
     return newFiles
+  }
+
+  async function preloadWasm() {
+    wasmLoading.value = true
+    try {
+      await loadFFmpeg()
+      wasmReady.value = true
+    } catch (err) {
+      console.warn('FFmpeg.wasm konnte nicht geladen werden, Fallback auf Server:', err)
+    } finally {
+      wasmLoading.value = false
+    }
   }
 
   function removeFile(fileId) {
@@ -82,7 +102,44 @@ export const useAudioStore = defineStore('audio', () => {
     conversionProgress.value[fileId] = progress
   }
 
-  async function convertFile(fileData) {
+  // --- Local conversion via FFmpeg.wasm ---
+  async function convertFileLocally(fileData) {
+    updateFileProgress(fileData.id, 0, 'converting')
+
+    try {
+      const blob = await convertLocally(
+        fileData.file,
+        currentFormat.value,
+        currentQuality.value,
+        (progress) => {
+          updateFileProgress(fileData.id, Math.min(progress, 99))
+        }
+      )
+
+      updateFileProgress(fileData.id, 100, 'completed')
+      const file = audioFiles.value.find(f => f.id === fileData.id)
+
+      if (file) {
+        const blobUrl = URL.createObjectURL(blob)
+        file.convertedUrl = blobUrl
+        file.convertedName = getConvertedFileName(fileData.name, currentFormat.value)
+        file.convertedFormat = currentFormat.value.toUpperCase()
+        file.convertedSize = blob.size
+        file.status = 'completed'
+        file.processedLocally = true
+
+        convertedFiles.value.push(file)
+      }
+      return { success: true }
+    } catch (error) {
+      console.error('Lokale Konvertierung fehlgeschlagen:', error)
+      console.log('Fallback auf Server-Konvertierung...')
+      return convertFileRemotely(fileData)
+    }
+  }
+
+  // --- Remote conversion via backend API ---
+  async function convertFileRemotely(fileData) {
     const formData = new FormData()
     formData.append('file', fileData.file)
     formData.append('format', currentFormat.value)
@@ -91,21 +148,16 @@ export const useAudioStore = defineStore('audio', () => {
     updateFileProgress(fileData.id, 0, 'converting')
 
     try {
-      console.log('Starte Konvertierung:', fileData.name)
-      
       const response = await axios.post('/audiokonverter/api/convert', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
-        timeout: 600000, // 10 Minuten Timeout
+        timeout: 600000,
         onUploadProgress: (progressEvent) => {
           const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-          console.log('Upload Progress:', percentCompleted + '%')
           updateFileProgress(fileData.id, Math.min(percentCompleted, 90))
         }
       })
-
-      console.log('Server Response:', response.data)
 
       if (!response.data) {
         throw new Error('Keine Antwort vom Server')
@@ -116,12 +168,10 @@ export const useAudioStore = defineStore('audio', () => {
       }
 
       if (!response.data.url) {
-        console.error('Server Response hat kein url Feld:', response.data)
         throw new Error('Server-Antwort unvollständig: url fehlt')
       }
 
       if (!response.data.filename) {
-        console.error('Server Response hat kein filename Feld:', response.data)
         throw new Error('Server-Antwort unvollständig: filename fehlt')
       }
 
@@ -129,28 +179,20 @@ export const useAudioStore = defineStore('audio', () => {
       const file = audioFiles.value.find(f => f.id === fileData.id)
 
       if (file) {
-        // Verwende url statt output
         const urlPath = response.data.url.startsWith('/')
           ? response.data.url
           : '/' + response.data.url
 
         file.convertedUrl = '/audiokonverter' + urlPath
-        // Behalte ursprünglichen Namen, nur mit neuer Endung
         file.convertedName = getConvertedFileName(fileData.name, currentFormat.value)
         file.convertedFormat = currentFormat.value.toUpperCase()
         file.status = 'completed'
+        file.processedLocally = false
 
-        // Hole Dateigröße vom Server
         const convertedSize = await fetchFileSize(file.convertedUrl)
         if (convertedSize) {
           file.convertedSize = convertedSize
         }
-
-        console.log('Konvertierung erfolgreich:', {
-          url: file.convertedUrl,
-          name: file.convertedName,
-          size: file.convertedSize ? formatFileSize(file.convertedSize) : 'unbekannt'
-        })
 
         convertedFiles.value.push(file)
       }
@@ -166,14 +208,53 @@ export const useAudioStore = defineStore('audio', () => {
     }
   }
 
+  // --- Hybrid dispatch: decide local vs remote ---
+  async function convertFile(fileData) {
+    const useLocal = shouldProcessLocally(fileData.file)
+
+    if (useLocal) {
+      if (!wasmReady.value) {
+        try {
+          await preloadWasm()
+        } catch {
+          return convertFileRemotely(fileData)
+        }
+      }
+      return convertFileLocally(fileData)
+    }
+
+    return convertFileRemotely(fileData)
+  }
+
   async function convertAllFiles() {
     if (isConverting.value) return
 
     isConverting.value = true
     const pendingFiles = audioFiles.value.filter(f => f.status === 'pending' || f.status === 'error')
 
-    for (const fileData of pendingFiles) {
-      await convertFile(fileData)
+    // Separate local and remote files
+    const localFiles = pendingFiles.filter(f => shouldProcessLocally(f.file))
+    const remoteFiles = pendingFiles.filter(f => !shouldProcessLocally(f.file))
+
+    // Pre-load WASM if needed for local files
+    if (localFiles.length > 0 && !wasmReady.value) {
+      try {
+        await preloadWasm()
+      } catch {
+        // All local files fallback to remote
+        remoteFiles.push(...localFiles)
+        localFiles.length = 0
+      }
+    }
+
+    // Process local files first (no upload needed = instant start)
+    for (const fileData of localFiles) {
+      await convertFileLocally(fileData)
+    }
+
+    // Then process remote files
+    for (const fileData of remoteFiles) {
+      await convertFileRemotely(fileData)
     }
 
     isConverting.value = false
@@ -181,20 +262,20 @@ export const useAudioStore = defineStore('audio', () => {
 
   async function downloadFile(fileData) {
     if (!fileData.convertedUrl) return
-    
+
     try {
       const response = await fetch(fileData.convertedUrl)
       const blob = await response.blob()
-      
+
       const url = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
       link.download = fileData.convertedName || `converted-${fileData.name}`
       link.style.display = 'none'
-      
+
       document.body.appendChild(link)
       link.click()
-      
+
       document.body.removeChild(link)
       window.URL.revokeObjectURL(url)
     } catch (error) {
@@ -205,7 +286,7 @@ export const useAudioStore = defineStore('audio', () => {
 
   async function downloadAllFiles() {
     const completedFiles = audioFiles.value.filter(f => f.status === 'completed' && f.convertedUrl)
-    
+
     if (completedFiles.length === 0) {
       return
     }
@@ -240,7 +321,9 @@ export const useAudioStore = defineStore('audio', () => {
     currentFormat,
     currentQuality,
     conversionProgress,
-    
+    wasmReady,
+    wasmLoading,
+
     // Computed
     hasFiles,
     hasConvertedFiles,

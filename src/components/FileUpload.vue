@@ -12,7 +12,7 @@
         ref="fileInput"
         type="file"
         multiple
-        accept="audio/*,.mp3,.wav,.flac,.ogg,.aac,.m4a"
+        accept="audio/*,.mp3,.wav,.flac,.ogg,.aac,.m4a,.opus,.aiff,.aif,.wma"
         @change="handleFileSelect"
         style="display: none"
       >
@@ -47,7 +47,7 @@ const { showToast } = useToast()
 const fileInput = ref(null)
 const isDragging = ref(false)
 
-const SUPPORTED_FORMATS = ['audio/mpeg', 'audio/wav', 'audio/flac', 'audio/ogg', 'audio/aac', 'audio/x-m4a', 'audio/mp4']
+const SUPPORTED_FORMATS = ['audio/mpeg', 'audio/wav', 'audio/flac', 'audio/ogg', 'audio/aac', 'audio/x-m4a', 'audio/mp4', 'audio/opus', 'audio/aiff', 'audio/x-aiff', 'audio/x-ms-wma']
 const MAX_FILE_SIZE = 300 * 1024 * 1024 // 300MB
 
 function triggerFileInput() {
@@ -79,7 +79,7 @@ function processFiles(files) {
 
     // Check file type
     const isAudio = SUPPORTED_FORMATS.some(format => file.type.includes(format.split('/')[1])) ||
-                    /\.(mp3|wav|flac|ogg|aac|m4a)$/i.test(file.name)
+                    /\.(mp3|wav|flac|ogg|aac|m4a|opus|aiff|aif|wma)$/i.test(file.name)
 
     if (!isAudio) {
       errors.push(`${file.name}: ${t('errors.unsupportedFile')}`)
