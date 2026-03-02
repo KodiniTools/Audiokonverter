@@ -2,7 +2,7 @@ import { FFmpeg } from '@ffmpeg/ffmpeg'
 import { fetchFile, toBlobURL } from '@ffmpeg/util'
 
 const WASM_THRESHOLD = 20 * 1024 * 1024 // 20MB
-const LOAD_TIMEOUT = 15000 // 15s for loading WASM from CDN
+const LOAD_TIMEOUT = 30000 // 30s for loading WASM from CDN (background only, never blocks UI)
 const EXEC_TIMEOUT = 120000 // 2min for conversion
 
 let ffmpeg = null
