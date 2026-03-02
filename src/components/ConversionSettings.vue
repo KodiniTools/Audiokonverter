@@ -19,6 +19,9 @@
           <option value="ogg">OGG</option>
           <option value="aac">AAC</option>
           <option value="m4a">M4A</option>
+          <option value="opus">OPUS</option>
+          <option value="aiff">AIFF</option>
+          <option value="wma">WMA</option>
         </select>
       </div>
 
@@ -104,6 +107,22 @@ const qualityInfo = computed(() => {
 
   if (format === 'ogg') {
     return `Q${quality}`
+  }
+
+  if (format === 'opus') {
+    const bitrates = [32, 48, 64, 96, 128, 160, 192, 256, 320, 510]
+    return `${bitrates[quality - 1]} kbps`
+  }
+
+  if (format === 'aiff') {
+    if (quality <= 4) return '16-bit PCM'
+    if (quality <= 7) return '24-bit PCM'
+    return '32-bit PCM'
+  }
+
+  if (format === 'wma') {
+    const bitrates = [64, 96, 128, 160, 192, 224, 256, 320, 320, 320]
+    return `${bitrates[quality - 1]} kbps`
   }
 
   return ''
