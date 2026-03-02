@@ -30,16 +30,6 @@ export const useAudioStore = defineStore('audio', () => {
     return `${baseName}.${newFormat}`
   }
 
-  async function fetchFileSize(url) {
-    try {
-      const response = await fetch(url, { method: 'HEAD' })
-      const contentLength = response.headers.get('content-length')
-      return contentLength ? parseInt(contentLength, 10) : null
-    } catch (error) {
-      console.warn('Konnte Dateigröße nicht abrufen:', error)
-      return null
-    }
-  }
 
   function addFiles(files) {
     const newFiles = Array.from(files).map(file => ({
@@ -189,11 +179,7 @@ export const useAudioStore = defineStore('audio', () => {
         file.convertedFormat = currentFormat.value.toUpperCase()
         file.status = 'completed'
         file.processedLocally = false
-
-        const convertedSize = await fetchFileSize(file.convertedUrl)
-        if (convertedSize) {
-          file.convertedSize = convertedSize
-        }
+        file.convertedSize = response.data.size || null
 
         convertedFiles.value.push(file)
       }
@@ -211,19 +197,9 @@ export const useAudioStore = defineStore('audio', () => {
 
   // --- Hybrid dispatch: decide local vs remote ---
   async function convertFile(fileData) {
-    const useLocal = shouldProcessLocally(fileData.file)
-
-    if (useLocal) {
-      if (!wasmReady.value) {
-        try {
-          await preloadWasm()
-        } catch {
-          return convertFileRemotely(fileData)
-        }
-      }
+    if (wasmReady.value && shouldProcessLocally(fileData.file)) {
       return convertFileLocally(fileData)
     }
-
     return convertFileRemotely(fileData)
   }
 
@@ -234,28 +210,13 @@ export const useAudioStore = defineStore('audio', () => {
     try {
       const pendingFiles = audioFiles.value.filter(f => f.status === 'pending' || f.status === 'error')
 
-      // Separate local and remote files
-      const localFiles = pendingFiles.filter(f => shouldProcessLocally(f.file))
-      const remoteFiles = pendingFiles.filter(f => !shouldProcessLocally(f.file))
-
-      // Pre-load WASM if needed for local files
-      if (localFiles.length > 0 && !wasmReady.value) {
-        await preloadWasm()
-        // preloadWasm swallows errors — check if it actually succeeded
-        if (!wasmReady.value) {
-          remoteFiles.push(...localFiles)
-          localFiles.length = 0
+      for (const fileData of pendingFiles) {
+        // Use WASM only if it's ALREADY loaded and file is small enough
+        if (wasmReady.value && shouldProcessLocally(fileData.file)) {
+          await convertFileLocally(fileData)
+        } else {
+          await convertFileRemotely(fileData)
         }
-      }
-
-      // Process local files first (no upload needed = instant start)
-      for (const fileData of localFiles) {
-        await convertFileLocally(fileData)
-      }
-
-      // Then process remote files
-      for (const fileData of remoteFiles) {
-        await convertFileRemotely(fileData)
       }
     } finally {
       isConverting.value = false
