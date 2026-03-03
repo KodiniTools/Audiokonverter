@@ -13,7 +13,7 @@
     <main class="main-content">
       <!-- Converter area: Two-column layout when files exist -->
       <div class="container">
-        <div v-if="audioStore.hasFiles" class="converter-area">
+        <div v-if="!workflowStore.isUploadStep" class="converter-area">
           <div class="converter-left">
             <FileList />
           </div>
@@ -37,6 +37,7 @@
 import { onMounted } from 'vue'
 import { useThemeStore } from '@/stores/themeStore'
 import { useAudioStore } from '@/stores/audioStore'
+import { useWorkflowStore } from '@/stores/workflowStore'
 import { useScrollReveal } from '@/composables/useScrollReveal'
 import NavControls from '@/components/NavControls.vue'
 import HeaderTitle from '@/components/HeaderTitle.vue'
@@ -49,6 +50,7 @@ import ToastContainer from '@/components/ToastContainer.vue'
 
 const themeStore = useThemeStore()
 const audioStore = useAudioStore()
+const workflowStore = useWorkflowStore()
 useScrollReveal()
 
 onMounted(() => {
