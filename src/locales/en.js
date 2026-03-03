@@ -130,7 +130,10 @@ export default {
     normalizerDesc: 'Consistent volume for all files',
     equalizer: 'Adjust in Equalizer',
     equalizerDesc: 'Precise frequency control',
-    newFiles: 'Convert new files'
+    newFiles: 'Convert new files',
+    preparing: 'Preparing\u2026',
+    shareSuccess: '{count} file handed over | {count} files handed over',
+    shareFailed: 'Could not hand over files'
   },
   faq: {
     title: 'FAQ',
