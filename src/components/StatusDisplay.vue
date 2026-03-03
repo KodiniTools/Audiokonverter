@@ -11,17 +11,16 @@
       <h4 class="wizard-title">{{ t('wizard.title') }}</h4>
 
       <div class="wizard-grid">
-        <!-- ZIP Download -->
+        <!-- Playlist Generator -->
         <button
           class="wizard-card"
-          @click="downloadAsZip"
+          @click="shareAndOpen('playlist', 'https://kodinitools.com/playlist_generator/app')"
           :disabled="isBusy"
         >
-          <span class="wizard-card-icon" aria-hidden="true">&#128230;</span>
           <span class="wizard-card-label">
-            {{ preparingTool === 'zip' ? t('actions.creatingZip') : t('wizard.zipDownload') }}
+            {{ preparingTool === 'playlist' ? t('wizard.preparing') : t('wizard.playlist') }}
           </span>
-          <span class="wizard-card-desc">{{ t('wizard.zipDesc') }}</span>
+          <span class="wizard-card-desc">{{ t('wizard.playlistDesc') }}</span>
         </button>
 
         <!-- Audio Visualizer -->
@@ -30,7 +29,6 @@
           @click="shareAndOpen('visualizer', 'https://kodinitools.com/visualizer/')"
           :disabled="isBusy"
         >
-          <span class="wizard-card-icon" aria-hidden="true">&#127926;</span>
           <span class="wizard-card-label">
             {{ preparingTool === 'visualizer' ? t('wizard.preparing') : t('wizard.visualizer') }}
           </span>
@@ -43,7 +41,6 @@
           @click="shareAndOpen('normalizer', 'https://kodinitools.com/audionormalisierer/')"
           :disabled="isBusy"
         >
-          <span class="wizard-card-icon" aria-hidden="true">&#128266;</span>
           <span class="wizard-card-label">
             {{ preparingTool === 'normalizer' ? t('wizard.preparing') : t('wizard.normalizer') }}
           </span>
@@ -56,7 +53,6 @@
           @click="shareAndOpen('equalizer', 'https://kodinitools.com/equaliser19/')"
           :disabled="isBusy"
         >
-          <span class="wizard-card-icon" aria-hidden="true">&#127899;</span>
           <span class="wizard-card-label">
             {{ preparingTool === 'equalizer' ? t('wizard.preparing') : t('wizard.equalizer') }}
           </span>
@@ -78,7 +74,6 @@ import { useAudioStore } from '@/stores/audioStore'
 import { useWorkflowStore } from '@/stores/workflowStore'
 import { useToast } from '@/composables/useToast'
 import { shareFiles } from '@/services/SharedFileRepository'
-import JSZip from 'jszip'
 
 const { t } = useI18n()
 const audioStore = useAudioStore()
@@ -122,40 +117,6 @@ async function shareAndOpen(toolKey, toolUrl) {
     showToast('success', t('wizard.shareSuccess', { count: entries.length }))
   } catch (error) {
     showToast('error', t('wizard.shareFailed'))
-  } finally {
-    preparingTool.value = null
-  }
-}
-
-/** Download all converted files as a single ZIP archive. */
-async function downloadAsZip() {
-  const completedFiles = audioStore.audioFiles.filter(
-    f => f.status === 'completed' && f.convertedUrl
-  )
-  if (completedFiles.length === 0) return
-
-  preparingTool.value = 'zip'
-  try {
-    const zip = new JSZip()
-    const entries = await collectConvertedBlobs()
-    for (const entry of entries) {
-      zip.file(entry.name, entry.blob)
-    }
-
-    const zipBlob = await zip.generateAsync({ type: 'blob' })
-    const url = window.URL.createObjectURL(zipBlob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = 'converted-audio-files.zip'
-    link.style.display = 'none'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    window.URL.revokeObjectURL(url)
-
-    showToast('success', t('toast.zipDownloadStarted'))
-  } catch (error) {
-    showToast('error', t('toast.zipDownloadFailed'), { message: error.message })
   } finally {
     preparingTool.value = null
   }
@@ -254,12 +215,6 @@ function startNew() {
   cursor: wait;
 }
 
-.wizard-card-icon {
-  font-size: 1.5rem;
-  margin-bottom: 0.4rem;
-  line-height: 1;
-}
-
 .wizard-card-label {
   font-size: 0.8rem;
   font-weight: 600;
@@ -334,10 +289,6 @@ function startNew() {
   .wizard-card {
     padding: 0.75rem 0.5rem;
     border-radius: 10px;
-  }
-
-  .wizard-card-icon {
-    font-size: 1.25rem;
   }
 
   .wizard-card-label {
