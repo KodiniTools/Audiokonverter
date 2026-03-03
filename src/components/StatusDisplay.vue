@@ -1,10 +1,9 @@
 <template>
   <div v-if="audioStore.hasConvertedFiles" class="status-display">
-    <div class="completion-message">
-      <div class="completion-text">
-        <h3>{{ t('status.completed') }}!</h3>
-        <p>{{ t('status.completedOf', { completed: completedCount, total: audioStore.fileCount }) }}</p>
-      </div>
+    <div class="completion-banner">
+      <span class="completion-check" aria-hidden="true">&#10003;</span>
+      <span class="completion-label">{{ t('status.completed') }}!</span>
+      <span class="completion-detail">{{ t('status.completedOf', { completed: completedCount, total: audioStore.fileCount }) }}</span>
     </div>
 
     <!-- Next-Step Wizard -->
@@ -130,38 +129,45 @@ function startNew() {
 
 <style scoped>
 .status-display {
-  margin: 2rem 0;
-  animation: slideInUp 0.5s ease;
+  margin: 1rem 0;
+  animation: slideInUp 0.4s ease;
 }
 
-.completion-message {
+.completion-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  border: 2px solid var(--success-color);
-  border-radius: 16px;
-  padding: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.1);
+  border: 1px solid var(--success-color);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.08);
 }
 
-.completion-text h3 {
-  font-size: 1.5rem;
+.completion-check {
   color: var(--success-color);
-  margin-bottom: 0.25rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1;
 }
 
-.completion-text p {
-  font-size: 1rem;
+.completion-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--success-color);
+}
+
+.completion-detail {
+  font-size: 0.8rem;
   color: var(--text-secondary);
 }
 
 /* ── Next-Step Wizard ────────────────────────────────────────────── */
 .wizard {
-  margin-top: 1.25rem;
-  animation: slideInUp 0.5s ease 0.15s both;
+  margin-top: 0.75rem;
+  animation: slideInUp 0.4s ease 0.1s both;
 }
 
 .wizard-title {
@@ -261,45 +267,23 @@ function startNew() {
 
 /* ── Responsive ─────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .status-display {
-    margin: 1.5rem 0;
-  }
-
-  .completion-message {
-    padding: 1.25rem;
-    gap: 0.75rem;
-  }
-
-  .completion-text h3 {
-    font-size: 1.25rem;
-  }
-
-  .completion-text p {
-    font-size: 0.9rem;
-  }
-
   .wizard-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 480px) {
-  .status-display {
-    margin: 1rem 0;
+  .completion-banner {
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
   }
 
-  .completion-message {
-    padding: 1rem;
-    gap: 0.6rem;
-    border-radius: 10px;
-  }
-
-  .completion-text h3 {
-    font-size: 1.1rem;
-  }
-
-  .completion-text p {
+  .completion-label {
     font-size: 0.8rem;
+  }
+
+  .completion-detail {
+    font-size: 0.7rem;
   }
 
   .wizard-grid {
