@@ -122,8 +122,8 @@ export default {
   },
   wizard: {
     title: 'What\'s next?',
-    zipDownload: 'Download as ZIP',
-    zipDesc: 'All files as a ZIP archive',
+    playlist: 'Create Playlist',
+    playlistDesc: 'Generate a playlist from converted files',
     visualizer: 'View in Visualizer',
     visualizerDesc: 'Real-time visualization of your audio',
     normalizer: 'Normalize volume',
