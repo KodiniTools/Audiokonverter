@@ -15,50 +15,53 @@
         <button
           class="wizard-card"
           @click="downloadAsZip"
-          :disabled="isDownloading"
+          :disabled="isBusy"
         >
           <span class="wizard-card-icon" aria-hidden="true">&#128230;</span>
           <span class="wizard-card-label">
-            {{ isDownloading ? t('actions.creatingZip') : t('wizard.zipDownload') }}
+            {{ preparingTool === 'zip' ? t('actions.creatingZip') : t('wizard.zipDownload') }}
           </span>
           <span class="wizard-card-desc">{{ t('wizard.zipDesc') }}</span>
         </button>
 
         <!-- Audio Visualizer -->
-        <a
-          href="https://kodinitools.com/visualizer/"
+        <button
           class="wizard-card"
-          target="_blank"
-          rel="noopener noreferrer"
+          @click="shareAndOpen('visualizer', 'https://kodinitools.com/visualizer/')"
+          :disabled="isBusy"
         >
           <span class="wizard-card-icon" aria-hidden="true">&#127926;</span>
-          <span class="wizard-card-label">{{ t('wizard.visualizer') }}</span>
+          <span class="wizard-card-label">
+            {{ preparingTool === 'visualizer' ? t('wizard.preparing') : t('wizard.visualizer') }}
+          </span>
           <span class="wizard-card-desc">{{ t('wizard.visualizerDesc') }}</span>
-        </a>
+        </button>
 
         <!-- Audio Normalizer -->
-        <a
-          href="https://kodinitools.com/audionormalisierer/"
+        <button
           class="wizard-card"
-          target="_blank"
-          rel="noopener noreferrer"
+          @click="shareAndOpen('normalizer', 'https://kodinitools.com/audionormalisierer/')"
+          :disabled="isBusy"
         >
           <span class="wizard-card-icon" aria-hidden="true">&#128266;</span>
-          <span class="wizard-card-label">{{ t('wizard.normalizer') }}</span>
+          <span class="wizard-card-label">
+            {{ preparingTool === 'normalizer' ? t('wizard.preparing') : t('wizard.normalizer') }}
+          </span>
           <span class="wizard-card-desc">{{ t('wizard.normalizerDesc') }}</span>
-        </a>
+        </button>
 
         <!-- Equalizer 19 -->
-        <a
-          href="https://kodinitools.com/equaliser19/"
+        <button
           class="wizard-card"
-          target="_blank"
-          rel="noopener noreferrer"
+          @click="shareAndOpen('equalizer', 'https://kodinitools.com/equaliser19/')"
+          :disabled="isBusy"
         >
           <span class="wizard-card-icon" aria-hidden="true">&#127899;</span>
-          <span class="wizard-card-label">{{ t('wizard.equalizer') }}</span>
+          <span class="wizard-card-label">
+            {{ preparingTool === 'equalizer' ? t('wizard.preparing') : t('wizard.equalizer') }}
+          </span>
           <span class="wizard-card-desc">{{ t('wizard.equalizerDesc') }}</span>
-        </a>
+        </button>
       </div>
 
       <button class="wizard-reset" @click="startNew">
@@ -74,6 +77,7 @@ import { useI18n } from 'vue-i18n'
 import { useAudioStore } from '@/stores/audioStore'
 import { useWorkflowStore } from '@/stores/workflowStore'
 import { useToast } from '@/composables/useToast'
+import { shareFiles } from '@/services/SharedFileRepository'
 import JSZip from 'jszip'
 
 const { t } = useI18n()
@@ -81,26 +85,61 @@ const audioStore = useAudioStore()
 const workflowStore = useWorkflowStore()
 const { showToast } = useToast()
 
-const isDownloading = ref(false)
+const preparingTool = ref(null)
+
+const isBusy = computed(() => preparingTool.value !== null)
 
 const completedCount = computed(() => {
   return audioStore.audioFiles.filter(f => f.status === 'completed').length
 })
 
+/** Collect converted blobs from the store. */
+async function collectConvertedBlobs() {
+  const completedFiles = audioStore.audioFiles.filter(
+    f => f.status === 'completed' && f.convertedUrl
+  )
+  const entries = []
+  for (const f of completedFiles) {
+    const response = await fetch(f.convertedUrl)
+    const blob = await response.blob()
+    entries.push({ name: f.convertedName || f.name, blob })
+  }
+  return entries
+}
+
+/** Store files in IndexedDB, then open the target tool. */
+async function shareAndOpen(toolKey, toolUrl) {
+  const completedFiles = audioStore.audioFiles.filter(
+    f => f.status === 'completed' && f.convertedUrl
+  )
+  if (completedFiles.length === 0) return
+
+  preparingTool.value = toolKey
+  try {
+    const entries = await collectConvertedBlobs()
+    await shareFiles(entries)
+    window.open(`${toolUrl}?source=audiokonverter`, '_blank', 'noopener')
+    showToast('success', t('wizard.shareSuccess', { count: entries.length }))
+  } catch (error) {
+    showToast('error', t('wizard.shareFailed'))
+  } finally {
+    preparingTool.value = null
+  }
+}
+
+/** Download all converted files as a single ZIP archive. */
 async function downloadAsZip() {
   const completedFiles = audioStore.audioFiles.filter(
     f => f.status === 'completed' && f.convertedUrl
   )
   if (completedFiles.length === 0) return
 
-  isDownloading.value = true
+  preparingTool.value = 'zip'
   try {
     const zip = new JSZip()
-
-    for (const fileData of completedFiles) {
-      const response = await fetch(fileData.convertedUrl)
-      const blob = await response.blob()
-      zip.file(fileData.convertedName || `converted-${fileData.name}`, blob)
+    const entries = await collectConvertedBlobs()
+    for (const entry of entries) {
+      zip.file(entry.name, entry.blob)
     }
 
     const zipBlob = await zip.generateAsync({ type: 'blob' })
@@ -118,7 +157,7 @@ async function downloadAsZip() {
   } catch (error) {
     showToast('error', t('toast.zipDownloadFailed'), { message: error.message })
   } finally {
-    isDownloading.value = false
+    preparingTool.value = null
   }
 }
 
@@ -201,6 +240,7 @@ function startNew() {
   text-decoration: none;
   color: inherit;
   font-family: inherit;
+  font-size: inherit;
 }
 
 .wizard-card:hover:not(:disabled) {
@@ -210,8 +250,8 @@ function startNew() {
 }
 
 .wizard-card:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  opacity: 0.6;
+  cursor: wait;
 }
 
 .wizard-card-icon {

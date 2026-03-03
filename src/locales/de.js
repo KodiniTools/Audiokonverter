@@ -130,7 +130,10 @@ export default {
     normalizerDesc: 'Einheitliches Level für alle Dateien',
     equalizer: 'Im Equalizer anpassen',
     equalizerDesc: 'Präzise Frequenzkontrolle',
-    newFiles: 'Neue Dateien konvertieren'
+    newFiles: 'Neue Dateien konvertieren',
+    preparing: 'Wird vorbereitet\u2026',
+    shareSuccess: '{count} Datei übergeben | {count} Dateien übergeben',
+    shareFailed: 'Dateien konnten nicht übergeben werden'
   },
   faq: {
     title: 'FAQ',
