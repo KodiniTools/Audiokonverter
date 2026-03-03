@@ -123,7 +123,7 @@ a:hover {
 .hero-section {
   position: relative;
   background: var(--accent-gradient);
-  padding: 2rem 0 1.25rem;
+  padding: 1.5rem 0 1rem;
   overflow: hidden;
 }
 
@@ -137,23 +137,8 @@ a:hover {
   pointer-events: none;
 }
 
-.hero-section::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  right: 0;
-  height: 24px;
-  background: var(--background);
-  clip-path: ellipse(55% 100% at 50% 100%);
-}
-
 [data-theme="dark"] .hero-section {
   background: linear-gradient(135deg, #1a3a3a 0%, #243d3d 50%, #2d4a4a 100%);
-}
-
-[data-theme="dark"] .hero-section::after {
-  background: var(--background);
 }
 
 /* ===== TWO-COLUMN CONVERTER LAYOUT ===== */
@@ -162,7 +147,7 @@ a:hover {
   grid-template-columns: 1.4fr 1fr;
   gap: 1.25rem;
   align-items: start;
-  margin: 1.25rem 0;
+  margin: 0.75rem 0 0;
 }
 
 /* ===== GLASS CARD ===== */
@@ -184,7 +169,7 @@ a:hover {
 /* ===== FULL-WIDTH SECTIONS ===== */
 .full-width-section {
   width: 100%;
-  padding: 1.25rem 0;
+  padding: 0.75rem 0;
   position: relative;
 }
 
@@ -492,7 +477,7 @@ html, body {
   h4 { font-size: 0.9rem; }
 
   .hero-section {
-    padding: 1.5rem 0 1rem;
+    padding: 1rem 0 0.75rem;
   }
 
   .converter-area {
@@ -529,11 +514,7 @@ html, body {
   }
 
   .hero-section {
-    padding: 1.25rem 0 1rem;
-  }
-
-  .hero-section::after {
-    height: 16px;
+    padding: 0.75rem 0 0.5rem;
   }
 
   .glass-card {
