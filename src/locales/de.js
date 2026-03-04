@@ -135,6 +135,9 @@ export default {
     shareSuccess: '{count} Datei übergeben | {count} Dateien übergeben',
     shareFailed: 'Dateien konnten nicht übergeben werden'
   },
+  share: {
+    facebook: 'Auf Facebook teilen'
+  },
   faq: {
     title: 'FAQ',
     questions: {

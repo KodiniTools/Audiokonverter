@@ -135,6 +135,9 @@ export default {
     shareSuccess: '{count} file handed over | {count} files handed over',
     shareFailed: 'Could not hand over files'
   },
+  share: {
+    facebook: 'Share on Facebook'
+  },
   faq: {
     title: 'FAQ',
     questions: {
