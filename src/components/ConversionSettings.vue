@@ -23,6 +23,7 @@
           <option value="aiff">AIFF</option>
           <option value="wma">WMA</option>
         </select>
+        <p class="format-hint">{{ formatHint }}</p>
       </div>
 
       <!-- Quality Slider -->
@@ -68,6 +69,10 @@ import { useToast } from '@/composables/useToast'
 const { t } = useI18n()
 const audioStore = useAudioStore()
 const { showToast } = useToast()
+
+const formatHint = computed(() => {
+  return t(`conversion.formatHints.${audioStore.currentFormat}`)
+})
 
 const hasPendingFiles = computed(() => {
   return audioStore.audioFiles.some(f => f.status === 'pending' || f.status === 'error')
@@ -240,6 +245,13 @@ async function startConversion() {
   font-size: 0.75rem;
   color: var(--text-secondary);
   font-style: italic;
+}
+
+.format-hint {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  margin-top: 0.25rem;
 }
 
 .btn-convert {

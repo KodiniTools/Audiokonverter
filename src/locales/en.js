@@ -18,6 +18,17 @@ export default {
   conversion: {
     title: 'Settings',
     format: 'Format',
+    formatHints: {
+      mp3:  'Small & universally compatible — ideal for music and podcasts',
+      wav:  'Lossless & uncompressed — for professional editing',
+      flac: 'Lossless & compressed — perfect for archiving',
+      ogg:  'Open-source alternative to MP3, good quality at small file sizes',
+      aac:  'Better quality than MP3 at the same file size — standard on Apple devices',
+      m4a:  'AAC in an Apple container — ideal for iTunes and iOS',
+      opus: 'Most modern codec, best quality at low bitrates — ideal for streaming',
+      aiff: 'Lossless — Apple\'s professional studio format',
+      wma:  'Windows Media Audio — for older Windows devices'
+    },
     quality: 'Quality',
     qualityLevels: {
       low: 'Low',

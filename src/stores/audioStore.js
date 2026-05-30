@@ -1,15 +1,28 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import axios from 'axios'
 import { shouldProcessLocally, convertLocally, loadFFmpeg } from '@/services/WasmAudioService'
+
+const STORAGE_KEY = 'audiokonverter_settings'
+
+function loadSavedSettings() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    return raw ? JSON.parse(raw) : {}
+  } catch {
+    return {}
+  }
+}
+
+const saved = loadSavedSettings()
 
 export const useAudioStore = defineStore('audio', () => {
   // State
   const audioFiles = ref([])
   const convertedFiles = ref([])
   const isConverting = ref(false)
-  const currentFormat = ref('mp3')
-  const currentQuality = ref(7)
+  const currentFormat = ref(saved.format ?? 'mp3')
+  const currentQuality = ref(saved.quality ?? 7)
   const conversionProgress = ref({})
   const wasmReady = ref(false)
   const wasmLoading = ref(false)
@@ -267,6 +280,12 @@ export const useAudioStore = defineStore('audio', () => {
   function setQuality(quality) {
     currentQuality.value = quality
   }
+
+  watch([currentFormat, currentQuality], ([format, quality]) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ format, quality }))
+    } catch {}
+  })
 
   function formatFileSize(bytes) {
     if (bytes === 0) return '0 Bytes'
