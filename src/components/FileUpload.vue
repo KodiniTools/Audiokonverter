@@ -65,11 +65,17 @@ const SUPPORTED_FORMATS = ['audio/mpeg', 'audio/wav', 'audio/flac', 'audio/ogg',
 const MAX_FILE_SIZE = 300 * 1024 * 1024 // 300MB
 
 function triggerFileInput() {
-  fileInput.value?.click()
+  if (fileInput.value) {
+    fileInput.value.value = ''
+    fileInput.value.click()
+  }
 }
 
 function triggerFolderInput() {
-  folderInput.value?.click()
+  if (folderInput.value) {
+    folderInput.value.value = ''
+    folderInput.value.click()
+  }
 }
 
 function handleFileSelect(event) {
