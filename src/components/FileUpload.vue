@@ -6,7 +6,6 @@
       @drop.prevent="handleDrop"
       @dragover.prevent="isDragging = true"
       @dragleave.prevent="isDragging = false"
-      @click="triggerFileInput"
     >
       <input
         ref="fileInput"
@@ -14,6 +13,14 @@
         multiple
         accept="audio/*,.mp3,.wav,.flac,.ogg,.aac,.m4a,.opus,.aiff,.aif,.wma"
         @change="handleFileSelect"
+        style="display: none"
+      >
+      <input
+        ref="folderInput"
+        type="file"
+        webkitdirectory
+        multiple
+        @change="handleFolderSelect"
         style="display: none"
       >
 
@@ -50,31 +57,26 @@ const audioStore = useAudioStore()
 const { showToast } = useToast()
 
 const fileInput = ref(null)
+const folderInput = ref(null)
 const isDragging = ref(false)
 
 const SUPPORTED_FORMATS = ['audio/mpeg', 'audio/wav', 'audio/flac', 'audio/ogg', 'audio/aac', 'audio/x-m4a', 'audio/mp4', 'audio/opus', 'audio/aiff', 'audio/x-aiff', 'audio/x-ms-wma']
 const MAX_FILE_SIZE = 300 * 1024 * 1024 // 300MB
 
-function openPicker(folderMode) {
-  const el = fileInput.value
-  if (!el) return
-  el.value = ''
-  if (folderMode) {
-    el.setAttribute('webkitdirectory', '')
-    el.removeAttribute('accept')
-  } else {
-    el.removeAttribute('webkitdirectory')
-    el.setAttribute('accept', 'audio/*,.mp3,.wav,.flac,.ogg,.aac,.m4a,.opus,.aiff,.aif,.wma')
-  }
-  el.click()
-}
-
 function triggerFileInput() {
-  openPicker(false)
+  fileInput.value.value = ''
+  fileInput.value.click()
 }
 
 function triggerFolderInput() {
-  openPicker(true)
+  folderInput.value.value = ''
+  folderInput.value.click()
+}
+
+function handleFolderSelect(event) {
+  const files = Array.from(event.target.files)
+  processFiles(files)
+  event.target.value = ''
 }
 
 function handleFileSelect(event) {
