@@ -13,6 +13,7 @@ export default {
     dragDrop: 'Drop files here or click to browse',
     supportedFormats: 'MP3 • WAV • FLAC • OGG • AAC • M4A • OPUS • AIFF • WMA',
     selectFiles: 'Choose files',
+    selectFolder: 'Choose folder',
     filesSelected: '{count} file | {count} files'
   },
   conversion: {
