@@ -16,14 +16,6 @@
         @change="handleFileSelect"
         style="display: none"
       >
-      <input
-        ref="folderInput"
-        type="file"
-        webkitdirectory
-        multiple
-        @change="handleFileSelect"
-        style="display: none"
-      >
 
       <!-- Animated background waves -->
       <div class="upload-bg-waves">
@@ -58,24 +50,31 @@ const audioStore = useAudioStore()
 const { showToast } = useToast()
 
 const fileInput = ref(null)
-const folderInput = ref(null)
 const isDragging = ref(false)
 
 const SUPPORTED_FORMATS = ['audio/mpeg', 'audio/wav', 'audio/flac', 'audio/ogg', 'audio/aac', 'audio/x-m4a', 'audio/mp4', 'audio/opus', 'audio/aiff', 'audio/x-aiff', 'audio/x-ms-wma']
 const MAX_FILE_SIZE = 300 * 1024 * 1024 // 300MB
 
-function triggerFileInput() {
-  if (fileInput.value) {
-    fileInput.value.value = ''
-    fileInput.value.click()
+function openPicker(folderMode) {
+  const el = fileInput.value
+  if (!el) return
+  el.value = ''
+  if (folderMode) {
+    el.setAttribute('webkitdirectory', '')
+    el.removeAttribute('accept')
+  } else {
+    el.removeAttribute('webkitdirectory')
+    el.setAttribute('accept', 'audio/*,.mp3,.wav,.flac,.ogg,.aac,.m4a,.opus,.aiff,.aif,.wma')
   }
+  el.click()
+}
+
+function triggerFileInput() {
+  openPicker(false)
 }
 
 function triggerFolderInput() {
-  if (folderInput.value) {
-    folderInput.value.value = ''
-    folderInput.value.click()
-  }
+  openPicker(true)
 }
 
 function handleFileSelect(event) {
