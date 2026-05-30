@@ -16,6 +16,14 @@
         @change="handleFileSelect"
         style="display: none"
       >
+      <input
+        ref="folderInput"
+        type="file"
+        webkitdirectory
+        multiple
+        @change="handleFileSelect"
+        style="display: none"
+      >
 
       <!-- Animated background waves -->
       <div class="upload-bg-waves">
@@ -27,9 +35,14 @@
       <h3 class="upload-title">{{ t('upload.dragDrop') }}</h3>
       <p class="upload-subtitle">{{ t('upload.supportedFormats') }}</p>
 
-      <button class="btn btn-primary upload-btn" @click.stop="triggerFileInput">
-        {{ t('upload.selectFiles') }}
-      </button>
+      <div class="upload-actions">
+        <button class="btn btn-primary upload-btn" @click.stop="triggerFileInput">
+          {{ t('upload.selectFiles') }}
+        </button>
+        <button class="btn upload-btn upload-btn-folder" @click.stop="triggerFolderInput">
+          {{ t('upload.selectFolder') }}
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -45,6 +58,7 @@ const audioStore = useAudioStore()
 const { showToast } = useToast()
 
 const fileInput = ref(null)
+const folderInput = ref(null)
 const isDragging = ref(false)
 
 const SUPPORTED_FORMATS = ['audio/mpeg', 'audio/wav', 'audio/flac', 'audio/ogg', 'audio/aac', 'audio/x-m4a', 'audio/mp4', 'audio/opus', 'audio/aiff', 'audio/x-aiff', 'audio/x-ms-wma']
@@ -54,16 +68,62 @@ function triggerFileInput() {
   fileInput.value?.click()
 }
 
+function triggerFolderInput() {
+  folderInput.value?.click()
+}
+
 function handleFileSelect(event) {
   const files = Array.from(event.target.files)
   processFiles(files)
-  event.target.value = '' // Reset input
+  event.target.value = ''
 }
 
-function handleDrop(event) {
+async function handleDrop(event) {
   isDragging.value = false
-  const files = Array.from(event.dataTransfer.files)
-  processFiles(files)
+
+  const items = Array.from(event.dataTransfer.items ?? [])
+  const hasDirectories = items.some(item => {
+    const entry = item.webkitGetAsEntry?.()
+    return entry?.isDirectory
+  })
+
+  if (hasDirectories) {
+    const files = await readDroppedEntries(items)
+    processFiles(files)
+  } else {
+    processFiles(Array.from(event.dataTransfer.files))
+  }
+}
+
+function readDroppedEntries(items) {
+  const entries = items.map(item => item.webkitGetAsEntry?.()).filter(Boolean)
+  const promises = entries.map(entry => readEntry(entry))
+  return Promise.all(promises).then(results => results.flat())
+}
+
+function readEntry(entry) {
+  if (entry.isFile) {
+    return new Promise(resolve => entry.file(resolve, () => resolve(null))).then(f => f ? [f] : [])
+  }
+  if (entry.isDirectory) {
+    return new Promise(resolve => {
+      const reader = entry.createReader()
+      const allEntries = []
+      const readBatch = () => {
+        reader.readEntries(batch => {
+          if (batch.length === 0) {
+            Promise.all(allEntries.map(e => readEntry(e)))
+              .then(results => resolve(results.flat()))
+          } else {
+            allEntries.push(...batch)
+            readBatch()
+          }
+        }, () => resolve([]))
+      }
+      readBatch()
+    })
+  }
+  return Promise.resolve([])
 }
 
 function processFiles(files) {
@@ -195,6 +255,14 @@ function processFiles(files) {
   position: relative;
 }
 
+.upload-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
+}
+
 .upload-btn {
   padding: 0.65rem 1.75rem;
   font-size: 0.9rem;
@@ -211,6 +279,11 @@ function processFiles(files) {
   background: rgba(255, 255, 255, 0.3);
   border-color: rgba(245, 244, 214, 0.5);
   transform: translateY(-1px) scale(1.02);
+}
+
+.upload-btn-folder {
+  background: rgba(255, 255, 255, 0.1);
+  border-style: dashed;
 }
 
 @keyframes slideInUp {
