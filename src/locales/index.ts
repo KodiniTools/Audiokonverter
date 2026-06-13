@@ -2,27 +2,25 @@ import { createI18n } from 'vue-i18n'
 import de from './de.js'
 import en from './en.js'
 
-// Nutze gleichen Key wie die globale SSI-Navigation
 const savedLocale = localStorage.getItem('locale')
 const browserLocale = navigator.language.split('-')[0]
-const defaultLocale = savedLocale || (browserLocale === 'de' ? 'de' : 'en')
+const defaultLocale = savedLocale ?? (browserLocale === 'de' ? 'de' : 'en')
 
 export const i18n = createI18n({
   legacy: false,
   locale: defaultLocale,
   fallbackLocale: 'en',
-  messages: {
-    de,
-    en,
-  },
+  messages: { de, en },
   globalInjection: true,
   missingWarn: false,
   fallbackWarn: false,
 })
 
-// Funktion zum Wechseln der Sprache (gleicher Key wie globale SSI-Navigation)
-export function setLocale(locale) {
-  i18n.global.locale.value = locale
+export type Locale = 'de' | 'en'
+
+export function setLocale(locale: Locale): void {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ;(i18n.global.locale as any).value = locale
   localStorage.setItem('locale', locale)
   document.documentElement.setAttribute('lang', locale)
 }

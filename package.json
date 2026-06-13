@@ -7,10 +7,11 @@
     "dev": "vite",
     "build": "vite build --mode production",
     "preview": "vite preview",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs",
-    "lint:fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix",
-    "format": "prettier --write \"src/**/*.{vue,js,json,css}\"",
-    "format:check": "prettier --check \"src/**/*.{vue,js,json,css}\"",
+    "type-check": "vue-tsc --build --force",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx",
+    "lint:fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx --fix",
+    "format": "prettier --write \"src/**/*.{vue,js,ts,json,css}\"",
+    "format:check": "prettier --check \"src/**/*.{vue,js,ts,json,css}\"",
     "deploy:windows": "powershell -ExecutionPolicy Bypass -File .\\deploy.ps1",
     "deploy:linux": "bash deploy.sh"
   },
@@ -26,13 +27,18 @@
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
+    "@types/node": "^25.9.3",
+    "@typescript-eslint/eslint-plugin": "^8.61.0",
+    "@typescript-eslint/parser": "^8.61.0",
     "@vitejs/plugin-vue": "^5.0.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.6",
     "eslint-plugin-vue": "^9.20.0",
     "prettier": "^3.8.4",
+    "typescript": "^6.0.3",
     "vite": "^5.0.0",
-    "vite-plugin-pwa": "^1.2.0"
+    "vite-plugin-pwa": "^1.2.0",
+    "vue-tsc": "^3.3.5"
   }
 }

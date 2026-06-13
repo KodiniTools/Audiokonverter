@@ -1,42 +1,39 @@
 import { ref } from 'vue'
 import { i18n } from '@/locales/index.js'
+import type { Toast, ToastType, ToastOptions } from '@/types'
 
-const toasts = ref([])
+const toasts = ref<Toast[]>([])
 let toastIdCounter = 0
 
 export function useToast() {
-  function showToast(type = 'info', title, options = {}) {
-    const toast = {
+  function showToast(type: ToastType = 'info', title: string, options: ToastOptions = {}): number {
+    const toast: Toast = {
       id: ++toastIdCounter,
       type,
       title,
-      message: options.message || '',
-      duration: options.duration || 3000,
-      actions: options.actions || [],
+      message: options.message ?? '',
+      duration: options.duration ?? 3000,
+      actions: options.actions ?? [],
       closeable: options.closeable !== false,
     }
 
     toasts.value.push(toast)
 
     if (toast.duration > 0) {
-      setTimeout(() => {
-        removeToast(toast.id)
-      }, toast.duration)
+      setTimeout(() => removeToast(toast.id), toast.duration)
     }
 
     return toast.id
   }
 
-  function removeToast(id) {
+  function removeToast(id: number): void {
     const index = toasts.value.findIndex((t) => t.id === id)
-    if (index !== -1) {
-      toasts.value.splice(index, 1)
-    }
+    if (index !== -1) toasts.value.splice(index, 1)
   }
 
-  function showConfirmToast(type, title, message) {
+  function showConfirmToast(type: ToastType, title: string, message: string): Promise<boolean> {
     return new Promise((resolve) => {
-      const toast = {
+      const toast: Toast = {
         id: ++toastIdCounter,
         type,
         title,
@@ -65,10 +62,5 @@ export function useToast() {
     })
   }
 
-  return {
-    toasts,
-    showToast,
-    removeToast,
-    showConfirmToast,
-  }
+  return { toasts, showToast, removeToast, showConfirmToast }
 }
