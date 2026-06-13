@@ -41,6 +41,19 @@ function isAllowedFormat(fmt) {
 function validateBitrate(br){ return typeof br==="string" && /^[1-9]\d{1,3}k$/i.test(br); }
 function validateSampleRate(sr){ const n=Number(sr); return Number.isInteger(n)&&n>=8000&&n<=192000; }
 function validateChannels(ch){ const n=Number(ch); return Number.isInteger(n)&&n>=1&&n<=8; }
+function qualityToBitrate(quality, format) {
+  const q = Math.max(1, Math.min(10, Number(quality) || 5));
+  switch (format) {
+    case "opus": {
+      const rates = [32,48,64,96,128,160,192,256,320,510];
+      return (rates[q-1] || 128) + "k";
+    }
+    default: {
+      const rates = [64,96,128,160,192,224,256,320,320,320];
+      return (rates[q-1] || 192) + "k";
+    }
+  }
+}
 
 function runFfmpeg(args, timeoutMs=120000) {
   return new Promise((resolve, reject) => {
@@ -109,7 +122,9 @@ app.post("/api/convert", upload.single("file"), async (req, res) => {
 
       const fmt = String(req.body.format||"").toLowerCase();
       if (!isAllowedFormat(fmt)) throw new Error("bad_format");
-      const bitrate=req.body.bitrate, samplerate=req.body.samplerate, channels=req.body.channels;
+      const quality = req.body.quality ? Math.max(1, Math.min(10, Number(req.body.quality))) : null;
+      let bitrate = req.body.bitrate || (quality ? qualityToBitrate(quality, fmt) : null);
+      const samplerate=req.body.samplerate, channels=req.body.channels;
       const normalize = String(req.body.normalize||"false").toLowerCase()==="true";
       if (bitrate && !validateBitrate(bitrate)) throw new Error("bad_bitrate");
       if (samplerate && !validateSampleRate(samplerate)) throw new Error("bad_samplerate");
@@ -126,28 +141,34 @@ app.post("/api/convert", upload.single("file"), async (req, res) => {
 
       switch(fmt){
         case "mp3":
-          args.push("-codec:a","libmp3lame"); bitrate? args.push("-b:a",bitrate): args.push("-q:a","2"); break;
+          args.push("-codec:a","libmp3lame","-b:a", bitrate||"192k"); break;
         case "aac":
-          args.push("-codec:a","aac"); if (bitrate) args.push("-b:a",bitrate); break;
+          args.push("-codec:a","aac","-b:a", bitrate||"192k"); break;
         case "m4a":
-          args.push("-vn","-codec:a","aac"); if (bitrate) args.push("-b:a",bitrate); args.push("-movflags","+faststart"); break;
+          args.push("-vn","-codec:a","aac","-b:a", bitrate||"192k","-movflags","+faststart"); break;
         case "ogg":
-          args.push("-codec:a","libvorbis"); if (bitrate) args.push("-b:a",bitrate); break;
-        case "flac":
-          args.push("-codec:a","flac"); break;
-        case "wav":
-          args.push("-codec:a","pcm_s16le"); break;
+          args.push("-codec:a","libvorbis"); quality ? args.push("-q:a", String(quality)) : args.push("-b:a", bitrate||"192k"); break;
+        case "flac": {
+          const comprLevel = quality ? Math.min(8, Math.max(0, quality - 2)) : 5;
+          args.push("-codec:a","flac","-compression_level", String(comprLevel)); break;
+        }
+        case "wav": {
+          const wavCodec = quality && quality > 7 ? "pcm_f32le" : quality && quality > 4 ? "pcm_s24le" : "pcm_s16le";
+          args.push("-codec:a", wavCodec); break;
+        }
         case "wma":
-          args.push("-codec:a","wmav2"); if (bitrate) args.push("-b:a",bitrate); break;
+          args.push("-codec:a","wmav2","-b:a", bitrate||"192k"); break;
         case "opus":
-          args.push("-codec:a","libopus"); if (bitrate) args.push("-b:a",bitrate); else args.push("-b:a","128k"); break;
-        case "aiff":
-          args.push("-codec:a","pcm_s16be"); break;
+          args.push("-codec:a","libopus","-b:a", bitrate||"128k"); break;
+        case "aiff": {
+          const aiffCodec = quality && quality > 7 ? "pcm_s32be" : quality && quality > 4 ? "pcm_s24be" : "pcm_s16be";
+          args.push("-codec:a", aiffCodec); break;
+        }
       }
 
       args.push(outPath);
 
-      console.log("[convert start]", { port:PORT, in:tmpIn, fmt, bitrate, samplerate, channels, normalize, out:outPath });
+      console.log("[convert start]", { port:PORT, in:tmpIn, fmt, quality, bitrate, samplerate, channels, normalize, out:outPath });
       await runFfmpeg(args, 120000);
       console.log("[convert ok]", outPath);
      const stats = fs.statSync(outPath);
