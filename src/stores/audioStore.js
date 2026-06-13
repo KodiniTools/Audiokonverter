@@ -43,9 +43,8 @@ export const useAudioStore = defineStore('audio', () => {
     return `${baseName}.${newFormat}`
   }
 
-
   function addFiles(files) {
-    const newFiles = Array.from(files).map(file => ({
+    const newFiles = Array.from(files).map((file) => ({
       id: `${file.name}-${Date.now()}-${Math.random()}`,
       file,
       name: file.name,
@@ -58,13 +57,13 @@ export const useAudioStore = defineStore('audio', () => {
       convertedSize: null,
       convertedFormat: null,
       processedLocally: shouldProcessLocally(file),
-      error: null
+      error: null,
     }))
 
     audioFiles.value.push(...newFiles)
 
     // Pre-load FFmpeg.wasm if any file qualifies for local processing
-    if (newFiles.some(f => f.processedLocally) && !wasmReady.value && !wasmLoading.value) {
+    if (newFiles.some((f) => f.processedLocally) && !wasmReady.value && !wasmLoading.value) {
       preloadWasm()
     }
 
@@ -84,7 +83,7 @@ export const useAudioStore = defineStore('audio', () => {
   }
 
   function removeFile(fileId) {
-    const index = audioFiles.value.findIndex(f => f.id === fileId)
+    const index = audioFiles.value.findIndex((f) => f.id === fileId)
     if (index !== -1) {
       audioFiles.value.splice(index, 1)
     }
@@ -98,7 +97,7 @@ export const useAudioStore = defineStore('audio', () => {
   }
 
   function updateFileProgress(fileId, progress, status = null) {
-    const file = audioFiles.value.find(f => f.id === fileId)
+    const file = audioFiles.value.find((f) => f.id === fileId)
     if (file) {
       file.progress = progress
       if (status) file.status = status
@@ -121,7 +120,7 @@ export const useAudioStore = defineStore('audio', () => {
       )
 
       updateFileProgress(fileData.id, 100, 'completed')
-      const file = audioFiles.value.find(f => f.id === fileData.id)
+      const file = audioFiles.value.find((f) => f.id === fileData.id)
 
       if (file) {
         const blobUrl = URL.createObjectURL(blob)
@@ -154,13 +153,13 @@ export const useAudioStore = defineStore('audio', () => {
     try {
       const response = await axios.post('/audiokonverter/api/convert', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data',
         },
         timeout: 600000,
         onUploadProgress: (progressEvent) => {
           const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
           updateFileProgress(fileData.id, Math.min(percentCompleted, 90))
-        }
+        },
       })
 
       if (!response.data) {
@@ -180,7 +179,7 @@ export const useAudioStore = defineStore('audio', () => {
       }
 
       updateFileProgress(fileData.id, 100, 'completed')
-      const file = audioFiles.value.find(f => f.id === fileData.id)
+      const file = audioFiles.value.find((f) => f.id === fileData.id)
 
       if (file) {
         const urlPath = response.data.url.startsWith('/')
@@ -199,7 +198,7 @@ export const useAudioStore = defineStore('audio', () => {
       return { success: true, data: response.data }
     } catch (error) {
       updateFileProgress(fileData.id, 0, 'error')
-      const file = audioFiles.value.find(f => f.id === fileData.id)
+      const file = audioFiles.value.find((f) => f.id === fileData.id)
       if (file) {
         file.error = error.response?.data?.error || error.message
         file.status = 'error'
@@ -221,7 +220,9 @@ export const useAudioStore = defineStore('audio', () => {
 
     isConverting.value = true
     try {
-      const pendingFiles = audioFiles.value.filter(f => f.status === 'pending' || f.status === 'error')
+      const pendingFiles = audioFiles.value.filter(
+        (f) => f.status === 'pending' || f.status === 'error'
+      )
 
       for (const fileData of pendingFiles) {
         // Use WASM only if it's ALREADY loaded and file is small enough
@@ -261,7 +262,9 @@ export const useAudioStore = defineStore('audio', () => {
   }
 
   async function downloadAllFiles() {
-    const completedFiles = audioFiles.value.filter(f => f.status === 'completed' && f.convertedUrl)
+    const completedFiles = audioFiles.value.filter(
+      (f) => f.status === 'completed' && f.convertedUrl
+    )
 
     if (completedFiles.length === 0) {
       return
@@ -269,7 +272,7 @@ export const useAudioStore = defineStore('audio', () => {
 
     for (const fileData of completedFiles) {
       await downloadFile(fileData)
-      await new Promise(resolve => setTimeout(resolve, 300))
+      await new Promise((resolve) => setTimeout(resolve, 300))
     }
   }
 
@@ -323,6 +326,6 @@ export const useAudioStore = defineStore('audio', () => {
     downloadAllFiles,
     setFormat,
     setQuality,
-    formatFileSize
+    formatFileSize,
   }
 })

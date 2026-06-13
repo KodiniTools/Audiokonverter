@@ -2,11 +2,7 @@
   <div class="global-actions">
     <div class="actions-grid">
       <!-- Clear All -->
-      <button
-        class="action-btn btn-secondary"
-        @click="clearAll"
-        :title="t('actions.clearAll')"
-      >
+      <button class="action-btn btn-secondary" :title="t('actions.clearAll')" @click="clearAll">
         <span>{{ t('actions.clearAll') }}</span>
       </button>
 
@@ -14,20 +10,22 @@
       <button
         v-if="audioStore.hasConvertedFiles"
         class="action-btn btn-primary"
-        @click="downloadAllSeparately"
         :disabled="isDownloadingSeparate"
         :title="t('actions.downloadAll')"
+        @click="downloadAllSeparately"
       >
-        <span>{{ isDownloadingSeparate ? t('actions.downloading') : t('actions.downloadAll') }}</span>
+        <span>{{
+          isDownloadingSeparate ? t('actions.downloading') : t('actions.downloadAll')
+        }}</span>
       </button>
 
       <!-- Download All as ZIP -->
       <button
         v-if="audioStore.hasConvertedFiles"
         class="action-btn btn-success"
-        @click="downloadAllAsZip"
         :disabled="isDownloading"
         :title="t('actions.downloadAllAsZip')"
+        @click="downloadAllAsZip"
       >
         <span>{{ isDownloading ? t('actions.creatingZip') : t('actions.downloadAllAsZip') }}</span>
       </button>
@@ -62,7 +60,9 @@ async function clearAll() {
 }
 
 async function downloadAllSeparately() {
-  const completedFiles = audioStore.audioFiles.filter(f => f.status === 'completed' && f.convertedUrl)
+  const completedFiles = audioStore.audioFiles.filter(
+    (f) => f.status === 'completed' && f.convertedUrl
+  )
 
   if (completedFiles.length === 0) {
     showToast('warning', t('toast.noFilesToDownload'))
@@ -75,7 +75,7 @@ async function downloadAllSeparately() {
     for (const fileData of completedFiles) {
       await audioStore.downloadFile(fileData)
       // Kurze Pause zwischen Downloads für bessere Browser-Kompatibilität
-      await new Promise(resolve => setTimeout(resolve, 500))
+      await new Promise((resolve) => setTimeout(resolve, 500))
     }
     showToast('success', t('toast.allFilesDownloaded'))
   } catch (error) {
@@ -87,7 +87,9 @@ async function downloadAllSeparately() {
 }
 
 async function downloadAllAsZip() {
-  const completedFiles = audioStore.audioFiles.filter(f => f.status === 'completed' && f.convertedUrl)
+  const completedFiles = audioStore.audioFiles.filter(
+    (f) => f.status === 'completed' && f.convertedUrl
+  )
 
   if (completedFiles.length === 0) {
     showToast('warning', t('toast.noFilesToDownload'))
@@ -179,7 +181,7 @@ async function downloadAllAsZip() {
 
 .btn-primary {
   background: var(--accent-gradient);
-  color: #F5F4D6;
+  color: #f5f4d6;
   font-weight: 600;
 }
 
@@ -197,8 +199,12 @@ async function downloadAllAsZip() {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @media (max-width: 768px) {

@@ -13,7 +13,7 @@ export function useToast() {
       message: options.message || '',
       duration: options.duration || 3000,
       actions: options.actions || [],
-      closeable: options.closeable !== false
+      closeable: options.closeable !== false,
     }
 
     toasts.value.push(toast)
@@ -28,7 +28,7 @@ export function useToast() {
   }
 
   function removeToast(id) {
-    const index = toasts.value.findIndex(t => t.id === id)
+    const index = toasts.value.findIndex((t) => t.id === id)
     if (index !== -1) {
       toasts.value.splice(index, 1)
     }
@@ -49,16 +49,16 @@ export function useToast() {
             callback: () => {
               removeToast(toast.id)
               resolve(true)
-            }
+            },
           },
           {
             label: i18n.global.t('actions.cancel'),
             callback: () => {
               removeToast(toast.id)
               resolve(false)
-            }
-          }
-        ]
+            },
+          },
+        ],
       }
 
       toasts.value.push(toast)
@@ -69,6 +69,6 @@ export function useToast() {
     toasts,
     showToast,
     removeToast,
-    showConfirmToast
+    showConfirmToast,
   }
 }

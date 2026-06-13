@@ -1,12 +1,12 @@
 export default {
   app: {
     title: 'Audio Konverter',
-    subtitle: 'Schnell & einfach konvertieren'
+    subtitle: 'Schnell & einfach konvertieren',
   },
   nav: {
     home: 'Start',
     toggleTheme: 'Design',
-    language: 'Sprache'
+    language: 'Sprache',
   },
   upload: {
     title: 'Upload',
@@ -14,38 +14,38 @@ export default {
     supportedFormats: 'MP3 • WAV • FLAC • OGG • AAC • M4A • OPUS • AIFF • WMA',
     selectFiles: 'Dateien wählen',
     selectFolder: 'Ordner wählen',
-    filesSelected: '{count} Datei | {count} Dateien'
+    filesSelected: '{count} Datei | {count} Dateien',
   },
   conversion: {
     title: 'Einstellungen',
     format: 'Format',
     formatHints: {
-      mp3:  'Klein & überall kompatibel — ideal für Musik und Podcasts',
-      wav:  'Verlustfrei & unkomprimiert — für professionelle Bearbeitung',
+      mp3: 'Klein & überall kompatibel — ideal für Musik und Podcasts',
+      wav: 'Verlustfrei & unkomprimiert — für professionelle Bearbeitung',
       flac: 'Verlustfrei & komprimiert — perfekt für Archivierung',
-      ogg:  'Open-Source-Alternative zu MP3, gute Qualität bei kleiner Dateigröße',
-      aac:  'Bessere Qualität als MP3 bei gleicher Dateigröße — Standard auf Apple-Geräten',
-      m4a:  'AAC in Apple-Verpackung — ideal für iTunes und iOS',
+      ogg: 'Open-Source-Alternative zu MP3, gute Qualität bei kleiner Dateigröße',
+      aac: 'Bessere Qualität als MP3 bei gleicher Dateigröße — Standard auf Apple-Geräten',
+      m4a: 'AAC in Apple-Verpackung — ideal für iTunes und iOS',
       opus: 'Modernster Codec, beste Qualität bei niedrigen Bitraten — ideal für Streaming',
       aiff: 'Verlustfrei — Apples professionelles Studio-Format',
-      wma:  'Windows Media Audio — für ältere Windows-Geräte'
+      wma: 'Windows Media Audio — für ältere Windows-Geräte',
     },
     quality: 'Qualität',
     qualityLevels: {
       low: 'Niedrig',
       medium: 'Mittel',
       high: 'Hoch',
-      maximum: 'Maximum'
+      maximum: 'Maximum',
     },
     convert: 'Konvertieren',
     converting: 'Läuft...',
-    progress: 'Fortschritt'
+    progress: 'Fortschritt',
   },
   fileList: {
     title: 'Dateien',
     empty: 'Noch keine Dateien',
     remove: 'Entfernen',
-    size: 'Größe'
+    size: 'Größe',
   },
   actions: {
     clearAll: 'Leeren',
@@ -62,7 +62,7 @@ export default {
     confirmDeleteAll: 'Möchten Sie wirklich alle Dateien löschen?',
     play: 'Abspielen',
     pause: 'Pause',
-    volume: 'Lautstärke'
+    volume: 'Lautstärke',
   },
   status: {
     processing: 'Läuft...',
@@ -72,7 +72,7 @@ export default {
     waiting: 'Wartet...',
     completedOf: '{completed} von {total} Dateien konvertiert',
     local: 'Lokal',
-    server: 'Server'
+    server: 'Server',
   },
   toast: {
     success: 'Erfolg',
@@ -89,7 +89,7 @@ export default {
     zipDownloadStarted: 'ZIP-Download gestartet',
     zipDownloadFailed: 'ZIP-Download fehlgeschlagen',
     allFilesDownloaded: 'Alle Dateien heruntergeladen',
-    downloadFailed: 'Download fehlgeschlagen'
+    downloadFailed: 'Download fehlgeschlagen',
   },
   errors: {
     uploadFailed: 'Upload fehlgeschlagen',
@@ -98,39 +98,44 @@ export default {
     fileTooLarge: 'Zu groß (max. 300MB)',
     networkError: 'Netzwerkfehler',
     serverError: 'Serverfehler',
-    unsupportedFile: 'Nicht unterstützt'
+    unsupportedFile: 'Nicht unterstützt',
   },
   download: {
     title: 'Download',
     subtitle: 'Laden Sie die Desktop-Version herunter',
     installer: {
       title: 'Windows Installer',
-      description: 'Empfohlen für die meisten Benutzer. Automatische Installation mit Startmenü-Einträgen.',
-      exe: 'Download (.exe)'
+      description:
+        'Empfohlen für die meisten Benutzer. Automatische Installation mit Startmenü-Einträgen.',
+      exe: 'Download (.exe)',
     },
     portable: {
       title: 'Portable Version',
-      description: 'Keine Installation erforderlich. Ideal für USB-Sticks oder eingeschränkte Systeme.',
+      description:
+        'Keine Installation erforderlich. Ideal für USB-Sticks oder eingeschränkte Systeme.',
       x64: 'ZIP (64-bit)',
-      x86: 'ZIP (32-bit)'
+      x86: 'ZIP (32-bit)',
     },
-    note: 'Alle Downloads sind virenfrei und digital signiert.'
+    note: 'Alle Downloads sind virenfrei und digital signiert.',
   },
   tools: {
     title: 'Unsere Audio-Tools',
     visitTool: 'Zum Tool',
     visualizer: {
       title: 'Audio Visualizer',
-      description: 'Verwandle deine Musik in ein visuelles Erlebnis! Dieses moderne Tool bietet eine professionelle Echtzeit-Visualisierung deiner Audiodaten direkt im Browser.'
+      description:
+        'Verwandle deine Musik in ein visuelles Erlebnis! Dieses moderne Tool bietet eine professionelle Echtzeit-Visualisierung deiner Audiodaten direkt im Browser.',
     },
     normalizer: {
       title: 'Audio Normalisierer',
-      description: 'Mit dem Audio Normalizer bringst du deine gesamte Musikbibliothek auf ein einheitliches Lautstärkeniveau, ohne die Klangqualität zu beeinträchtigen.'
+      description:
+        'Mit dem Audio Normalizer bringst du deine gesamte Musikbibliothek auf ein einheitliches Lautstärkeniveau, ohne die Klangqualität zu beeinträchtigen.',
     },
     equalizer: {
       title: 'Equalizer 19',
-      description: 'Der Equalizer 19 ist ein leistungsstarker 19-Band-Equalizer, der auf der Web Audio API basiert und eine chirurgisch genaue Frequenzkontrolle ermöglicht.'
-    }
+      description:
+        'Der Equalizer 19 ist ein leistungsstarker 19-Band-Equalizer, der auf der Web Audio API basiert und eine chirurgisch genaue Frequenzkontrolle ermöglicht.',
+    },
   },
   wizard: {
     title: 'Wie geht es weiter?',
@@ -145,30 +150,30 @@ export default {
     newFiles: 'Neue Dateien konvertieren',
     preparing: 'Wird vorbereitet\u2026',
     shareSuccess: '{count} Datei übergeben | {count} Dateien übergeben',
-    shareFailed: 'Dateien konnten nicht übergeben werden'
+    shareFailed: 'Dateien konnten nicht übergeben werden',
   },
   share: {
-    facebook: 'Auf Facebook teilen'
+    facebook: 'Auf Facebook teilen',
   },
   faq: {
     title: 'FAQ',
     questions: {
       formats: {
         q: 'Welche Formate werden unterstützt?',
-        a: 'MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF und WMA werden unterstützt.'
+        a: 'MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF und WMA werden unterstützt.',
       },
       quality: {
         q: 'Was bedeutet die Qualitätseinstellung?',
-        a: 'Höhere Qualität = besserer Sound, größere Datei.'
+        a: 'Höhere Qualität = besserer Sound, größere Datei.',
       },
       privacy: {
         q: 'Sind meine Dateien sicher?',
-        a: 'Ja! Kleine Dateien (unter 20 MB) werden direkt in deinem Browser konvertiert und verlassen nie dein Gerät. Größere Dateien werden sicher auf dem Server verarbeitet und nach der Konvertierung automatisch gelöscht.'
+        a: 'Ja! Kleine Dateien (unter 20 MB) werden direkt in deinem Browser konvertiert und verlassen nie dein Gerät. Größere Dateien werden sicher auf dem Server verarbeitet und nach der Konvertierung automatisch gelöscht.',
       },
       batch: {
         q: 'Kann ich mehrere Dateien gleichzeitig konvertieren?',
-        a: 'Klar! Einfach mehrere Dateien hochladen.'
-      }
-    }
-  }
+        a: 'Klar! Einfach mehrere Dateien hochladen.',
+      },
+    },
+  },
 }

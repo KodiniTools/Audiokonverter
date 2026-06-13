@@ -19,7 +19,7 @@
             <div class="file-details">
               <span class="file-name" :title="file.name">{{ file.name }}</span>
               <div class="file-size-info">
-                <span class="file-size" :class="{ 'original': file.status === 'completed' }">
+                <span class="file-size" :class="{ original: file.status === 'completed' }">
                   {{ audioStore.formatFileSize(file.size) }}
                 </span>
                 <template v-if="file.status === 'completed' && file.convertedSize">
@@ -34,7 +34,11 @@
 
           <div class="file-item-status">
             <!-- Processing mode badge -->
-            <span v-if="file.status === 'pending'" class="mode-badge" :class="file.processedLocally ? 'local' : 'server'">
+            <span
+              v-if="file.status === 'pending'"
+              class="mode-badge"
+              :class="file.processedLocally ? 'local' : 'server'"
+            >
               {{ file.processedLocally ? t('status.local') : t('status.server') }}
             </span>
 
@@ -46,8 +50,15 @@
             <!-- Circular Progress -->
             <div v-if="file.status === 'converting'" class="progress-circle">
               <svg viewBox="0 0 36 36" class="progress-ring">
-                <path class="progress-ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                <path class="progress-ring-fill" :stroke-dasharray="`${file.progress}, 100`" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path
+                  class="progress-ring-bg"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                />
+                <path
+                  class="progress-ring-fill"
+                  :stroke-dasharray="`${file.progress}, 100`"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                />
               </svg>
               <span class="progress-text">{{ file.progress }}%</span>
             </div>
@@ -56,27 +67,33 @@
             <button
               v-if="file.status === 'completed'"
               class="btn-icon btn-download"
-              @click="audioStore.downloadFile(file)"
               :title="t('actions.download')"
               aria-label="Download"
-            >&#8595;</button>
+              @click="audioStore.downloadFile(file)"
+            >
+              &#8595;
+            </button>
 
             <!-- Retry Button -->
             <button
               v-if="file.status === 'error'"
               class="btn-icon btn-retry"
-              @click="audioStore.convertFile(file)"
               :title="t('actions.retry')"
               aria-label="Retry"
-            >&#8635;</button>
+              @click="audioStore.convertFile(file)"
+            >
+              &#8635;
+            </button>
 
             <!-- Remove Button -->
             <button
               class="btn-icon btn-remove"
-              @click="removeFile(file.id)"
               :title="t('fileList.remove')"
               aria-label="Remove"
-            >&times;</button>
+              @click="removeFile(file.id)"
+            >
+              &times;
+            </button>
           </div>
         </div>
 
@@ -84,18 +101,21 @@
         <div class="audio-controls">
           <button
             class="btn-icon btn-play"
-            @click="togglePlay(file)"
             :title="isPlayingFile(file.id) ? t('actions.pause') : t('actions.play')"
+            @click="togglePlay(file)"
           >
             <svg v-if="!isPlayingFile(file.id)" viewBox="0 0 24 24" width="14" height="14">
-              <path d="M8 5v14l11-7z" fill="currentColor"/>
+              <path d="M8 5v14l11-7z" fill="currentColor" />
             </svg>
             <svg v-else viewBox="0 0 24 24" width="14" height="14">
-              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" fill="currentColor"/>
+              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" fill="currentColor" />
             </svg>
           </button>
           <svg class="volume-icon" viewBox="0 0 24 24" width="12" height="12">
-            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" fill="currentColor"/>
+            <path
+              d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"
+              fill="currentColor"
+            />
           </svg>
           <input
             type="range"
@@ -104,8 +124,8 @@
             max="1"
             step="0.05"
             :value="getFileVolume(file.id)"
-            @input="updateVolume(file.id, $event.target.value)"
             :title="t('actions.volume')"
+            @input="updateVolume(file.id, $event.target.value)"
           />
         </div>
 
@@ -207,7 +227,7 @@ function removeFile(fileId) {
 onUnmounted(() => {
   audioEl.pause()
   audioEl.src = ''
-  objectUrls.forEach(url => URL.revokeObjectURL(url))
+  objectUrls.forEach((url) => URL.revokeObjectURL(url))
   objectUrls.clear()
 })
 </script>

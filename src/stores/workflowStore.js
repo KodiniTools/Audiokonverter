@@ -10,7 +10,7 @@ export const WORKFLOW_STEPS = {
   UPLOAD: 'upload',
   CONFIGURE: 'configure',
   CONVERTING: 'converting',
-  COMPLETED: 'completed'
+  COMPLETED: 'completed',
 }
 
 export const useWorkflowStore = defineStore('workflow', () => {
@@ -22,7 +22,7 @@ export const useWorkflowStore = defineStore('workflow', () => {
     if (!audioStore.hasFiles) return WORKFLOW_STEPS.UPLOAD
 
     const allDone = audioStore.audioFiles.every(
-      f => f.status === 'completed' || f.status === 'error'
+      (f) => f.status === 'completed' || f.status === 'error'
     )
     if (allDone && audioStore.hasConvertedFiles) return WORKFLOW_STEPS.COMPLETED
 
@@ -34,10 +34,10 @@ export const useWorkflowStore = defineStore('workflow', () => {
     const files = audioStore.audioFiles
     return {
       total: files.length,
-      pending: files.filter(f => f.status === 'pending').length,
-      converting: files.filter(f => f.status === 'converting').length,
-      completed: files.filter(f => f.status === 'completed').length,
-      error: files.filter(f => f.status === 'error').length
+      pending: files.filter((f) => f.status === 'pending').length,
+      converting: files.filter((f) => f.status === 'converting').length,
+      completed: files.filter((f) => f.status === 'completed').length,
+      error: files.filter((f) => f.status === 'error').length,
     }
   })
 
@@ -53,10 +53,10 @@ export const useWorkflowStore = defineStore('workflow', () => {
   const processingModeSummary = computed(() => {
     const files = audioStore.audioFiles
     return {
-      local: files.filter(f => f.processedLocally).length,
-      server: files.filter(f => !f.processedLocally).length,
+      local: files.filter((f) => f.processedLocally).length,
+      server: files.filter((f) => !f.processedLocally).length,
       wasmReady: audioStore.wasmReady,
-      wasmLoading: audioStore.wasmLoading
+      wasmLoading: audioStore.wasmLoading,
     }
   })
 
@@ -68,9 +68,11 @@ export const useWorkflowStore = defineStore('workflow', () => {
 
   // ── Action guards ────────────────────────────────────────────────────
   const canStartConversion = computed(() => {
-    return audioStore.hasFiles &&
+    return (
+      audioStore.hasFiles &&
       !audioStore.isConverting &&
       (fileSummary.value.pending > 0 || fileSummary.value.error > 0)
+    )
   })
 
   const canDownload = computed(() => fileSummary.value.completed > 0)
@@ -107,6 +109,6 @@ export const useWorkflowStore = defineStore('workflow', () => {
     lastTransition,
 
     // Constants (for external comparison)
-    STEPS: WORKFLOW_STEPS
+    STEPS: WORKFLOW_STEPS,
   }
 })

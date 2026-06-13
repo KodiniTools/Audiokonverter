@@ -23,7 +23,7 @@ const { t } = useI18n()
 .main-title {
   font-size: 2.25rem;
   font-weight: 700;
-  color: #F5F4D6;
+  color: #f5f4d6;
   margin-bottom: 0.35rem;
   letter-spacing: -0.02em;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
