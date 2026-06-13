@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "vite build --mode production",
     "preview": "vite preview",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs",
+    "lint:fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix",
+    "format": "prettier --write \"src/**/*.{vue,js,json,css}\"",
+    "format:check": "prettier --check \"src/**/*.{vue,js,json,css}\"",
     "deploy:windows": "powershell -ExecutionPolicy Bypass -File .\\deploy.ps1",
     "deploy:linux": "bash deploy.sh"
   },
@@ -25,7 +28,10 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.0",
     "eslint": "^8.57.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.6",
     "eslint-plugin-vue": "^9.20.0",
+    "prettier": "^3.8.4",
     "vite": "^5.0.0",
     "vite-plugin-pwa": "^1.2.0"
   }

@@ -1,7 +1,3 @@
-<template>
-  <!-- Bridge-Komponente: Synct die globale SSI-Navigation mit dem Vue-App-State -->
-</template>
-
 <script setup>
 import { onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'

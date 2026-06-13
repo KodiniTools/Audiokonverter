@@ -13,11 +13,11 @@ export const i18n = createI18n({
   fallbackLocale: 'en',
   messages: {
     de,
-    en
+    en,
   },
   globalInjection: true,
   missingWarn: false,
-  fallbackWarn: false
+  fallbackWarn: false,
 })
 
 // Funktion zum Wechseln der Sprache (gleicher Key wie globale SSI-Navigation)

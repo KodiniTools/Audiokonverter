@@ -23,15 +23,16 @@ export default defineConfig(({ mode }) => {
               handler: 'CacheFirst',
               options: {
                 cacheName: 'ffmpeg-wasm-cache',
-                expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 30 }
-              }
-            }
-          ]
+                expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              },
+            },
+          ],
         },
         manifest: {
           name: 'Audio Konverter - Schnell & Einfach',
           short_name: 'Audio Konverter',
-          description: 'Konvertiere Audiodateien schnell und einfach. MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF, WMA. Kostenlos, sicher und direkt im Browser.',
+          description:
+            'Konvertiere Audiodateien schnell und einfach. MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF, WMA. Kostenlos, sicher und direkt im Browser.',
           theme_color: '#014F99',
           background_color: '#E9E9EB',
           display: 'standalone',
@@ -42,23 +43,23 @@ export default defineConfig(({ mode }) => {
             {
               src: 'icon-192.png',
               sizes: '192x192',
-              type: 'image/png'
+              type: 'image/png',
             },
             {
               src: 'icon-512.png',
               sizes: '512x512',
               type: 'image/png',
-              purpose: 'any maskable'
-            }
-          ]
-        }
-      })
+              purpose: 'any maskable',
+            },
+          ],
+        },
+      }),
     ],
 
     resolve: {
       alias: {
-        '@': fileURLToPath(new URL('./src', import.meta.url))
-      }
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
+      },
     },
 
     // Base Path - /audiokonverter/ für Production, / für Development
@@ -71,20 +72,20 @@ export default defineConfig(({ mode }) => {
       host: true,
       headers: {
         'Cross-Origin-Opener-Policy': 'same-origin',
-        'Cross-Origin-Embedder-Policy': 'require-corp'
+        'Cross-Origin-Embedder-Policy': 'require-corp',
       },
       proxy: {
         '/api': {
           target: 'http://localhost:3001',
           changeOrigin: true,
-          secure: false
+          secure: false,
         },
         '/files': {
           target: 'http://localhost:3001',
           changeOrigin: true,
-          secure: false
-        }
-      }
+          secure: false,
+        },
+      },
     },
 
     // Production Build
@@ -112,8 +113,8 @@ export default defineConfig(({ mode }) => {
           manualChunks: {
             'vue-vendor': ['vue', 'pinia'],
             'i18n-vendor': ['vue-i18n'],
-            'utils': ['axios'],
-            'ffmpeg': ['@ffmpeg/ffmpeg', '@ffmpeg/util']
+            utils: ['axios'],
+            ffmpeg: ['@ffmpeg/ffmpeg', '@ffmpeg/util'],
           },
 
           // Asset-Dateinamen mit Hashes
@@ -133,15 +134,15 @@ export default defineConfig(({ mode }) => {
 
           // Chunk- und Entry-Dateinamen
           chunkFileNames: 'assets/js/[name]-[hash].js',
-          entryFileNames: 'assets/js/[name]-[hash].js'
-        }
+          entryFileNames: 'assets/js/[name]-[hash].js',
+        },
       },
 
       // Asset Inline Limit (4KB)
       assetsInlineLimit: 4096,
 
       // Compression Report
-      reportCompressedSize: true
+      reportCompressedSize: true,
     },
 
     // Preview Server (für lokale Production-Tests)
@@ -151,24 +152,24 @@ export default defineConfig(({ mode }) => {
       host: true,
       headers: {
         'Cross-Origin-Opener-Policy': 'same-origin',
-        'Cross-Origin-Embedder-Policy': 'require-corp'
+        'Cross-Origin-Embedder-Policy': 'require-corp',
       },
       proxy: {
         '/api': {
           target: 'http://localhost:3001',
-          changeOrigin: true
+          changeOrigin: true,
         },
         '/files': {
           target: 'http://localhost:3001',
-          changeOrigin: true
-        }
-      }
+          changeOrigin: true,
+        },
+      },
     },
 
     // Dependency Optimierungen
     optimizeDeps: {
       include: ['vue', 'pinia', 'vue-i18n', 'axios'],
-      exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util']
-    }
+      exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util'],
+    },
   }
 })

@@ -43,13 +43,19 @@ export async function shareFiles(files) {
       blob: file.blob,
       mimeType: file.blob.type,
       source: 'audiokonverter',
-      sharedAt: Date.now()
+      sharedAt: Date.now(),
     })
   }
 
   return new Promise((resolve, reject) => {
-    tx.oncomplete = () => { db.close(); resolve() }
-    tx.onerror = () => { db.close(); reject(tx.error) }
+    tx.oncomplete = () => {
+      db.close()
+      resolve()
+    }
+    tx.onerror = () => {
+      db.close()
+      reject(tx.error)
+    }
   })
 }
 
@@ -63,8 +69,14 @@ export async function getSharedFiles() {
   const request = tx.objectStore(STORE_NAME).getAll()
 
   return new Promise((resolve, reject) => {
-    request.onsuccess = () => { db.close(); resolve(request.result) }
-    request.onerror = () => { db.close(); reject(request.error) }
+    request.onsuccess = () => {
+      db.close()
+      resolve(request.result)
+    }
+    request.onerror = () => {
+      db.close()
+      reject(request.error)
+    }
   })
 }
 
@@ -77,7 +89,13 @@ export async function clearSharedFiles() {
   tx.objectStore(STORE_NAME).clear()
 
   return new Promise((resolve, reject) => {
-    tx.oncomplete = () => { db.close(); resolve() }
-    tx.onerror = () => { db.close(); reject(tx.error) }
+    tx.oncomplete = () => {
+      db.close()
+      resolve()
+    }
+    tx.onerror = () => {
+      db.close()
+      reject(tx.error)
+    }
   })
 }

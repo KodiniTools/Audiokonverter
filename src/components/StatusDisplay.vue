@@ -3,7 +3,9 @@
     <div class="completion-banner">
       <span class="completion-check" aria-hidden="true">&#10003;</span>
       <span class="completion-label">{{ t('status.completed') }}!</span>
-      <span class="completion-detail">{{ t('status.completedOf', { completed: completedCount, total: audioStore.fileCount }) }}</span>
+      <span class="completion-detail">{{
+        t('status.completedOf', { completed: completedCount, total: audioStore.fileCount })
+      }}</span>
     </div>
 
     <!-- Next-Step Wizard -->
@@ -14,8 +16,8 @@
         <!-- Playlist Generator -->
         <button
           class="wizard-card"
-          @click="shareAndOpen('playlist', 'https://kodinitools.com/playlist_generator/app')"
           :disabled="isBusy"
+          @click="shareAndOpen('playlist', 'https://kodinitools.com/playlist_generator/app')"
         >
           <span class="wizard-card-label">
             {{ preparingTool === 'playlist' ? t('wizard.preparing') : t('wizard.playlist') }}
@@ -26,8 +28,8 @@
         <!-- Audio Visualizer -->
         <button
           class="wizard-card"
-          @click="shareAndOpen('visualizer', 'https://kodinitools.com/visualizer/')"
           :disabled="isBusy"
+          @click="shareAndOpen('visualizer', 'https://kodinitools.com/visualizer/')"
         >
           <span class="wizard-card-label">
             {{ preparingTool === 'visualizer' ? t('wizard.preparing') : t('wizard.visualizer') }}
@@ -38,8 +40,8 @@
         <!-- Audio Normalizer -->
         <button
           class="wizard-card"
-          @click="shareAndOpen('normalizer', 'https://kodinitools.com/audionormalisierer/')"
           :disabled="isBusy"
+          @click="shareAndOpen('normalizer', 'https://kodinitools.com/audionormalisierer/')"
         >
           <span class="wizard-card-label">
             {{ preparingTool === 'normalizer' ? t('wizard.preparing') : t('wizard.normalizer') }}
@@ -50,8 +52,8 @@
         <!-- Equalizer 19 -->
         <button
           class="wizard-card"
-          @click="shareAndOpen('equalizer', 'https://kodinitools.com/equaliser19/')"
           :disabled="isBusy"
+          @click="shareAndOpen('equalizer', 'https://kodinitools.com/equaliser19/')"
         >
           <span class="wizard-card-label">
             {{ preparingTool === 'equalizer' ? t('wizard.preparing') : t('wizard.equalizer') }}
@@ -85,13 +87,13 @@ const preparingTool = ref(null)
 const isBusy = computed(() => preparingTool.value !== null)
 
 const completedCount = computed(() => {
-  return audioStore.audioFiles.filter(f => f.status === 'completed').length
+  return audioStore.audioFiles.filter((f) => f.status === 'completed').length
 })
 
 /** Collect converted blobs from the store. */
 async function collectConvertedBlobs() {
   const completedFiles = audioStore.audioFiles.filter(
-    f => f.status === 'completed' && f.convertedUrl
+    (f) => f.status === 'completed' && f.convertedUrl
   )
   const entries = []
   for (const f of completedFiles) {
@@ -105,7 +107,7 @@ async function collectConvertedBlobs() {
 /** Store files in IndexedDB, then open the target tool. */
 async function shareAndOpen(toolKey, toolUrl) {
   const completedFiles = audioStore.audioFiles.filter(
-    f => f.status === 'completed' && f.convertedUrl
+    (f) => f.status === 'completed' && f.convertedUrl
   )
   if (completedFiles.length === 0) return
 

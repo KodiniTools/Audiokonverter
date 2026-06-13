@@ -8,11 +8,7 @@
         <label for="format-select" class="setting-label">
           {{ t('conversion.format') }}
         </label>
-        <select
-          id="format-select"
-          v-model="audioStore.currentFormat"
-          class="setting-select"
-        >
+        <select id="format-select" v-model="audioStore.currentFormat" class="setting-select">
           <option value="mp3">MP3</option>
           <option value="wav">WAV</option>
           <option value="flac">FLAC</option>
@@ -34,12 +30,12 @@
         <div class="quality-control">
           <input
             id="quality-slider"
+            v-model.number="audioStore.currentQuality"
             type="range"
             min="1"
             max="10"
-            v-model.number="audioStore.currentQuality"
             class="quality-slider"
-          >
+          />
           <div class="quality-markers">
             <span>{{ t('conversion.qualityLevels.low') }}</span>
             <span>{{ t('conversion.qualityLevels.maximum') }}</span>
@@ -75,7 +71,7 @@ const formatHint = computed(() => {
 })
 
 const hasPendingFiles = computed(() => {
-  return audioStore.audioFiles.some(f => f.status === 'pending' || f.status === 'error')
+  return audioStore.audioFiles.some((f) => f.status === 'pending' || f.status === 'error')
 })
 
 const qualityLabel = computed(() => {
@@ -92,7 +88,7 @@ const qualityInfo = computed(() => {
 
   const bitrates = {
     mp3: [64, 96, 128, 160, 192, 224, 256, 320, 320, 320],
-    aac: [64, 96, 128, 160, 192, 224, 256, 320, 320, 320]
+    aac: [64, 96, 128, 160, 192, 224, 256, 320, 320, 320],
   }
 
   if (format === 'mp3' || format === 'aac' || format === 'm4a') {
@@ -139,7 +135,7 @@ async function startConversion() {
     showToast('success', t('toast.conversionComplete'))
   } catch (error) {
     showToast('error', t('toast.conversionFailed'), {
-      message: error.message
+      message: error.message,
     })
   }
 }

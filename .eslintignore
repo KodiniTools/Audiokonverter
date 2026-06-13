@@ -1,0 +1,8 @@
+node_modules
+dist
+dist-ssr
+build
+.cache
+.temp
+public
+ecosystem.config.js

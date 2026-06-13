@@ -1,12 +1,12 @@
 export default {
   app: {
     title: 'Audio Converter',
-    subtitle: 'Fast & easy conversion'
+    subtitle: 'Fast & easy conversion',
   },
   nav: {
     home: 'Home',
     toggleTheme: 'Theme',
-    language: 'Language'
+    language: 'Language',
   },
   upload: {
     title: 'Upload',
@@ -14,38 +14,38 @@ export default {
     supportedFormats: 'MP3 • WAV • FLAC • OGG • AAC • M4A • OPUS • AIFF • WMA',
     selectFiles: 'Choose files',
     selectFolder: 'Choose folder',
-    filesSelected: '{count} file | {count} files'
+    filesSelected: '{count} file | {count} files',
   },
   conversion: {
     title: 'Settings',
     format: 'Format',
     formatHints: {
-      mp3:  'Small & universally compatible — ideal for music and podcasts',
-      wav:  'Lossless & uncompressed — for professional editing',
+      mp3: 'Small & universally compatible — ideal for music and podcasts',
+      wav: 'Lossless & uncompressed — for professional editing',
       flac: 'Lossless & compressed — perfect for archiving',
-      ogg:  'Open-source alternative to MP3, good quality at small file sizes',
-      aac:  'Better quality than MP3 at the same file size — standard on Apple devices',
-      m4a:  'AAC in an Apple container — ideal for iTunes and iOS',
+      ogg: 'Open-source alternative to MP3, good quality at small file sizes',
+      aac: 'Better quality than MP3 at the same file size — standard on Apple devices',
+      m4a: 'AAC in an Apple container — ideal for iTunes and iOS',
       opus: 'Most modern codec, best quality at low bitrates — ideal for streaming',
-      aiff: 'Lossless — Apple\'s professional studio format',
-      wma:  'Windows Media Audio — for older Windows devices'
+      aiff: "Lossless — Apple's professional studio format",
+      wma: 'Windows Media Audio — for older Windows devices',
     },
     quality: 'Quality',
     qualityLevels: {
       low: 'Low',
       medium: 'Medium',
       high: 'High',
-      maximum: 'Maximum'
+      maximum: 'Maximum',
     },
     convert: 'Convert',
     converting: 'Converting...',
-    progress: 'Progress'
+    progress: 'Progress',
   },
   fileList: {
     title: 'Files',
     empty: 'No files yet',
     remove: 'Remove',
-    size: 'Size'
+    size: 'Size',
   },
   actions: {
     clearAll: 'Clear',
@@ -62,7 +62,7 @@ export default {
     confirmDeleteAll: 'Are you sure you want to delete all files?',
     play: 'Play',
     pause: 'Pause',
-    volume: 'Volume'
+    volume: 'Volume',
   },
   status: {
     processing: 'Processing...',
@@ -72,7 +72,7 @@ export default {
     waiting: 'Waiting...',
     completedOf: '{completed} of {total} files converted',
     local: 'Local',
-    server: 'Server'
+    server: 'Server',
   },
   toast: {
     success: 'Success',
@@ -89,7 +89,7 @@ export default {
     zipDownloadStarted: 'ZIP download started',
     zipDownloadFailed: 'ZIP download failed',
     allFilesDownloaded: 'All files downloaded',
-    downloadFailed: 'Download failed'
+    downloadFailed: 'Download failed',
   },
   errors: {
     uploadFailed: 'Upload failed',
@@ -98,7 +98,7 @@ export default {
     fileTooLarge: 'Too large (max. 300MB)',
     networkError: 'Network error',
     serverError: 'Server error',
-    unsupportedFile: 'Not supported'
+    unsupportedFile: 'Not supported',
   },
   download: {
     title: 'Download',
@@ -106,34 +106,37 @@ export default {
     installer: {
       title: 'Windows Installer',
       description: 'Recommended for most users. Automatic installation with start menu entries.',
-      exe: 'Download (.exe)'
+      exe: 'Download (.exe)',
     },
     portable: {
       title: 'Portable Version',
       description: 'No installation required. Ideal for USB drives or restricted systems.',
       x64: 'ZIP (64-bit)',
-      x86: 'ZIP (32-bit)'
+      x86: 'ZIP (32-bit)',
     },
-    note: 'All downloads are virus-free and digitally signed.'
+    note: 'All downloads are virus-free and digitally signed.',
   },
   tools: {
     title: 'Our Audio Tools',
     visitTool: 'Open Tool',
     visualizer: {
       title: 'Audio Visualizer',
-      description: 'Turn your music into a visual experience! This modern tool offers professional real-time visualization of your audio data right in the browser.'
+      description:
+        'Turn your music into a visual experience! This modern tool offers professional real-time visualization of your audio data right in the browser.',
     },
     normalizer: {
       title: 'Audio Normalizer',
-      description: 'With the Audio Normalizer, bring your entire music library to a consistent volume level without compromising sound quality.'
+      description:
+        'With the Audio Normalizer, bring your entire music library to a consistent volume level without compromising sound quality.',
     },
     equalizer: {
       title: 'Equalizer 19',
-      description: 'Equalizer 19 is a powerful 19-band equalizer based on the Web Audio API that enables surgically precise frequency control.'
-    }
+      description:
+        'Equalizer 19 is a powerful 19-band equalizer based on the Web Audio API that enables surgically precise frequency control.',
+    },
   },
   wizard: {
-    title: 'What\'s next?',
+    title: "What's next?",
     playlist: 'Create Playlist',
     playlistDesc: 'Generate a playlist from converted files',
     visualizer: 'View in Visualizer',
@@ -145,30 +148,30 @@ export default {
     newFiles: 'Convert new files',
     preparing: 'Preparing\u2026',
     shareSuccess: '{count} file handed over | {count} files handed over',
-    shareFailed: 'Could not hand over files'
+    shareFailed: 'Could not hand over files',
   },
   share: {
-    facebook: 'Share on Facebook'
+    facebook: 'Share on Facebook',
   },
   faq: {
     title: 'FAQ',
     questions: {
       formats: {
         q: 'Which formats are supported?',
-        a: 'MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF and WMA are supported.'
+        a: 'MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF and WMA are supported.',
       },
       quality: {
         q: 'What does the quality setting mean?',
-        a: 'Higher quality = better sound, larger file.'
+        a: 'Higher quality = better sound, larger file.',
       },
       privacy: {
         q: 'Are my files safe?',
-        a: 'Yes! Small files (under 20 MB) are converted directly in your browser and never leave your device. Larger files are securely processed on our server and automatically deleted after conversion.'
+        a: 'Yes! Small files (under 20 MB) are converted directly in your browser and never leave your device. Larger files are securely processed on our server and automatically deleted after conversion.',
       },
       batch: {
         q: 'Can I convert multiple files at once?',
-        a: 'Sure! Just upload multiple files.'
-      }
-    }
-  }
+        a: 'Sure! Just upload multiple files.',
+      },
+    },
+  },
 }

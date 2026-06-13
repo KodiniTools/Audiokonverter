@@ -1,11 +1,7 @@
 <template>
   <div class="toast-container">
     <TransitionGroup name="toast">
-      <div
-        v-for="toast in toasts"
-        :key="toast.id"
-        :class="['toast', `toast-${toast.type}`]"
-      >
+      <div v-for="toast in toasts" :key="toast.id" :class="['toast', `toast-${toast.type}`]">
         <div class="toast-content">
           <div class="toast-message">
             <strong class="toast-title">{{ toast.title }}</strong>
@@ -15,9 +11,11 @@
           <button
             v-if="toast.closeable"
             class="toast-close"
-            @click="removeToast(toast.id)"
             aria-label="Close"
-          >&times;</button>
+            @click="removeToast(toast.id)"
+          >
+            &times;
+          </button>
         </div>
 
         <div v-if="toast.actions && toast.actions.length" class="toast-actions">

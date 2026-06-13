@@ -29,7 +29,7 @@ function withTimeout(promise, ms, msg) {
     promise,
     new Promise((_, reject) => {
       timer = setTimeout(() => reject(new Error(msg)), ms)
-    })
+    }),
   ]).finally(() => clearTimeout(timer))
 }
 
@@ -45,7 +45,7 @@ export async function loadFFmpeg() {
     const deadline = Date.now() + LOAD_TIMEOUT
     while (loading) {
       if (Date.now() > deadline) throw new Error('wasm_load_timeout')
-      await new Promise(resolve => setTimeout(resolve, 100))
+      await new Promise((resolve) => setTimeout(resolve, 100))
     }
     // The other caller finished — check if it succeeded
     if (loaded) return ffmpeg
@@ -67,19 +67,22 @@ export async function loadFFmpeg() {
     if (!cachedCoreURL) {
       cachedCoreURL = await withTimeout(
         toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-        LOAD_TIMEOUT, 'wasm_core_fetch_timeout'
+        LOAD_TIMEOUT,
+        'wasm_core_fetch_timeout'
       )
     }
     if (!cachedWasmURL) {
       cachedWasmURL = await withTimeout(
         toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
-        LOAD_TIMEOUT, 'wasm_binary_fetch_timeout'
+        LOAD_TIMEOUT,
+        'wasm_binary_fetch_timeout'
       )
     }
 
     await withTimeout(
       ffmpeg.load({ coreURL: cachedCoreURL, wasmURL: cachedWasmURL }),
-      LOAD_TIMEOUT, 'wasm_init_timeout'
+      LOAD_TIMEOUT,
+      'wasm_init_timeout'
     )
 
     loaded = true
@@ -202,13 +205,17 @@ export async function convertLocally(file, targetFormat, quality, onProgress) {
       m4a: 'audio/mp4',
       opus: 'audio/opus',
       aiff: 'audio/aiff',
-      wma: 'audio/x-ms-wma'
+      wma: 'audio/x-ms-wma',
     }
 
     return new Blob([data.buffer], { type: mimeTypes[targetFormat] || 'audio/mpeg' })
   } finally {
     setProgressHandler(null)
-    try { await instance.deleteFile(inputName) } catch (_) {}
-    try { await instance.deleteFile(outputName) } catch (_) {}
+    try {
+      await instance.deleteFile(inputName)
+    } catch (_) {}
+    try {
+      await instance.deleteFile(outputName)
+    } catch (_) {}
   }
 }

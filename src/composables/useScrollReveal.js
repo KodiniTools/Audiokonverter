@@ -13,7 +13,7 @@ export function useScrollReveal() {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (prefersReducedMotion) {
       // Make all elements visible immediately
-      document.querySelectorAll('[data-reveal]').forEach(el => {
+      document.querySelectorAll('[data-reveal]').forEach((el) => {
         el.classList.add('revealed')
       })
       return
@@ -37,12 +37,12 @@ export function useScrollReveal() {
       },
       {
         threshold: 0.1,
-        rootMargin: '0px 0px -40px 0px'
+        rootMargin: '0px 0px -40px 0px',
       }
     )
 
     // Observe all elements with data-reveal attribute
-    document.querySelectorAll('[data-reveal]').forEach(el => {
+    document.querySelectorAll('[data-reveal]').forEach((el) => {
       observer.observe(el)
     })
   })

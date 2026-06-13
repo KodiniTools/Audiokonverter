@@ -12,17 +12,17 @@
         type="file"
         multiple
         accept="audio/*,.mp3,.wav,.flac,.ogg,.aac,.m4a,.opus,.aiff,.aif,.wma"
-        @change="handleFileSelect"
         style="display: none"
-      >
+        @change="handleFileSelect"
+      />
       <input
         ref="folderInput"
         type="file"
         webkitdirectory
         multiple
-        @change="handleFolderSelect"
         style="display: none"
-      >
+        @change="handleFolderSelect"
+      />
 
       <!-- Animated background waves -->
       <div class="upload-bg-waves">
@@ -60,7 +60,19 @@ const fileInput = ref(null)
 const folderInput = ref(null)
 const isDragging = ref(false)
 
-const SUPPORTED_FORMATS = ['audio/mpeg', 'audio/wav', 'audio/flac', 'audio/ogg', 'audio/aac', 'audio/x-m4a', 'audio/mp4', 'audio/opus', 'audio/aiff', 'audio/x-aiff', 'audio/x-ms-wma']
+const SUPPORTED_FORMATS = [
+  'audio/mpeg',
+  'audio/wav',
+  'audio/flac',
+  'audio/ogg',
+  'audio/aac',
+  'audio/x-m4a',
+  'audio/mp4',
+  'audio/opus',
+  'audio/aiff',
+  'audio/x-aiff',
+  'audio/x-ms-wma',
+]
 const MAX_FILE_SIZE = 300 * 1024 * 1024 // 300MB
 
 function triggerFileInput() {
@@ -89,7 +101,7 @@ async function handleDrop(event) {
   isDragging.value = false
 
   const items = Array.from(event.dataTransfer.items ?? [])
-  const hasDirectories = items.some(item => {
+  const hasDirectories = items.some((item) => {
     const entry = item.webkitGetAsEntry?.()
     return entry?.isDirectory
   })
@@ -103,29 +115,35 @@ async function handleDrop(event) {
 }
 
 function readDroppedEntries(items) {
-  const entries = items.map(item => item.webkitGetAsEntry?.()).filter(Boolean)
-  const promises = entries.map(entry => readEntry(entry))
-  return Promise.all(promises).then(results => results.flat())
+  const entries = items.map((item) => item.webkitGetAsEntry?.()).filter(Boolean)
+  const promises = entries.map((entry) => readEntry(entry))
+  return Promise.all(promises).then((results) => results.flat())
 }
 
 function readEntry(entry) {
   if (entry.isFile) {
-    return new Promise(resolve => entry.file(resolve, () => resolve(null))).then(f => f ? [f] : [])
+    return new Promise((resolve) => entry.file(resolve, () => resolve(null))).then((f) =>
+      f ? [f] : []
+    )
   }
   if (entry.isDirectory) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const reader = entry.createReader()
       const allEntries = []
       const readBatch = () => {
-        reader.readEntries(batch => {
-          if (batch.length === 0) {
-            Promise.all(allEntries.map(e => readEntry(e)))
-              .then(results => resolve(results.flat()))
-          } else {
-            allEntries.push(...batch)
-            readBatch()
-          }
-        }, () => resolve([]))
+        reader.readEntries(
+          (batch) => {
+            if (batch.length === 0) {
+              Promise.all(allEntries.map((e) => readEntry(e))).then((results) =>
+                resolve(results.flat())
+              )
+            } else {
+              allEntries.push(...batch)
+              readBatch()
+            }
+          },
+          () => resolve([])
+        )
       }
       readBatch()
     })
@@ -137,7 +155,7 @@ function processFiles(files) {
   const validFiles = []
   const errors = []
 
-  files.forEach(file => {
+  files.forEach((file) => {
     // Check file size
     if (file.size > MAX_FILE_SIZE) {
       errors.push(`${file.name}: ${t('errors.fileTooLarge')}`)
@@ -145,8 +163,9 @@ function processFiles(files) {
     }
 
     // Check file type
-    const isAudio = SUPPORTED_FORMATS.some(format => file.type.includes(format.split('/')[1])) ||
-                    /\.(mp3|wav|flac|ogg|aac|m4a|opus|aiff|aif|wma)$/i.test(file.name)
+    const isAudio =
+      SUPPORTED_FORMATS.some((format) => file.type.includes(format.split('/')[1])) ||
+      /\.(mp3|wav|flac|ogg|aac|m4a|opus|aiff|aif|wma)$/i.test(file.name)
 
     if (!isAudio) {
       errors.push(`${file.name}: ${t('errors.unsupportedFile')}`)
@@ -160,12 +179,12 @@ function processFiles(files) {
   if (validFiles.length > 0) {
     audioStore.addFiles(validFiles)
     showToast('success', t('toast.fileAdded'), {
-      message: `${validFiles.length} ${t('upload.filesSelected', { count: validFiles.length })}`
+      message: `${validFiles.length} ${t('upload.filesSelected', { count: validFiles.length })}`,
     })
   }
 
   // Show errors
-  errors.forEach(error => {
+  errors.forEach((error) => {
     showToast('error', t('toast.error'), { message: error })
   })
 }
@@ -250,7 +269,7 @@ function processFiles(files) {
 .upload-title {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #F5F4D6;
+  color: #f5f4d6;
   margin-bottom: 0.35rem;
   position: relative;
 }
@@ -276,7 +295,7 @@ function processFiles(files) {
   position: relative;
   background: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(245, 244, 214, 0.3);
-  color: #F5F4D6;
+  color: #f5f4d6;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -305,7 +324,8 @@ function processFiles(files) {
 }
 
 @keyframes waveFloat {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0) rotate(0deg);
   }
   50% {

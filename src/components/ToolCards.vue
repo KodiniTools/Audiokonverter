@@ -15,9 +15,7 @@
       >
         <h3 class="tool-card-title">{{ t(`tools.${tool.key}.title`) }}</h3>
         <p class="tool-card-desc">{{ t(`tools.${tool.key}.description`) }}</p>
-        <span class="tool-card-link">
-          {{ t('tools.visitTool') }} &rarr;
-        </span>
+        <span class="tool-card-link"> {{ t('tools.visitTool') }} &rarr; </span>
       </a>
     </div>
   </div>
@@ -31,16 +29,16 @@ const { t } = useI18n()
 const tools = [
   {
     key: 'visualizer',
-    link: 'https://kodinitools.com/visualizer/'
+    link: 'https://kodinitools.com/visualizer/',
   },
   {
     key: 'normalizer',
-    link: 'https://kodinitools.com/audionormalisierer/'
+    link: 'https://kodinitools.com/audionormalisierer/',
   },
   {
     key: 'equalizer',
-    link: 'https://kodinitools.com/equaliser19/'
-  }
+    link: 'https://kodinitools.com/equaliser19/',
+  },
 ]
 </script>
 

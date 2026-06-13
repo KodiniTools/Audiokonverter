@@ -154,7 +154,7 @@ const baseUrl = '/audiokonverter/downloads/'
 
 .download-btn.primary {
   background: var(--primary-color);
-  color: #F5F4D6;
+  color: #f5f4d6;
 }
 
 .download-btn.primary:hover {

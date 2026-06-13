@@ -3,7 +3,7 @@
     <NavControls />
 
     <!-- Hero Section: Full-width gradient with title + upload -->
-    <section class="hero-section" id="converter">
+    <section id="converter" class="hero-section">
       <div class="container">
         <HeaderTitle />
         <FileUpload />
@@ -50,8 +50,8 @@ import StatusDisplay from '@/components/StatusDisplay.vue'
 import ShareButton from '@/components/ShareButton.vue'
 import ToastContainer from '@/components/ToastContainer.vue'
 
-const themeStore = useThemeStore()
-const audioStore = useAudioStore()
+useThemeStore()
+useAudioStore()
 const workflowStore = useWorkflowStore()
 useScrollReveal()
 
