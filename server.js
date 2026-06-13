@@ -12,6 +12,17 @@ const app = express()
 const PORT = process.env.PORT || 9000
 const FILES_DIR = process.env.FILES_DIR || path.join(__dirname, 'files')
 
+// --- Env-Var Validation (Startup) ---
+const NARAKEET_API_KEY = process.env.NARAKEET_API_KEY || null
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || null
+
+if (!NARAKEET_API_KEY) {
+  console.warn('[startup] NARAKEET_API_KEY nicht gesetzt – /api/tts Endpoint deaktiviert')
+}
+if (!ADMIN_PASSWORD) {
+  console.warn('[startup] ADMIN_PASSWORD nicht gesetzt – Admin-Endpoints deaktiviert')
+}
+
 app.use(express.json({ limit: '300mb' }))
 app.use(express.urlencoded({ extended: true, limit: '300mb' }))
 
@@ -272,7 +283,9 @@ app.post('/api/convert', upload.single('file'), async (req, res) => {
 
 // ---- TTS Proxy (Narakeet API) ----
 app.post('/api/tts', express.json(), async (req, res) => {
-  const NARAKEET_API_KEY = 'rPqWwEFnbq5MDmxYGtAaY4b4mKkjE7xR8fplS8Ng'
+  if (!NARAKEET_API_KEY) {
+    return res.status(503).json({ ok: false, error: 'tts_not_configured' })
+  }
 
   try {
     const { text, voice = 'vicki', speed = 1.0, volume = 'medium', format = 'mp3' } = req.body
@@ -338,7 +351,6 @@ app.post('/api/tts', express.json(), async (req, res) => {
 // MUSIK-PLAYER ENDPOINTS
 // ========================================
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Onomatopeja_1357'
 const sessions = new Map()
 const PLAYLISTS_FILE = path.join(__dirname, 'playlists.json')
 const PLAYER_STATE_FILE = path.join(__dirname, 'player-state.json')
@@ -404,6 +416,9 @@ function requireAuth(req, res, next) {
 // Login
 app.post('/api/login', (req, res) => {
   try {
+    if (!ADMIN_PASSWORD) {
+      return res.status(503).json({ ok: false, error: 'admin_not_configured' })
+    }
     const { password } = req.body
     if (password !== ADMIN_PASSWORD) {
       return res.status(401).json({ ok: false, error: 'invalid_password' })
