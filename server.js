@@ -2,7 +2,6 @@ const express = require('express')
 const path = require('path')
 const fs = require('fs')
 const os = require('os')
-const https = require('https')
 const { spawn } = require('child_process')
 const multer = require('multer')
 const { extension: extFromMime } = require('mime-types')
@@ -13,12 +12,8 @@ const PORT = process.env.PORT || 9000
 const FILES_DIR = process.env.FILES_DIR || path.join(__dirname, 'files')
 
 // --- Env-Var Validation (Startup) ---
-const NARAKEET_API_KEY = process.env.NARAKEET_API_KEY || null
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || null
 
-if (!NARAKEET_API_KEY) {
-  console.warn('[startup] NARAKEET_API_KEY nicht gesetzt – /api/tts Endpoint deaktiviert')
-}
 if (!ADMIN_PASSWORD) {
   console.warn('[startup] ADMIN_PASSWORD nicht gesetzt – Admin-Endpoints deaktiviert')
 }
@@ -278,72 +273,6 @@ app.post('/api/convert', upload.single('file'), async (req, res) => {
       const code = e.message === 'ffmpeg_timeout' ? 504 : 500
       return res.status(code).json({ ok: false, error: e.message })
     }
-  }
-})
-
-// ---- TTS Proxy (Narakeet API) ----
-app.post('/api/tts', express.json(), async (req, res) => {
-  if (!NARAKEET_API_KEY) {
-    return res.status(503).json({ ok: false, error: 'tts_not_configured' })
-  }
-
-  try {
-    const { text, voice = 'vicki', speed = 1.0, volume = 'medium', format = 'mp3' } = req.body
-
-    if (!text || text.trim().length === 0) {
-      return res.status(400).json({ ok: false, error: 'Text required' })
-    }
-
-    const apiUrl = new URL(`https://api.narakeet.com/text-to-speech/${format}`)
-    apiUrl.searchParams.append('voice', voice)
-    if (speed !== 1.0) {
-      apiUrl.searchParams.append('voice-speed', speed.toString())
-    }
-    if (volume !== 'medium') {
-      apiUrl.searchParams.append('voice-volume', volume)
-    }
-    console.log(`[TTS] Request: ${text.substring(0, 50)}... (voice: ${voice})`)
-
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain',
-        'x-api-key': NARAKEET_API_KEY,
-        accept: 'application/octet-stream',
-      },
-    }
-
-    const apiReq = https.request(apiUrl, options, (apiRes) => {
-      if (apiRes.statusCode !== 200) {
-        let errorData = ''
-        apiRes.on('data', (chunk) => (errorData += chunk.toString()))
-        apiRes.on('end', () => {
-          console.error(`[TTS] API Error ${apiRes.statusCode}: ${errorData}`)
-          res
-            .status(apiRes.statusCode)
-            .json({ ok: false, error: errorData || 'API request failed' })
-        })
-        return
-      }
-
-      res.setHeader('Content-Type', 'audio/mpeg')
-      apiRes.pipe(res)
-
-      apiRes.on('end', () => {
-        console.log('[TTS] Audio successfully sent')
-      })
-    })
-
-    apiReq.on('error', (error) => {
-      console.error('[TTS] Request error:', error)
-      res.status(500).json({ ok: false, error: error.message })
-    })
-
-    apiReq.write(text)
-    apiReq.end()
-  } catch (e) {
-    console.error('[TTS] Error:', e.message)
-    res.status(500).json({ ok: false, error: e.message })
   }
 })
 
