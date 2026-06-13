@@ -2,7 +2,6 @@ const express = require('express')
 const path = require('path')
 const fs = require('fs')
 const os = require('os')
-const https = require('https')
 const { spawn } = require('child_process')
 const multer = require('multer')
 const { extension: extFromMime } = require('mime-types')
@@ -11,6 +10,13 @@ const { nanoid } = require('nanoid')
 const app = express()
 const PORT = process.env.PORT || 9000
 const FILES_DIR = process.env.FILES_DIR || path.join(__dirname, 'files')
+
+// --- Env-Var Validation (Startup) ---
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || null
+
+if (!ADMIN_PASSWORD) {
+  console.warn('[startup] ADMIN_PASSWORD nicht gesetzt – Admin-Endpoints deaktiviert')
+}
 
 app.use(express.json({ limit: '300mb' }))
 app.use(express.urlencoded({ extended: true, limit: '300mb' }))
@@ -270,75 +276,10 @@ app.post('/api/convert', upload.single('file'), async (req, res) => {
   }
 })
 
-// ---- TTS Proxy (Narakeet API) ----
-app.post('/api/tts', express.json(), async (req, res) => {
-  const NARAKEET_API_KEY = 'rPqWwEFnbq5MDmxYGtAaY4b4mKkjE7xR8fplS8Ng'
-
-  try {
-    const { text, voice = 'vicki', speed = 1.0, volume = 'medium', format = 'mp3' } = req.body
-
-    if (!text || text.trim().length === 0) {
-      return res.status(400).json({ ok: false, error: 'Text required' })
-    }
-
-    const apiUrl = new URL(`https://api.narakeet.com/text-to-speech/${format}`)
-    apiUrl.searchParams.append('voice', voice)
-    if (speed !== 1.0) {
-      apiUrl.searchParams.append('voice-speed', speed.toString())
-    }
-    if (volume !== 'medium') {
-      apiUrl.searchParams.append('voice-volume', volume)
-    }
-    console.log(`[TTS] Request: ${text.substring(0, 50)}... (voice: ${voice})`)
-
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain',
-        'x-api-key': NARAKEET_API_KEY,
-        accept: 'application/octet-stream',
-      },
-    }
-
-    const apiReq = https.request(apiUrl, options, (apiRes) => {
-      if (apiRes.statusCode !== 200) {
-        let errorData = ''
-        apiRes.on('data', (chunk) => (errorData += chunk.toString()))
-        apiRes.on('end', () => {
-          console.error(`[TTS] API Error ${apiRes.statusCode}: ${errorData}`)
-          res
-            .status(apiRes.statusCode)
-            .json({ ok: false, error: errorData || 'API request failed' })
-        })
-        return
-      }
-
-      res.setHeader('Content-Type', 'audio/mpeg')
-      apiRes.pipe(res)
-
-      apiRes.on('end', () => {
-        console.log('[TTS] Audio successfully sent')
-      })
-    })
-
-    apiReq.on('error', (error) => {
-      console.error('[TTS] Request error:', error)
-      res.status(500).json({ ok: false, error: error.message })
-    })
-
-    apiReq.write(text)
-    apiReq.end()
-  } catch (e) {
-    console.error('[TTS] Error:', e.message)
-    res.status(500).json({ ok: false, error: e.message })
-  }
-})
-
 // ========================================
 // MUSIK-PLAYER ENDPOINTS
 // ========================================
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Onomatopeja_1357'
 const sessions = new Map()
 const PLAYLISTS_FILE = path.join(__dirname, 'playlists.json')
 const PLAYER_STATE_FILE = path.join(__dirname, 'player-state.json')
@@ -404,6 +345,9 @@ function requireAuth(req, res, next) {
 // Login
 app.post('/api/login', (req, res) => {
   try {
+    if (!ADMIN_PASSWORD) {
+      return res.status(503).json({ ok: false, error: 'admin_not_configured' })
+    }
     const { password } = req.body
     if (password !== ADMIN_PASSWORD) {
       return res.status(401).json({ ok: false, error: 'invalid_password' })
