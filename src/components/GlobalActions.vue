@@ -33,7 +33,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAudioStore } from '@/stores/audioStore'
@@ -46,7 +46,7 @@ const { showToast, showConfirmToast } = useToast()
 const isDownloading = ref(false)
 const isDownloadingSeparate = ref(false)
 
-async function clearAll() {
+async function clearAll(): Promise<void> {
   const confirmed = await showConfirmToast(
     'warning',
     t('actions.clearAll'),
@@ -59,7 +59,7 @@ async function clearAll() {
   }
 }
 
-async function downloadAllSeparately() {
+async function downloadAllSeparately(): Promise<void> {
   const completedFiles = audioStore.audioFiles.filter(
     (f) => f.status === 'completed' && f.convertedUrl
   )
@@ -74,7 +74,6 @@ async function downloadAllSeparately() {
   try {
     for (const fileData of completedFiles) {
       await audioStore.downloadFile(fileData)
-      // Kurze Pause zwischen Downloads für bessere Browser-Kompatibilität
       await new Promise((resolve) => setTimeout(resolve, 500))
     }
     showToast('success', t('toast.allFilesDownloaded'))
@@ -86,7 +85,7 @@ async function downloadAllSeparately() {
   }
 }
 
-async function downloadAllAsZip() {
+async function downloadAllAsZip(): Promise<void> {
   const completedFiles = audioStore.audioFiles.filter(
     (f) => f.status === 'completed' && f.convertedUrl
   )
@@ -102,7 +101,7 @@ async function downloadAllAsZip() {
     const zip = new JSZip()
 
     for (const fileData of completedFiles) {
-      const response = await fetch(fileData.convertedUrl)
+      const response = await fetch(fileData.convertedUrl!)
       const blob = await response.blob()
       zip.file(fileData.convertedName || `converted-${fileData.name}`, blob)
     }
@@ -124,7 +123,7 @@ async function downloadAllAsZip() {
     showToast('success', t('toast.zipDownloadStarted'))
   } catch (error) {
     console.error('ZIP download failed:', error)
-    showToast('error', t('toast.zipDownloadFailed'), { message: error.message })
+    showToast('error', t('toast.zipDownloadFailed'), { message: (error as Error).message })
   } finally {
     isDownloading.value = false
   }

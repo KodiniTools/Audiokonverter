@@ -67,5 +67,25 @@ module.exports = {
         'prettier/prettier': 'error',
       },
     },
+    {
+      files: ['**/*.vue'],
+      parserOptions: {
+        parser: '@typescript-eslint/parser',
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
+      plugins: ['@typescript-eslint'],
+      rules: {
+        'no-undef': 'off',
+        'no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-vars': [
+          'error',
+          { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+        ],
+        '@typescript-eslint/no-explicit-any': 'warn',
+        '@typescript-eslint/no-non-null-assertion': 'warn',
+        'prettier/prettier': 'error',
+      },
+    },
   ],
 }

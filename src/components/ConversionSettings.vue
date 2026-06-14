@@ -56,7 +56,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAudioStore } from '@/stores/audioStore'
@@ -82,17 +82,17 @@ const qualityLabel = computed(() => {
   return t('conversion.qualityLevels.maximum')
 })
 
-const qualityInfo = computed(() => {
+const qualityInfo = computed((): string => {
   const quality = audioStore.currentQuality
   const format = audioStore.currentFormat
 
-  const bitrates = {
+  const bitrateMap: Record<string, number[]> = {
     mp3: [64, 96, 128, 160, 192, 224, 256, 320, 320, 320],
     aac: [64, 96, 128, 160, 192, 224, 256, 320, 320, 320],
   }
 
   if (format === 'mp3' || format === 'aac' || format === 'm4a') {
-    const bitrate = bitrates[format === 'm4a' ? 'aac' : format][quality - 1]
+    const bitrate = bitrateMap[format === 'm4a' ? 'aac' : format][quality - 1]
     return `${bitrate} kbps`
   }
 
@@ -111,8 +111,8 @@ const qualityInfo = computed(() => {
   }
 
   if (format === 'opus') {
-    const bitrates = [32, 48, 64, 96, 128, 160, 192, 256, 320, 510]
-    return `${bitrates[quality - 1]} kbps`
+    const opusBitrates = [32, 48, 64, 96, 128, 160, 192, 256, 320, 510]
+    return `${opusBitrates[quality - 1]} kbps`
   }
 
   if (format === 'aiff') {
@@ -122,20 +122,20 @@ const qualityInfo = computed(() => {
   }
 
   if (format === 'wma') {
-    const bitrates = [64, 96, 128, 160, 192, 224, 256, 320, 320, 320]
-    return `${bitrates[quality - 1]} kbps`
+    const wmaBitrates = [64, 96, 128, 160, 192, 224, 256, 320, 320, 320]
+    return `${wmaBitrates[quality - 1]} kbps`
   }
 
   return ''
 })
 
-async function startConversion() {
+async function startConversion(): Promise<void> {
   try {
     await audioStore.convertAllFiles()
     showToast('success', t('toast.conversionComplete'))
   } catch (error) {
     showToast('error', t('toast.conversionFailed'), {
-      message: error.message,
+      message: (error as Error).message,
     })
   }
 }

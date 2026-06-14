@@ -69,20 +69,21 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAudioStore } from '@/stores/audioStore'
 import { useWorkflowStore } from '@/stores/workflowStore'
 import { useToast } from '@/composables/useToast'
 import { shareFiles } from '@/services/SharedFileRepository'
+import type { SharedFileInput } from '@/types'
 
 const { t } = useI18n()
 const audioStore = useAudioStore()
 const workflowStore = useWorkflowStore()
 const { showToast } = useToast()
 
-const preparingTool = ref(null)
+const preparingTool = ref<string | null>(null)
 
 const isBusy = computed(() => preparingTool.value !== null)
 
@@ -90,22 +91,20 @@ const completedCount = computed(() => {
   return audioStore.audioFiles.filter((f) => f.status === 'completed').length
 })
 
-/** Collect converted blobs from the store. */
-async function collectConvertedBlobs() {
+async function collectConvertedBlobs(): Promise<SharedFileInput[]> {
   const completedFiles = audioStore.audioFiles.filter(
     (f) => f.status === 'completed' && f.convertedUrl
   )
-  const entries = []
+  const entries: SharedFileInput[] = []
   for (const f of completedFiles) {
-    const response = await fetch(f.convertedUrl)
+    const response = await fetch(f.convertedUrl!)
     const blob = await response.blob()
     entries.push({ name: f.convertedName || f.name, blob })
   }
   return entries
 }
 
-/** Store files in IndexedDB, then open the target tool. */
-async function shareAndOpen(toolKey, toolUrl) {
+async function shareAndOpen(toolKey: string, toolUrl: string): Promise<void> {
   const completedFiles = audioStore.audioFiles.filter(
     (f) => f.status === 'completed' && f.convertedUrl
   )
@@ -117,14 +116,14 @@ async function shareAndOpen(toolKey, toolUrl) {
     await shareFiles(entries)
     window.open(`${toolUrl}?source=audiokonverter`, '_blank', 'noopener')
     showToast('success', t('wizard.shareSuccess', { count: entries.length }))
-  } catch (error) {
+  } catch {
     showToast('error', t('wizard.shareFailed'))
   } finally {
     preparingTool.value = null
   }
 }
 
-function startNew() {
+function startNew(): void {
   audioStore.clearAllFiles()
 }
 </script>

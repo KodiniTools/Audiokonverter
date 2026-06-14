@@ -25,16 +25,18 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t, tm } = useI18n()
-const activeFaq = ref(null)
+const activeFaq = ref<string | number | null>(null)
 
-const faqs = computed(() => tm('faq.questions'))
+const faqs = computed(
+  () => tm('faq.questions') as unknown as Record<string, { q: string; a: string }>
+)
 
-function toggleFaq(key) {
+function toggleFaq(key: string | number): void {
   activeFaq.value = activeFaq.value === key ? null : key
 }
 </script>

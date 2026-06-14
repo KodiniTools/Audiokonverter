@@ -21,24 +21,20 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+
+interface Tool {
+  key: string
+  link: string
+}
 
 const { t } = useI18n()
 
-const tools = [
-  {
-    key: 'visualizer',
-    link: 'https://kodinitools.com/visualizer/',
-  },
-  {
-    key: 'normalizer',
-    link: 'https://kodinitools.com/audionormalisierer/',
-  },
-  {
-    key: 'equalizer',
-    link: 'https://kodinitools.com/equaliser19/',
-  },
+const tools: Tool[] = [
+  { key: 'visualizer', link: 'https://kodinitools.com/visualizer/' },
+  { key: 'normalizer', link: 'https://kodinitools.com/audionormalisierer/' },
+  { key: 'equalizer', link: 'https://kodinitools.com/equaliser19/' },
 ]
 </script>
 

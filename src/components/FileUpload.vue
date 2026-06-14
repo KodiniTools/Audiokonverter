@@ -46,7 +46,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAudioStore } from '@/stores/audioStore'
@@ -56,8 +56,8 @@ const { t } = useI18n()
 const audioStore = useAudioStore()
 const { showToast } = useToast()
 
-const fileInput = ref(null)
-const folderInput = ref(null)
+const fileInput = ref<HTMLInputElement | null>(null)
+const folderInput = ref<HTMLInputElement | null>(null)
 const isDragging = ref(false)
 
 const SUPPORTED_FORMATS = [
@@ -73,36 +73,40 @@ const SUPPORTED_FORMATS = [
   'audio/x-aiff',
   'audio/x-ms-wma',
 ]
-const MAX_FILE_SIZE = 300 * 1024 * 1024 // 300MB
+const MAX_FILE_SIZE = 300 * 1024 * 1024
 
-function triggerFileInput() {
+function triggerFileInput(): void {
+  if (!fileInput.value) return
   fileInput.value.value = ''
   fileInput.value.click()
 }
 
-function triggerFolderInput() {
+function triggerFolderInput(): void {
+  if (!folderInput.value) return
   folderInput.value.value = ''
   folderInput.value.click()
 }
 
-function handleFolderSelect(event) {
-  const files = Array.from(event.target.files)
+function handleFolderSelect(event: Event): void {
+  const input = event.target as HTMLInputElement
+  const files = Array.from(input.files ?? [])
   processFiles(files)
-  event.target.value = ''
+  input.value = ''
 }
 
-function handleFileSelect(event) {
-  const files = Array.from(event.target.files)
+function handleFileSelect(event: Event): void {
+  const input = event.target as HTMLInputElement
+  const files = Array.from(input.files ?? [])
   processFiles(files)
-  event.target.value = ''
+  input.value = ''
 }
 
-async function handleDrop(event) {
+async function handleDrop(event: DragEvent): Promise<void> {
   isDragging.value = false
 
-  const items = Array.from(event.dataTransfer.items ?? [])
+  const items = Array.from(event.dataTransfer?.items ?? [])
   const hasDirectories = items.some((item) => {
-    const entry = item.webkitGetAsEntry?.()
+    const entry = item.webkitGetAsEntry()
     return entry?.isDirectory
   })
 
@@ -110,26 +114,30 @@ async function handleDrop(event) {
     const files = await readDroppedEntries(items)
     processFiles(files)
   } else {
-    processFiles(Array.from(event.dataTransfer.files))
+    processFiles(Array.from(event.dataTransfer?.files ?? []))
   }
 }
 
-function readDroppedEntries(items) {
-  const entries = items.map((item) => item.webkitGetAsEntry?.()).filter(Boolean)
-  const promises = entries.map((entry) => readEntry(entry))
-  return Promise.all(promises).then((results) => results.flat())
+function readDroppedEntries(items: DataTransferItem[]): Promise<File[]> {
+  const entries = items
+    .map((item) => item.webkitGetAsEntry())
+    .filter((e): e is FileSystemEntry => e !== null)
+  return Promise.all(entries.map((entry) => readEntry(entry))).then((results) => results.flat())
 }
 
-function readEntry(entry) {
+function readEntry(entry: FileSystemEntry): Promise<File[]> {
   if (entry.isFile) {
-    return new Promise((resolve) => entry.file(resolve, () => resolve(null))).then((f) =>
-      f ? [f] : []
-    )
+    return new Promise<File[]>((resolve) => {
+      ;(entry as FileSystemFileEntry).file(
+        (f) => resolve([f]),
+        () => resolve([])
+      )
+    })
   }
   if (entry.isDirectory) {
-    return new Promise((resolve) => {
-      const reader = entry.createReader()
-      const allEntries = []
+    return new Promise<File[]>((resolve) => {
+      const reader = (entry as FileSystemDirectoryEntry).createReader()
+      const allEntries: FileSystemEntry[] = []
       const readBatch = () => {
         reader.readEntries(
           (batch) => {
@@ -151,18 +159,16 @@ function readEntry(entry) {
   return Promise.resolve([])
 }
 
-function processFiles(files) {
-  const validFiles = []
-  const errors = []
+function processFiles(files: File[]): void {
+  const validFiles: File[] = []
+  const errors: string[] = []
 
   files.forEach((file) => {
-    // Check file size
     if (file.size > MAX_FILE_SIZE) {
       errors.push(`${file.name}: ${t('errors.fileTooLarge')}`)
       return
     }
 
-    // Check file type
     const isAudio =
       SUPPORTED_FORMATS.some((format) => file.type.includes(format.split('/')[1])) ||
       /\.(mp3|wav|flac|ogg|aac|m4a|opus|aiff|aif|wma)$/i.test(file.name)
@@ -175,7 +181,6 @@ function processFiles(files) {
     validFiles.push(file)
   })
 
-  // Add valid files
   if (validFiles.length > 0) {
     audioStore.addFiles(validFiles)
     showToast('success', t('toast.fileAdded'), {
@@ -183,7 +188,6 @@ function processFiles(files) {
     })
   }
 
-  // Show errors
   errors.forEach((error) => {
     showToast('error', t('toast.error'), { message: error })
   })
