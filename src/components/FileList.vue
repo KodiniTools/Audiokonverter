@@ -20,12 +20,12 @@
               <span class="file-name" :title="file.name">{{ file.name }}</span>
               <div class="file-size-info">
                 <span class="file-size" :class="{ original: file.status === 'completed' }">
-                  {{ audioStore.formatFileSize(file.size) }}
+                  {{ formatFileSize(file.size) }}
                 </span>
                 <template v-if="file.status === 'completed' && file.convertedSize">
                   <span class="size-arrow">→</span>
                   <span class="file-size converted">
-                    {{ file.convertedFormat }} {{ audioStore.formatFileSize(file.convertedSize) }}
+                    {{ file.convertedFormat }} {{ formatFileSize(file.convertedSize) }}
                   </span>
                 </template>
               </div>
@@ -69,7 +69,7 @@
               class="btn-icon btn-download"
               :title="t('actions.download')"
               aria-label="Download"
-              @click="audioStore.downloadFile(file)"
+              @click="downloadFile(file)"
             >
               &#8595;
             </button>
@@ -143,15 +143,16 @@ import { computed, ref, reactive, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAudioStore } from '@/stores/audioStore'
 import { useToast } from '@/composables/useToast'
+import { useDownload } from '@/composables/useDownload'
+import { formatFileSize } from '@/utils/fileUtils'
 import type { AudioFile } from '@/types'
 
 const { t } = useI18n()
 const audioStore = useAudioStore()
 const { showToast } = useToast()
+const { downloadFile } = useDownload()
 
-const formattedTotalSize = computed(() => {
-  return audioStore.formatFileSize(audioStore.totalSize)
-})
+const formattedTotalSize = computed(() => formatFileSize(audioStore.totalSize))
 
 const currentPlayingId = ref<string | null>(null)
 const isPlaying = ref(false)

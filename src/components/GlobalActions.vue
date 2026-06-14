@@ -38,11 +38,13 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAudioStore } from '@/stores/audioStore'
 import { useToast } from '@/composables/useToast'
+import { useDownload } from '@/composables/useDownload'
 import JSZip from 'jszip'
 
 const { t } = useI18n()
 const audioStore = useAudioStore()
 const { showToast, showConfirmToast } = useToast()
+const { downloadFile } = useDownload()
 const isDownloading = ref(false)
 const isDownloadingSeparate = ref(false)
 
@@ -73,7 +75,7 @@ async function downloadAllSeparately(): Promise<void> {
 
   try {
     for (const fileData of completedFiles) {
-      await audioStore.downloadFile(fileData)
+      await downloadFile(fileData)
       await new Promise((resolve) => setTimeout(resolve, 500))
     }
     showToast('success', t('toast.allFilesDownloaded'))
