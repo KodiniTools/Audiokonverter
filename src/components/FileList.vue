@@ -125,7 +125,7 @@
             step="0.05"
             :value="getFileVolume(file.id)"
             :title="t('actions.volume')"
-            @input="updateVolume(file.id, $event.target.value)"
+            @input="(e) => updateVolume(file.id, e)"
           />
         </div>
 
@@ -138,11 +138,12 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, ref, reactive, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAudioStore } from '@/stores/audioStore'
 import { useToast } from '@/composables/useToast'
+import type { AudioFile } from '@/types'
 
 const { t } = useI18n()
 const audioStore = useAudioStore()
@@ -152,32 +153,31 @@ const formattedTotalSize = computed(() => {
   return audioStore.formatFileSize(audioStore.totalSize)
 })
 
-// Audio Player
-const currentPlayingId = ref(null)
+const currentPlayingId = ref<string | null>(null)
 const isPlaying = ref(false)
-const fileVolumes = reactive({})
+const fileVolumes = reactive<Record<string, number>>({})
 const audioEl = new Audio()
-const objectUrls = new Map()
+const objectUrls = new Map<string, string>()
 
-function getFileVolume(fileId) {
+function getFileVolume(fileId: string): number {
   return fileVolumes[fileId] ?? 0.7
 }
 
-function getAudioSrc(file) {
+function getAudioSrc(file: AudioFile): string {
   if (file.status === 'completed' && file.convertedUrl) {
     return file.convertedUrl
   }
   if (!objectUrls.has(file.id)) {
     objectUrls.set(file.id, URL.createObjectURL(file.file))
   }
-  return objectUrls.get(file.id)
+  return objectUrls.get(file.id)!
 }
 
-function isPlayingFile(fileId) {
+function isPlayingFile(fileId: string): boolean {
   return currentPlayingId.value === fileId && isPlaying.value
 }
 
-function togglePlay(file) {
+function togglePlay(file: AudioFile): void {
   if (currentPlayingId.value === file.id && isPlaying.value) {
     audioEl.pause()
     isPlaying.value = false
@@ -196,8 +196,8 @@ function togglePlay(file) {
   isPlaying.value = true
 }
 
-function updateVolume(fileId, val) {
-  const v = parseFloat(val)
+function updateVolume(fileId: string, event: Event): void {
+  const v = parseFloat((event.target as HTMLInputElement).value)
   fileVolumes[fileId] = v
   if (currentPlayingId.value === fileId) {
     audioEl.volume = v
@@ -208,7 +208,7 @@ audioEl.addEventListener('ended', () => {
   isPlaying.value = false
 })
 
-function removeFile(fileId) {
+function removeFile(fileId: string): void {
   if (currentPlayingId.value === fileId) {
     audioEl.pause()
     audioEl.src = ''
@@ -216,7 +216,7 @@ function removeFile(fileId) {
     isPlaying.value = false
   }
   if (objectUrls.has(fileId)) {
-    URL.revokeObjectURL(objectUrls.get(fileId))
+    URL.revokeObjectURL(objectUrls.get(fileId)!)
     objectUrls.delete(fileId)
   }
   delete fileVolumes[fileId]

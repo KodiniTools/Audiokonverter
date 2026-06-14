@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { i18n } from '@/locales/index.js'
+import { i18n } from '@/locales'
 import type { Toast, ToastType, ToastOptions } from '@/types'
 
 const toasts = ref<Toast[]>([])
