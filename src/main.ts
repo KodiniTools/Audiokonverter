@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
-import i18n, { setLocale } from './locales'
+import i18n, { setLocale } from './locales/index.ts'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -11,10 +11,9 @@ app.use(i18n)
 
 app.mount('#app')
 
-// Auf Sprachwechsel aus der globalen SSI-Navigation reagieren
 window.addEventListener('locale-changed', (e) => {
-  const locale = e.detail?.locale
-  if (locale && (locale === 'de' || locale === 'en')) {
+  const locale = (e as CustomEvent<{ locale?: string }>).detail?.locale
+  if (locale === 'de' || locale === 'en') {
     setLocale(locale)
   }
 })

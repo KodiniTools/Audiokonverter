@@ -119,13 +119,14 @@ export default defineConfig(({ mode }) => {
 
           // Asset-Dateinamen mit Hashes
           assetFileNames: (assetInfo) => {
-            const info = assetInfo.name.split('.')
+            const name = assetInfo.name ?? ''
+            const info = name.split('.')
             let extType = info[info.length - 1]
 
             // Kategorisiere Assets
-            if (/\.(png|jpe?g|svg|gif|tiff|bmp|ico)$/i.test(assetInfo.name)) {
+            if (/\.(png|jpe?g|svg|gif|tiff|bmp|ico)$/i.test(name)) {
               extType = 'img'
-            } else if (/\.(woff2?|ttf|otf|eot)$/i.test(assetInfo.name)) {
+            } else if (/\.(woff2?|ttf|otf|eot)$/i.test(name)) {
               extType = 'fonts'
             }
 

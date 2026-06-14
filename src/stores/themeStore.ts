@@ -1,12 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
+import type { Theme } from '@/types'
 
 export const useThemeStore = defineStore('theme', () => {
-  // Nutze gleichen Key wie die globale SSI-Navigation
-  const savedTheme = localStorage.getItem('theme') || 'light'
-  const theme = ref(savedTheme)
+  const savedTheme = (localStorage.getItem('theme') as Theme) ?? 'light'
+  const theme = ref<Theme>(savedTheme)
 
-  // Wende gespeichertes Theme beim Start an
   if (savedTheme === 'dark') {
     document.documentElement.setAttribute('data-theme', 'dark')
   }
@@ -16,17 +15,13 @@ export const useThemeStore = defineStore('theme', () => {
     localStorage.setItem('theme', newTheme)
   })
 
-  function toggleTheme() {
+  function toggleTheme(): void {
     theme.value = theme.value === 'light' ? 'dark' : 'light'
   }
 
-  function setTheme(newTheme) {
+  function setTheme(newTheme: Theme): void {
     theme.value = newTheme
   }
 
-  return {
-    theme,
-    toggleTheme,
-    setTheme,
-  }
+  return { theme, toggleTheme, setTheme }
 })
