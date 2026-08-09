@@ -42,12 +42,14 @@
           {{ t('upload.selectFolder') }}
         </button>
       </div>
+
+      <p class="upload-paste-hint">{{ t('upload.pasteHint') }}</p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAudioStore } from '@/stores/audioStore'
 import { useToast } from '@/composables/useToast'
@@ -116,6 +118,38 @@ async function handleDrop(event: DragEvent): Promise<void> {
   } else {
     processFiles(Array.from(event.dataTransfer?.files ?? []))
   }
+}
+
+function handlePaste(event: ClipboardEvent): void {
+  // Nicht eingreifen, wenn gerade in ein Eingabefeld eingefuegt wird
+  const active = document.activeElement as HTMLElement | null
+  if (
+    active &&
+    (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)
+  ) {
+    return
+  }
+
+  const data = event.clipboardData
+  if (!data) return
+
+  const files: File[] = []
+  if (data.files && data.files.length > 0) {
+    files.push(...Array.from(data.files))
+  } else if (data.items && data.items.length > 0) {
+    for (const item of Array.from(data.items)) {
+      if (item.kind === 'file') {
+        const file = item.getAsFile()
+        if (file) files.push(file)
+      }
+    }
+  }
+
+  // Kein Datei-Inhalt in der Zwischenablage (z. B. reiner Text) -> nichts tun
+  if (files.length === 0) return
+
+  event.preventDefault()
+  processFiles(files)
 }
 
 function readDroppedEntries(items: DataTransferItem[]): Promise<File[]> {
@@ -192,6 +226,14 @@ function processFiles(files: File[]): void {
     showToast('error', t('toast.error'), { message: error })
   })
 }
+
+onMounted(() => {
+  window.addEventListener('paste', handlePaste)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('paste', handlePaste)
+})
 </script>
 
 <style scoped>
@@ -314,6 +356,13 @@ function processFiles(files: File[]): void {
 .upload-btn-folder {
   background: rgba(255, 255, 255, 0.1);
   border-style: dashed;
+}
+
+.upload-paste-hint {
+  font-size: 0.75rem;
+  color: rgba(245, 244, 214, 0.55);
+  margin-top: 0.85rem;
+  position: relative;
 }
 
 @keyframes slideInUp {
