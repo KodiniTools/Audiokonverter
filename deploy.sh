@@ -58,10 +58,10 @@ log "Deploye Commit $COMMIT (Branch $BRANCH)"
 # --- 2. Dependencies installieren ---------------------------
 if [[ -f package-lock.json ]]; then
   log "Installiere Dependencies (npm ci)"
-  npm ci
+  npm ci --include=dev
 else
   log "Installiere Dependencies (npm install)"
-  npm install
+  npm install --include=dev
 fi
 
 # --- 3. Production-Build ------------------------------------

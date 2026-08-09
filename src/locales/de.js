@@ -14,6 +14,7 @@ export default {
     supportedFormats: 'MP3 • WAV • FLAC • OGG • AAC • M4A • OPUS • AIFF • WMA',
     selectFiles: 'Dateien wählen',
     selectFolder: 'Ordner wählen',
+    pasteHint: 'oder aus der Zwischenablage einfügen (Strg + V)',
     filesSelected: '{count} Datei | {count} Dateien',
   },
   conversion: {
