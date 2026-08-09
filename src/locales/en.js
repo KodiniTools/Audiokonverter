@@ -17,6 +17,11 @@ export default {
     pasteHint: 'or paste from clipboard (Ctrl + V)',
     filesSelected: '{count} file | {count} files',
   },
+  player: {
+    noTrack: 'No track selected – click a file in the list',
+    playHint: 'Click to play',
+    seek: 'Seek position',
+  },
   conversion: {
     title: 'Settings',
     format: 'Format',

@@ -30,6 +30,7 @@
       <!-- Download, Tools, FAQ — jetzt statisches HTML in index.html -->
     </main>
 
+    <StickyPlayer />
     <ToastContainer />
   </div>
 </template>
@@ -48,6 +49,7 @@ import ConversionSettings from '@/components/ConversionSettings.vue'
 import GlobalActions from '@/components/GlobalActions.vue'
 import StatusDisplay from '@/components/StatusDisplay.vue'
 import ShareButton from '@/components/ShareButton.vue'
+import StickyPlayer from '@/components/StickyPlayer.vue'
 import ToastContainer from '@/components/ToastContainer.vue'
 
 useThemeStore()
