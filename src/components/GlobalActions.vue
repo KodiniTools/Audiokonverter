@@ -39,12 +39,14 @@ import { useI18n } from 'vue-i18n'
 import { useAudioStore } from '@/stores/audioStore'
 import { useToast } from '@/composables/useToast'
 import { useDownload } from '@/composables/useDownload'
+import { useAudioPlayer } from '@/composables/useAudioPlayer'
 import JSZip from 'jszip'
 
 const { t } = useI18n()
 const audioStore = useAudioStore()
 const { showToast, showConfirmToast } = useToast()
 const { downloadFile } = useDownload()
+const player = useAudioPlayer()
 const isDownloading = ref(false)
 const isDownloadingSeparate = ref(false)
 
@@ -56,6 +58,7 @@ async function clearAll(): Promise<void> {
   )
 
   if (confirmed) {
+    player.stopAll()
     audioStore.clearAllFiles()
     showToast('info', t('toast.allFilesCleared'))
   }

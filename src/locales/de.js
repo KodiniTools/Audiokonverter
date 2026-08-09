@@ -17,6 +17,11 @@ export default {
     pasteHint: 'oder aus der Zwischenablage einfügen (Strg + V)',
     filesSelected: '{count} Datei | {count} Dateien',
   },
+  player: {
+    noTrack: 'Kein Titel ausgewählt – Datei in der Liste anklicken',
+    playHint: 'Zum Abspielen anklicken',
+    seek: 'Wiedergabeposition',
+  },
   conversion: {
     title: 'Einstellungen',
     format: 'Format',
