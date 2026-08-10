@@ -53,6 +53,16 @@
     >
       {{ audioStore.isConverting ? t('conversion.converting') : t('conversion.convert') }}
     </button>
+
+    <!-- Cancel Button: nur während einer laufenden Konvertierung sichtbar -->
+    <button
+      v-if="audioStore.isConverting"
+      class="btn btn-cancel btn-convert"
+      :disabled="audioStore.isCancelling"
+      @click="cancelConversion"
+    >
+      {{ audioStore.isCancelling ? t('conversion.cancelling') : t('conversion.cancel') }}
+    </button>
   </div>
 </template>
 
@@ -131,13 +141,21 @@ const qualityInfo = computed((): string => {
 
 async function startConversion(): Promise<void> {
   try {
-    await audioStore.convertAllFiles()
-    showToast('success', t('toast.conversionComplete'))
+    const { cancelled } = await audioStore.convertAllFiles()
+    if (cancelled) {
+      showToast('info', t('toast.conversionCancelled'))
+    } else {
+      showToast('success', t('toast.conversionComplete'))
+    }
   } catch (error) {
     showToast('error', t('toast.conversionFailed'), {
       message: (error as Error).message,
     })
   }
+}
+
+function cancelConversion(): void {
+  audioStore.cancelConversion()
 }
 </script>
 
@@ -255,6 +273,22 @@ async function startConversion(): Promise<void> {
   padding: 0.75rem 1.5rem;
   font-size: 0.95rem;
   gap: 0.5rem;
+}
+
+/* Abbrechen-Button: kontraststarkes Rot, aus der Fehlerfarbe abgeleitet.
+   Wird direkt unter dem Konvertieren-Button eingeblendet. */
+.btn-cancel {
+  margin-top: 0.5rem;
+  background: color-mix(in srgb, var(--error-color) 82%, #000);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--error-color) 35%, transparent);
+}
+
+.btn-cancel:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--error-color) 70%, #000);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--error-color) 45%, transparent);
 }
 
 @keyframes slideInUp {
