@@ -85,6 +85,26 @@ export function setProgressHandler(handler: ((progress: number) => void) | null)
   currentProgressHandler = handler
 }
 
+/**
+ * Bricht eine laufende lokale Konvertierung sofort ab, indem der FFmpeg-Worker
+ * beendet wird. Die laufende `exec()`-Promise wird dadurch verworfen. Der interne
+ * Zustand wird zurückgesetzt, sodass die nächste Konvertierung FFmpeg neu lädt
+ * (die bereits geladenen Core-/WASM-Blobs bleiben zwischengespeichert).
+ */
+export function terminateFFmpeg(): void {
+  if (ffmpeg) {
+    try {
+      ffmpeg.terminate()
+    } catch {
+      // Worker bereits beendet – ignorieren
+    }
+  }
+  ffmpeg = null
+  loaded = false
+  loading = false
+  currentProgressHandler = null
+}
+
 function buildFFmpegArgs(
   inputName: string,
   outputName: string,

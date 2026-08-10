@@ -45,6 +45,8 @@ export default {
     },
     convert: 'Konvertieren',
     converting: 'Läuft...',
+    cancel: 'Abbrechen',
+    cancelling: 'Wird abgebrochen...',
     progress: 'Fortschritt',
   },
   fileList: {
@@ -89,6 +91,7 @@ export default {
     fileRemoved: 'Entfernt',
     conversionComplete: 'Fertig!',
     conversionFailed: 'Fehlgeschlagen',
+    conversionCancelled: 'Konvertierung abgebrochen',
     allFilesCleared: 'Alle gelöscht',
     unsupportedFormat: 'Format nicht unterstützt',
     noFilesToDownload: 'Keine Dateien zum Download',
