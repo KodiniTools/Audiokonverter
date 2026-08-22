@@ -40,6 +40,7 @@ import { useAudioStore } from '@/stores/audioStore'
 import { useToast } from '@/composables/useToast'
 import { useDownload } from '@/composables/useDownload'
 import { useAudioPlayer } from '@/composables/useAudioPlayer'
+import { saveBlobToDevice } from '@/utils/fileSaver'
 import JSZip from 'jszip'
 
 const { t } = useI18n()
@@ -77,11 +78,17 @@ async function downloadAllSeparately(): Promise<void> {
   isDownloadingSeparate.value = true
 
   try {
+    let savedCount = 0
     for (const fileData of completedFiles) {
-      await downloadFile(fileData)
+      const result = await downloadFile(fileData)
+      // User dismissed the save dialog — stop the batch.
+      if (result === 'cancelled') break
+      savedCount++
       await new Promise((resolve) => setTimeout(resolve, 500))
     }
-    showToast('success', t('toast.allFilesDownloaded'))
+    if (savedCount > 0) {
+      showToast('success', t('toast.allFilesDownloaded'))
+    }
   } catch (error) {
     console.error('Download failed:', error)
     showToast('error', t('toast.downloadFailed'))
@@ -113,19 +120,11 @@ async function downloadAllAsZip(): Promise<void> {
 
     const zipBlob = await zip.generateAsync({ type: 'blob' })
 
-    const url = window.URL.createObjectURL(zipBlob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = 'converted-audio-files.zip'
-    link.style.display = 'none'
+    const result = await saveBlobToDevice(zipBlob, 'converted-audio-files.zip')
 
-    document.body.appendChild(link)
-    link.click()
-
-    document.body.removeChild(link)
-    window.URL.revokeObjectURL(url)
-
-    showToast('success', t('toast.zipDownloadStarted'))
+    if (result !== 'cancelled') {
+      showToast('success', t('toast.zipDownloadStarted'))
+    }
   } catch (error) {
     console.error('ZIP download failed:', error)
     showToast('error', t('toast.zipDownloadFailed'), { message: (error as Error).message })
