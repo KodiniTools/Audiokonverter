@@ -29,8 +29,11 @@ PM2_APP="${DEPLOY_PM2_APP:-audiokonverter-server}"
 
 # Laufzeit-Ordner/Dateien des Backends im Zielverzeichnis, die
 # beim Sync NICHT geloescht werden duerfen (Zielordner ist
-# zugleich NGINX-Root und PM2-cwd):
-KEEP=(uploads output files node_modules .env)
+# zugleich NGINX-Root und PM2-cwd). "downloads" enthaelt die
+# manuell abgelegten Desktop-Installer (.exe/.msi/.zip), auf die
+# der Download-Bereich in index.html verlinkt – sie sind nicht
+# Teil des Repos/Builds und muessen Deploys ueberleben:
+KEEP=(uploads output files node_modules .env downloads)
 
 # Repo-Root = Verzeichnis dieses Skripts
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
