@@ -224,6 +224,14 @@
     .download-btn.primary:hover { background: var(--primary-hover); transform: translateY(-2px); }
     .download-btn.secondary { background: rgba(1, 79, 153, 0.1); color: var(--primary-color); border: 1px solid rgba(1, 79, 153, 0.2); }
     .download-btn.secondary:hover { background: rgba(1, 79, 153, 0.2); transform: translateY(-1px); }
+    /* Dark Mode: --primary-color ist hier ein helles Teal (#9ebec1) – helle Schrift
+       darauf hat nur ~1.8:1 Kontrast. Dunkle Schrift + sichtbarer Rahmen (WCAG AA). */
+    [data-theme="dark"] .download-btn.primary { color: #0f2626; font-weight: 600; }
+    [data-theme="dark"] .download-btn.primary:hover { color: #0f2626; }
+    [data-theme="dark"] .download-btn.secondary {
+      background: rgba(158, 190, 193, 0.12); color: #d6e6e7; border-color: rgba(158, 190, 193, 0.35);
+    }
+    [data-theme="dark"] .download-btn.secondary:hover { background: rgba(158, 190, 193, 0.24); color: #ffffff; }
     .download-note { text-align: center; font-size: 0.8rem; color: var(--text-secondary); margin-top: 1.25rem; }
 
     /* ===== TOOL CARDS ===== */
@@ -435,10 +443,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
         <p class="download-card-desc" data-i18n="download.installer.description">Empfohlen für die meisten Benutzer. Automatische Installation mit Startmenü-Einträgen.</p>
         <div class="download-buttons">
-          <a href="/audiokonverter/downloads/AudioConverter-Setup.exe" class="download-btn primary" data-i18n="download.installer.exe">Download (.exe)</a>
+          <a href="/audiokonverter/downloads/AudioConverter-Setup.exe" download class="download-btn primary" data-i18n="download.installer.exe">Download (.exe)</a>
           <div class="download-alt">
-            <a href="/audiokonverter/downloads/AudioConverter-Setup-x64.msi" class="download-btn secondary">MSI (64-bit)</a>
-            <a href="/audiokonverter/downloads/AudioConverter-Setup-x86.msi" class="download-btn secondary">MSI (32-bit)</a>
+            <a href="/audiokonverter/downloads/AudioConverter-Setup-x64.msi" download class="download-btn secondary">MSI (64-bit)</a>
+            <a href="/audiokonverter/downloads/AudioConverter-Setup-x86.msi" download class="download-btn secondary">MSI (32-bit)</a>
           </div>
         </div>
       </div>
@@ -450,8 +458,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
         <p class="download-card-desc" data-i18n="download.portable.description">Keine Installation erforderlich. Ideal für USB-Sticks oder eingeschränkte Systeme.</p>
         <div class="download-buttons">
-          <a href="/audiokonverter/downloads/AudioConverter-Portable-x64.zip" class="download-btn primary" data-i18n="download.portable.x64">ZIP (64-bit)</a>
-          <a href="/audiokonverter/downloads/AudioConverter-Portable-x86.zip" class="download-btn secondary" data-i18n="download.portable.x86">ZIP (32-bit)</a>
+          <a href="/audiokonverter/downloads/AudioConverter-Portable-x64.zip" download class="download-btn primary" data-i18n="download.portable.x64">ZIP (64-bit)</a>
+          <a href="/audiokonverter/downloads/AudioConverter-Portable-x86.zip" download class="download-btn secondary" data-i18n="download.portable.x86">ZIP (32-bit)</a>
         </div>
       </div>
     </div>

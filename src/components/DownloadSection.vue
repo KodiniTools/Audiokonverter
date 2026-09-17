@@ -12,14 +12,14 @@
         </div>
         <p class="download-card-desc">{{ t('download.installer.description') }}</p>
         <div class="download-buttons">
-          <a :href="baseUrl + 'AudioConverter-Setup.exe'" class="download-btn primary">
+          <a :href="baseUrl + 'AudioConverter-Setup.exe'" download class="download-btn primary">
             {{ t('download.installer.exe') }}
           </a>
           <div class="download-alt">
-            <a :href="baseUrl + 'AudioConverter-Setup-x64.msi'" class="download-btn secondary">
+            <a :href="baseUrl + 'AudioConverter-Setup-x64.msi'" download class="download-btn secondary">
               MSI (64-bit)
             </a>
-            <a :href="baseUrl + 'AudioConverter-Setup-x86.msi'" class="download-btn secondary">
+            <a :href="baseUrl + 'AudioConverter-Setup-x86.msi'" download class="download-btn secondary">
               MSI (32-bit)
             </a>
           </div>
@@ -33,10 +33,10 @@
         </div>
         <p class="download-card-desc">{{ t('download.portable.description') }}</p>
         <div class="download-buttons">
-          <a :href="baseUrl + 'AudioConverter-Portable-x64.zip'" class="download-btn primary">
+          <a :href="baseUrl + 'AudioConverter-Portable-x64.zip'" download class="download-btn primary">
             {{ t('download.portable.x64') }}
           </a>
-          <a :href="baseUrl + 'AudioConverter-Portable-x86.zip'" class="download-btn secondary">
+          <a :href="baseUrl + 'AudioConverter-Portable-x86.zip'" download class="download-btn secondary">
             {{ t('download.portable.x86') }}
           </a>
         </div>
@@ -171,6 +171,23 @@ const baseUrl = '/audiokonverter/downloads/'
 .download-btn.secondary:hover {
   background: rgba(1, 79, 153, 0.2);
   transform: translateY(-1px);
+}
+
+/* Dark Mode: --primary-color ist ein helles Teal – dunkle Schrift für Kontrast */
+:global([data-theme='dark']) .download-btn.primary {
+  color: #0f2626;
+  font-weight: 600;
+}
+
+:global([data-theme='dark']) .download-btn.secondary {
+  background: rgba(158, 190, 193, 0.12);
+  color: #d6e6e7;
+  border-color: rgba(158, 190, 193, 0.35);
+}
+
+:global([data-theme='dark']) .download-btn.secondary:hover {
+  background: rgba(158, 190, 193, 0.24);
+  color: #ffffff;
 }
 
 .download-note {
