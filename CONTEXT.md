@@ -115,7 +115,6 @@
     │   ├── ConversionSettings.vue   # Format- & Qualitätseinstellungen
     │   ├── GlobalActions.vue    # Clear, Download, Undo/Redo
     │   ├── StatusDisplay.vue    # Erfolgsmeldungen
-    │   ├── DownloadSection.vue  # Download-UI
     │   ├── FaqSection.vue       # FAQ-Akkordeon
     │   └── ToastContainer.vue   # Toast-Benachrichtigungen
     │
@@ -143,7 +142,6 @@
 | `ConversionSettings.vue` | 259 | Format- und Qualitätsauswahl |
 | `GlobalActions.vue` | 217 | Globale Aktionen (Löschen, Download) |
 | `StatusDisplay.vue` | 78 | Statusmeldungen |
-| `DownloadSection.vue` | 226 | Download-Bereich |
 | `FaqSection.vue` | 143 | FAQ-Bereich |
 | `ToastContainer.vue` | 262 | Toast-Benachrichtigungen |
 
