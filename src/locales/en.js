@@ -109,22 +109,6 @@ export default {
     serverError: 'Server error',
     unsupportedFile: 'Not supported',
   },
-  download: {
-    title: 'Download',
-    subtitle: 'Download the desktop version',
-    installer: {
-      title: 'Windows Installer',
-      description: 'Recommended for most users. Automatic installation with start menu entries.',
-      exe: 'Download (.exe)',
-    },
-    portable: {
-      title: 'Portable Version',
-      description: 'No installation required. Ideal for USB drives or restricted systems.',
-      x64: 'ZIP (64-bit)',
-      x86: 'ZIP (32-bit)',
-    },
-    note: 'All downloads are virus-free and digitally signed.',
-  },
   tools: {
     title: 'Our Audio Tools',
     visitTool: 'Open Tool',
