@@ -290,7 +290,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <!-- =============================================================
      ANCHOR NAVIGATION — Interne Seitennavigation
-     App | Features | FAQ
+     App | Features | FAQ | Blog (extern)
      ============================================================= -->
 <nav class="anchor-nav" id="anchor-nav" aria-label="Seitennavigation">
   <div class="container">
@@ -311,6 +311,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <a href="#faq" class="anchor-nav__link" data-anchor="faq">
           <span class="anchor-nav__icon" aria-hidden="true">&#10067;</span>
           <span data-i18n="nav.anchorFaq">FAQ</span>
+        </a>
+      </li>
+      <li>
+        <!-- Externer Link (kein data-anchor): wird von initAnchorNav ignoriert -->
+        <a href="https://kodinitools.com/blog/audiodatei-format-aendern/" class="anchor-nav__link">
+          <span class="anchor-nav__icon" aria-hidden="true">&#128221;</span>
+          <span data-i18n="nav.anchorBlog">Blog</span>
         </a>
       </li>
     </ul>
@@ -473,7 +480,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
      --------------------------------------------------------------- */
   var translations = {
     de: {
-      nav: { anchorApp: 'App', anchorFeatures: 'Features', anchorFaq: 'FAQ' },
+      nav: { anchorApp: 'App', anchorFeatures: 'Features', anchorFaq: 'FAQ', anchorBlog: 'Blog' },
       landing: {
         features: {
           title: 'Features',
@@ -500,7 +507,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       }
     },
     en: {
-      nav: { anchorApp: 'App', anchorFeatures: 'Features', anchorFaq: 'FAQ' },
+      nav: { anchorApp: 'App', anchorFeatures: 'Features', anchorFaq: 'FAQ', anchorBlog: 'Blog' },
       landing: {
         features: {
           title: 'Features',
