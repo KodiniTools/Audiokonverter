@@ -19,9 +19,11 @@ module.exports = {
         NODE_ENV: 'production',
         PORT: 9000,
         FILES_DIR: '/var/www/kodinitools.com/audiokonverter/files',
-        // 0 = kein automatisches Aufräumen. Die Oberfläche verteilt Links auf
-        // die Serverdatei; ein zu kurzer Wert macht sie unerreichbar.
-        CONVERT_TTL_MS: 0,
+        // Konvertierte Ergebnisse werden nach dieser Zeit automatisch gelöscht,
+        // damit sie sich nicht endlos ansammeln. 6 h ist großzügig: Der Download
+        // erfolgt sofort per Blob, ein offener Tab hat reichlich Puffer.
+        // 0 schaltet das Aufräumen ab.
+        CONVERT_TTL_MS: 21600000,
         MAX_UPLOAD_BYTES: 314572800,
       },
 
