@@ -18,9 +18,9 @@
  * Konfiguration (Umgebungsvariablen):
  *   PORT               Default 9000
  *   FILES_DIR          Ablage der Ergebnisse, Default <dieser Ordner>/files
- *   CONVERT_TTL_MS     Aufräumen alter Ergebnisse; Default 0 = AUS.
- *                      Die Oberfläche verteilt Links auf die Serverdatei,
- *                      ein zu kurzer Wert macht sie unerreichbar.
+ *   CONVERT_TTL_MS     Aufräumen alter Ergebnisse; Default 6 h.
+ *                      0 schaltet das Aufräumen ab. Ein zu kurzer Wert kann
+ *                      Download-Links brechen, die noch offen im Browser liegen.
  *   FFMPEG_TIMEOUT_MS  Default 120000
  *   MAX_UPLOAD_BYTES   Default 314572800 (300 MB)
  */
@@ -38,7 +38,11 @@ app.disable('x-powered-by')
 
 const PORT = Number(process.env.PORT) || 9000
 const FILES_DIR = process.env.FILES_DIR || path.join(__dirname, 'files')
-const CONVERT_TTL_MS = Number(process.env.CONVERT_TTL_MS) || 0
+// Default: 6 h. Unset → aufräumen an; explizit 0 schaltet es ab.
+const CONVERT_TTL_MS =
+  process.env.CONVERT_TTL_MS !== undefined && process.env.CONVERT_TTL_MS !== ''
+    ? Number(process.env.CONVERT_TTL_MS)
+    : 6 * 60 * 60 * 1000
 const FFMPEG_TIMEOUT_MS = Number(process.env.FFMPEG_TIMEOUT_MS) || 120000
 const MAX_UPLOAD_BYTES = Number(process.env.MAX_UPLOAD_BYTES) || 300 * 1024 * 1024
 
@@ -163,8 +167,20 @@ function runFfmpeg(args, timeoutMs = FFMPEG_TIMEOUT_MS) {
   })
 }
 
-// Von diesem Prozess erzeugte Ergebnisse, nur für den optionalen Sweeper.
-const convertedOutputs = new Map()
+// Endungen, die der Sweeper aufräumen darf — genau die Zielformate. So bleibt
+// alles Nicht-Audio (z. B. versehentlich abgelegte Dateien) unangetastet, selbst
+// wenn FILES_DIR wider Erwarten geteilt würde.
+const CONVERT_EXTENSIONS = new Set([
+  '.mp3',
+  '.wav',
+  '.flac',
+  '.aac',
+  '.ogg',
+  '.m4a',
+  '.wma',
+  '.opus',
+  '.aiff',
+])
 
 ensureDir(FILES_DIR)
 
@@ -212,7 +228,6 @@ app.post('/api/convert', upload.single('file'), async (req, res) => {
     await runFfmpeg(args)
 
     const stats = fs.statSync(outPath)
-    convertedOutputs.set(outName, { createdAt: Date.now() })
 
     console.log('[convert ok]', outName, stats.size + 'B')
     res.json({
@@ -231,20 +246,34 @@ app.post('/api/convert', upload.single('file'), async (req, res) => {
   }
 })
 
-// Optionales Aufräumen. Standardmäßig aus, weil die Oberfläche Links auf die
-// Serverdatei verteilt: Wer den Tab offen lässt und später herunterlädt, liefe
-// sonst ins Leere. Berührt ausschließlich selbst erzeugte Dateien.
+// Aufräumen alter Ergebnisse. Standardmäßig an (Default 6 h), abschaltbar über
+// CONVERT_TTL_MS=0. Geht direkt über FILES_DIR statt über eine Prozessliste,
+// damit auch Dateien aus früheren Läufen und Altbestände erfasst werden. Nur
+// Audio-Ergebnisse (CONVERT_EXTENSIONS) werden berührt.
 function sweepConvertedOutputs() {
   const now = Date.now()
-  for (const [filename, entry] of convertedOutputs) {
-    if (now - entry.createdAt < CONVERT_TTL_MS) continue
-    convertedOutputs.delete(filename)
-    safeUnlink(path.join(FILES_DIR, filename))
-    console.log('[convert sweep]', filename)
+  let removed = 0
+  try {
+    for (const name of fs.readdirSync(FILES_DIR)) {
+      if (!CONVERT_EXTENSIONS.has(path.extname(name).toLowerCase())) continue
+      const full = path.join(FILES_DIR, name)
+      try {
+        const stats = fs.statSync(full)
+        if (stats.isFile() && now - stats.mtimeMs >= CONVERT_TTL_MS) {
+          safeUnlink(full)
+          removed++
+          console.log('[convert sweep]', name)
+        }
+      } catch (_) {}
+    }
+  } catch (e) {
+    console.error('[convert sweep err]', e.message)
   }
+  return removed
 }
 
 if (CONVERT_TTL_MS > 0) {
+  sweepConvertedOutputs() // beim Start liegengebliebene Ergebnisse aufräumen
   const sweepTimer = setInterval(sweepConvertedOutputs, 5 * 60 * 1000)
   if (typeof sweepTimer.unref === 'function') sweepTimer.unref()
 }

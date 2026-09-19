@@ -44,18 +44,22 @@ dieselbe Namensbildung (`<basis>-<nanoid6>.<ext>`), dasselbe Upload-Limit.
 | --- | --- | --- |
 | `PORT` | `9000` | nginx proxied `/audiokonverter/` hierher |
 | `FILES_DIR` | `<dieser Ordner>/files` | in `ecosystem.config.cjs` auf `/var/www/kodinitools.com/audiokonverter/files` gesetzt |
-| `CONVERT_TTL_MS` | `0` (aus) | siehe unten |
+| `CONVERT_TTL_MS` | `21600000` (6 h) | Ergebnisse älter als dieser Wert werden automatisch gelöscht; `0` schaltet das Aufräumen ab. Siehe unten. |
 | `FFMPEG_TIMEOUT_MS` | `120000` | Abbruch langer Konvertierungen |
 | `MAX_UPLOAD_BYTES` | `314572800` | 300 MB |
 
-**Zum Aufräumen:** Anders als der MP3 Konverter, der sein Ergebnis als Blob im
-Browser hält und die Serverdatei danach löschen lässt, zeigt der Audiokonverter
-dem Nutzer einen Link auf die Serverdatei. Ein automatisches Löschen würde
-diesen Link brechen, wenn jemand den Tab länger offen lässt. Deshalb ist der
-Sweeper standardmäßig **aus** und die Dateien bleiben liegen — wie bisher. Wer
-aufräumen will, setzt `CONVERT_TTL_MS` auf einen großzügigen Wert
-(z. B. `21600000` für 6 Stunden); gelöscht wird dann ausschließlich, was dieser
-Prozess selbst erzeugt hat.
+**Zum Aufräumen:** Die Oberfläche lädt das Ergebnis inzwischen sofort per
+`fetch` als Blob herunter (Speicherort-Dialog), hält aber weiterhin einen Link
+auf die Serverdatei. Damit sich die Ergebnisse nicht endlos ansammeln und
+manuell gelöscht werden müssen, ist der Sweeper standardmäßig **an** mit einer
+großzügigen Aufbewahrung von **6 Stunden** (`CONVERT_TTL_MS`). Das ist lang
+genug, dass ein offener Tab die Datei noch herunterladen kann, und räumt sie
+danach automatisch weg. Der Sweeper läuft beim Start und danach alle 5 Minuten;
+er geht direkt über `FILES_DIR` (nicht über eine Prozessliste), sodass auch
+Altbestände und Dateien aus früheren Läufen erfasst werden. Gelöscht werden
+ausschließlich Audio-Ergebnisse (`.mp3`, `.wav`, `.flac`, `.aac`, `.ogg`,
+`.m4a`, `.wma`, `.opus`, `.aiff`); alles andere in `FILES_DIR` bleibt unberührt.
+Wer das Aufräumen abschalten will, setzt `CONVERT_TTL_MS=0`.
 
 ## Migration ohne Ausfall
 
