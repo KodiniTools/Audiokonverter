@@ -11,6 +11,17 @@ const app = express()
 const PORT = process.env.PORT || 9000
 const FILES_DIR = process.env.FILES_DIR || path.join(__dirname, 'files')
 
+// Konvertierte Downloads landen in einem eigenen Unterordner, damit sie
+// automatisch bereinigt werden können, ohne die (dauerhaften) Musikplayer-
+// Dateien im FILES_DIR-Root zu berühren.
+const CONVERTED_DIR = process.env.CONVERTED_DIR || path.join(FILES_DIR, 'converted')
+
+// Aufbewahrungsdauer konvertierter Dateien (Standard: 60 Minuten) und
+// Intervall des Aufräum-Jobs (Standard: 15 Minuten).
+const CONVERTED_TTL_MS = Math.max(1, Number(process.env.CONVERTED_TTL_MINUTES) || 60) * 60 * 1000
+const CLEANUP_INTERVAL_MS =
+  Math.max(1, Number(process.env.CLEANUP_INTERVAL_MINUTES) || 15) * 60 * 1000
+
 // --- Env-Var Validation (Startup) ---
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || null
 
@@ -27,6 +38,10 @@ const upload = multer({
 })
 
 ensureDir(FILES_DIR)
+ensureDir(CONVERTED_DIR)
+// Spezifischere Route zuerst, damit CONVERTED_DIR auch außerhalb von FILES_DIR
+// liegen darf.
+app.use('/files/converted', express.static(CONVERTED_DIR, { fallthrough: false }))
 app.use('/files', express.static(FILES_DIR, { fallthrough: false }))
 
 app.get('/health', (_req, res) => res.json({ ok: true, port: Number(PORT), filesDir: FILES_DIR }))
@@ -39,6 +54,29 @@ function safeUnlink(p) {
   try {
     fs.unlinkSync(p)
   } catch (_) {}
+}
+// Entfernt konvertierte Dateien, die älter als CONVERTED_TTL_MS sind.
+function cleanupConvertedFiles() {
+  let removed = 0
+  try {
+    const now = Date.now()
+    for (const name of fs.readdirSync(CONVERTED_DIR)) {
+      const full = path.join(CONVERTED_DIR, name)
+      try {
+        const stats = fs.statSync(full)
+        if (stats.isFile() && now - stats.mtimeMs > CONVERTED_TTL_MS) {
+          fs.unlinkSync(full)
+          removed++
+        }
+      } catch (_) {}
+    }
+    if (removed > 0) {
+      console.log('[cleanup]', removed, 'konvertierte Datei(en) entfernt (älter als', CONVERTED_TTL_MS / 60000, 'Min)')
+    }
+  } catch (e) {
+    console.error('[cleanup err]', e.message)
+  }
+  return removed
 }
 function sanitizeOutputName(base, wantedExt) {
   const cleanBase = String(base)
@@ -164,7 +202,7 @@ app.post('/api/convert', upload.single('file'), async (req, res) => {
         path.parse(req.file?.originalname || req.body.file_url || 'audio').name || 'audio'
       ).replace(/[^a-z0-9_\-.]+/gi, '_')
       const outName = sanitizeOutputName(base + '-' + nanoid(6), fmt)
-      const outPath = path.join(FILES_DIR, outName)
+      const outPath = path.join(CONVERTED_DIR, outName)
 
       const args = ['-y', '-i', tmpIn]
       if (samplerate) args.push('-ar', String(samplerate))
@@ -235,7 +273,7 @@ app.post('/api/convert', upload.single('file'), async (req, res) => {
       console.log('[convert ok]', outPath)
       const stats = fs.statSync(outPath)
       return {
-        url: '/files/' + path.basename(outPath),
+        url: '/files/converted/' + path.basename(outPath),
         filename: path.basename(outPath),
         format: fmt,
         size: stats.size,
@@ -741,6 +779,21 @@ app.put('/api/player/state', requireAuth, (req, res) => {
 // END MUSIK-PLAYER ENDPOINTS
 // ========================================
 
+// Automatisches Aufräumen konvertierter Downloads: einmal beim Start und dann
+// im festen Intervall. So müssen die Dateien nicht mehr manuell gelöscht werden.
+cleanupConvertedFiles()
+const cleanupTimer = setInterval(cleanupConvertedFiles, CLEANUP_INTERVAL_MS)
+if (typeof cleanupTimer.unref === 'function') cleanupTimer.unref()
+
 app.listen(PORT, '127.0.0.1', () => {
   console.log('Backend common auf http://127.0.0.1:' + PORT + ' (FILES_DIR=' + FILES_DIR + ')')
+  console.log(
+    '[cleanup] aktiv: konvertierte Dateien in ' +
+      CONVERTED_DIR +
+      ' werden nach ' +
+      CONVERTED_TTL_MS / 60000 +
+      ' Min entfernt (Intervall ' +
+      CLEANUP_INTERVAL_MS / 60000 +
+      ' Min)'
+  )
 })
