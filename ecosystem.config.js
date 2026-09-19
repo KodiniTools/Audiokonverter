@@ -5,18 +5,24 @@ module.exports = {
       // AUDIOKONVERTER - VUE 3
       // ===========================
       name: 'audiokonverter-server',
-      script: '/var/www/kodinitools.com/_backend_common/server.js',
+      // Eigenes Backend statt der geteilten Datei in _backend_common,
+      // siehe backend/README.md
+      script: '/var/www/kodinitools.com/audiokonverter-backend/server.js',
 
       // 🎯 KORREKT: Working Directory
-      cwd: '/var/www/kodinitools.com/audiokonverter',
+      cwd: '/var/www/kodinitools.com/audiokonverter-backend',
 
       // 🌐 Environment
+      // UPLOAD_DIR/OUTPUT_DIR/MAX_FILE_SIZE standen hier, wurden vom Backend
+      // aber nie gelesen — ersetzt durch die Variablen, die es wirklich kennt.
       env: {
         NODE_ENV: 'production',
         PORT: 9000,
-        UPLOAD_DIR: './uploads',
-        OUTPUT_DIR: './output',
-        MAX_FILE_SIZE: '500MB',
+        FILES_DIR: '/var/www/kodinitools.com/audiokonverter/files',
+        // 0 = kein automatisches Aufräumen. Die Oberfläche verteilt Links auf
+        // die Serverdatei; ein zu kurzer Wert macht sie unerreichbar.
+        CONVERT_TTL_MS: 0,
+        MAX_UPLOAD_BYTES: 314572800,
       },
 
       // ⚙️ PM2 Einstellungen

@@ -27,6 +27,10 @@ BRANCH="${DEPLOY_BRANCH:-main}"
 TARGET_DIR="${DEPLOY_TARGET:-/var/www/kodinitools.com/audiokonverter}"
 PM2_APP="${DEPLOY_PM2_APP:-audiokonverter-server}"
 
+# Eigenstaendiges Backend (siehe backend/README.md)
+BACKEND_DIR="${DEPLOY_BACKEND_DIR:-/var/www/kodinitools.com/audiokonverter-backend}"
+BACKEND_PORT="${DEPLOY_BACKEND_PORT:-9000}"
+
 # Laufzeit-Ordner/Dateien des Backends im Zielverzeichnis, die
 # beim Sync NICHT geloescht werden duerfen (Zielordner ist
 # zugleich NGINX-Root und PM2-cwd):
@@ -89,15 +93,50 @@ shopt -u nullglob dotglob
 # Frischen Build hineinkopieren (inkl. Dotfiles)
 cp -a dist/. "$TARGET_DIR"/
 
-# --- 5. Backend (PM2) neu laden -----------------------------
+# --- 5. Backend deployen und (PM2) neu laden ----------------
+# Das Backend liegt in backend/ und laeuft aus BACKEND_DIR. Solange dieser
+# Ordner nicht existiert, haengt der Dienst noch am gemeinsamen
+# _backend_common – dann wird nur neu geladen, nichts kopiert.
 if [[ "${DEPLOY_SKIP_BACKEND:-0}" == "1" ]]; then
-  log "DEPLOY_SKIP_BACKEND=1 – ueberspringe PM2-Reload"
-elif command -v pm2 >/dev/null 2>&1 && pm2 describe "$PM2_APP" >/dev/null 2>&1; then
-  log "Lade PM2-Backend neu: $PM2_APP"
-  pm2 reload "$PM2_APP" --update-env
+  log "DEPLOY_SKIP_BACKEND=1 – ueberspringe Backend-Deploy und PM2-Reload"
 else
-  log "PM2-Prozess '$PM2_APP' nicht gefunden – Backend-Reload uebersprungen"
-  log "Erststart ggf. mit: pm2 start ecosystem.config.js"
+  if [[ -d "$BACKEND_DIR" ]]; then
+    command -v rsync >/dev/null 2>&1 || fail "rsync ist nicht installiert (fuer den Backend-Sync noetig)."
+    log "Veroeffentliche Backend nach $BACKEND_DIR"
+    rsync -a --delete --exclude '/node_modules' --exclude '/files' backend/ "$BACKEND_DIR"/
+
+    # npm ci nur mit Lockfile – sonst bricht es ab und laesst den Ordner ohne
+    # node_modules zurueck, womit der Dienst beim Neustart sofort stirbt.
+    if [[ -f "$BACKEND_DIR/package-lock.json" ]]; then
+      npm --prefix "$BACKEND_DIR" ci --omit=dev || npm --prefix "$BACKEND_DIR" install --omit=dev
+    else
+      npm --prefix "$BACKEND_DIR" install --omit=dev
+    fi
+
+    [[ -d "$BACKEND_DIR/node_modules" ]] ||
+      fail "Backend-Abhaengigkeiten fehlen in $BACKEND_DIR – kein Reload, der laufende Prozess bleibt unberuehrt."
+  else
+    log "$BACKEND_DIR existiert nicht – Backend-Dateien werden nicht kopiert"
+  fi
+
+  if command -v pm2 >/dev/null 2>&1 && pm2 describe "$PM2_APP" >/dev/null 2>&1; then
+    log "Lade PM2-Backend neu: $PM2_APP"
+    pm2 reload "$PM2_APP" --update-env
+
+    # Ein gestarteter Prozess ist noch kein laufender Dienst: fehlende Module
+    # oder ein belegter Port fallen erst hier auf.
+    log "Pruefe /health auf 127.0.0.1:$BACKEND_PORT"
+    healthy=0
+    for _ in 1 2 3 4 5; do
+      sleep 1
+      if curl -sf "http://127.0.0.1:$BACKEND_PORT/health" >/dev/null; then healthy=1; break; fi
+    done
+    [[ $healthy -eq 1 ]] ||
+      fail "Backend antwortet nicht auf /health. Logs: pm2 logs $PM2_APP --lines 30"
+  else
+    log "PM2-Prozess '$PM2_APP' nicht gefunden – Backend-Reload uebersprungen"
+    log "Erststart ggf. mit: pm2 start ecosystem.config.js"
+  fi
 fi
 
 log "✓ Deployment abgeschlossen (Commit $COMMIT → $TARGET_DIR)"
