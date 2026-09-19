@@ -39,3 +39,6 @@ build/
 
 # TypeScript build info
 *.tsbuildinfo
+
+# Laufzeit-Ordner des Backends
+backend/files/
