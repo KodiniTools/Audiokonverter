@@ -135,7 +135,7 @@ else
       fail "Backend antwortet nicht auf /health. Logs: pm2 logs $PM2_APP --lines 30"
   else
     log "PM2-Prozess '$PM2_APP' nicht gefunden – Backend-Reload uebersprungen"
-    log "Erststart ggf. mit: pm2 start ecosystem.config.js"
+    log "Erststart ggf. mit: pm2 start ecosystem.config.cjs"
   fi
 fi
 

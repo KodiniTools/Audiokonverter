@@ -19,7 +19,7 @@ geteilten Datei `/var/www/kodinitools.com/_backend_common/server.js` ab.
 - Die Datei lag in keinem Repository: kein Review, kein Test, Deploy von Hand.
 
 Die Kopie, die bisher im Repo-Root lag (`server.js`, 746 Zeilen), war veraltet
-und wurde nie ausgeführt — `ecosystem.config.js` zeigte auf `_backend_common`.
+und wurde nie ausgeführt — `ecosystem.config.cjs` zeigte auf `_backend_common`.
 Sie ist entfernt; bei Bedarf liegt sie in der Git-History.
 
 ## Was drin ist — und was bewusst fehlt
@@ -43,7 +43,7 @@ dieselbe Namensbildung (`<basis>-<nanoid6>.<ext>`), dasselbe Upload-Limit.
 | Variable | Default | Bedeutung |
 | --- | --- | --- |
 | `PORT` | `9000` | nginx proxied `/audiokonverter/` hierher |
-| `FILES_DIR` | `<dieser Ordner>/files` | in `ecosystem.config.js` auf `/var/www/kodinitools.com/audiokonverter/files` gesetzt |
+| `FILES_DIR` | `<dieser Ordner>/files` | in `ecosystem.config.cjs` auf `/var/www/kodinitools.com/audiokonverter/files` gesetzt |
 | `CONVERT_TTL_MS` | `0` (aus) | siehe unten |
 | `FFMPEG_TIMEOUT_MS` | `120000` | Abbruch langer Konvertierungen |
 | `MAX_UPLOAD_BYTES` | `314572800` | 300 MB |
@@ -79,22 +79,35 @@ rsync -a --exclude '/node_modules' --exclude '/files' backend/ "$BACKEND_DIR"/
 npm --prefix "$BACKEND_DIR" install --omit=dev
 test -d "$BACKEND_DIR/node_modules" || { echo "FEHLER: Abhängigkeiten fehlen"; exit 1; }
 
-# 4) Auf einem Testport prüfen – der alte Dienst läuft dabei weiter
+# 4) Auf einem freien Port prüfen – der alte Dienst läuft dabei weiter.
+# Den Port sucht das Betriebssystem aus: feste Nummern sind auf diesem
+# Server schnell belegt.
 cd "$BACKEND_DIR"
-PORT=9001 FILES_DIR=/tmp/ak-test node server.js &
+FREE_PORT=$(node -e "const s=require('net').createServer();s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>console.log(p))})")
+ffmpeg -loglevel error -y -f lavfi -i "sine=frequency=440:duration=1" -ac 1 -ar 44100 /tmp/ak-test.wav
+
+PORT=$FREE_PORT FILES_DIR=/tmp/ak-test node server.js &
 TESTPID=$!
 sleep 2
-curl -s http://127.0.0.1:9001/health; echo
-curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:9001/api/tracks   # 404 erwartet
+curl -s http://127.0.0.1:$FREE_PORT/health; echo
+curl -s -F "file=@/tmp/ak-test.wav" -F "format=mp3" -F "bitrate=192k" \
+  http://127.0.0.1:$FREE_PORT/api/convert; echo
+for r in /api/tracks /api/playlists /api/upload; do
+  curl -s -o /dev/null -w "$r: %{http_code}\n" http://127.0.0.1:$FREE_PORT$r
+done
 kill $TESTPID
 ```
 
-Erst wenn `/health` mit `"service":"audiokonverter"` antwortet und `/api/tracks`
-404 liefert, den Port übernehmen:
+Erwartet: `"service":"audiokonverter"`, eine Convert-Antwort mit `size` deutlich
+über 0 und dreimal `404`.
+
+Erst dann den Port übernehmen. `ecosystem.config.cjs` trägt die Endung `.cjs`,
+weil `package.json` im Repo-Root `"type": "module"` setzt — als `.js` lehnt pm2
+die Datei mit „module is not defined in ES module scope" ab:
 
 ```bash
 pm2 delete audiokonverter-server
-pm2 start /opt/audiokonverter/ecosystem.config.js
+pm2 start /opt/audiokonverter/ecosystem.config.cjs
 pm2 save
 
 curl -s http://127.0.0.1:9000/health; echo
