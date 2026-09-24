@@ -112,6 +112,9 @@ function buildFFmpegArgs(
   quality: number
 ): string[] {
   const args = ['-y', '-i', inputName]
+  // WebM ist ein Video-Container: Videospur verwerfen, sonst versuchen
+  // Zielcontainer wie OGG/M4A sie mitzukodieren.
+  if (isWebmName(inputName)) args.push('-vn')
 
   switch (format) {
     case 'mp3': {
@@ -157,6 +160,11 @@ function buildFFmpegArgs(
 
   args.push(outputName)
   return args
+}
+
+/** Eingabe ist ein WebM-Container (Audio oder Video). */
+export function isWebmName(name: string): boolean {
+  return /\.(webm|weba)$/i.test(name)
 }
 
 const MIME_TYPES: Record<AudioFormat, string> = {

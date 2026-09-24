@@ -117,6 +117,32 @@ function wavBuffer(seconds = 0.2, sampleRate = 8000) {
   }
   console.log('[7] entfernte Endpunkte ->', entfernt.length + 'x 404')
 
+  // 8) WebM wird als Eingabe angenommen; die Videospur wird verworfen (-vn).
+  // Nur bei WebM — sonst ginge eingebettetes Cover-Art anderer Formate verloren.
+  // Der Inhalt ist WAV: ffmpeg erkennt das Format am Inhalt, nicht am Namen.
+  const argsLog = process.env.FFMPEG_ARGS_LOG
+  for (const [name, type, erwartetVn] of [
+    ['Aufnahme.webm', 'video/webm', true],
+    ['Sprache.weba', 'audio/webm', true],
+    ['Song 2.wav', 'audio/wav', false],
+  ]) {
+    if (argsLog) fs.writeFileSync(argsLog, '')
+    const wfd = new FormData()
+    wfd.append('file', new Blob([wavBuffer()], { type }), name)
+    wfd.append('format', 'ogg')
+    const wr = await (await fetch(BASE + '/api/convert', { method: 'POST', body: wfd })).json()
+    assert.strictEqual(wr.ok, true, `${name} -> convert ok`)
+    if (argsLog) {
+      const hatVn = fs.readFileSync(argsLog, 'utf8').split(/\s+/).includes('-vn')
+      assert.strictEqual(
+        hatVn,
+        erwartetVn,
+        `${name}: -vn ${erwartetVn ? 'gesetzt' : 'nicht gesetzt'}`
+      )
+    }
+  }
+  console.log('[8] WebM-Eingabe ok' + (argsLog ? ' (-vn nur bei WebM)' : ''))
+
   console.log('\nAlle Backend-Checks bestanden.')
   process.exit(0)
 })().catch((e) => {

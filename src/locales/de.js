@@ -11,7 +11,7 @@ export default {
   upload: {
     title: 'Upload',
     dragDrop: 'Dateien hierher ziehen oder klicken',
-    supportedFormats: 'MP3 • WAV • FLAC • OGG • AAC • M4A • OPUS • AIFF • WMA',
+    supportedFormats: 'MP3 • WAV • FLAC • OGG • AAC • M4A • OPUS • AIFF • WMA • WEBM',
     selectFiles: 'Dateien wählen',
     selectFolder: 'Ordner wählen',
     pasteHint: 'oder aus der Zwischenablage einfügen (Strg + V)',
@@ -151,7 +151,7 @@ export default {
     questions: {
       formats: {
         q: 'Welche Formate werden unterstützt?',
-        a: 'MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF und WMA werden unterstützt.',
+        a: 'MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF und WMA werden unterstützt. Zusätzlich lassen sich WebM-Dateien (z. B. Aufnahmen aus dem Browser) als Quelle in jedes dieser Formate umwandeln.',
       },
       quality: {
         q: 'Was bedeutet die Qualitätseinstellung?',
