@@ -5,4 +5,6 @@ for a in "$@"; do
   [ "$prev" = "-i" ] && in="$a"
   prev="$a"; out="$a"
 done
+# Optional: Argumente protokollieren, damit Tests sie prüfen können
+[ -n "$FFMPEG_ARGS_LOG" ] && echo "$*" >> "$FFMPEG_ARGS_LOG"
 cp "$in" "$out"

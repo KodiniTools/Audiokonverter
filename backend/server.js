@@ -81,6 +81,15 @@ function isAllowedFormat(fmt) {
   )
 }
 
+// WebM ist ein Video-Container. Bei solchen Eingaben wird die Videospur
+// verworfen (-vn); bei allen anderen bleibt z. B. eingebettetes Cover-Art erhalten.
+function isWebmInput(file) {
+  return (
+    /\.(webm|weba)$/i.test(String(file.originalname || '')) ||
+    /webm/i.test(String(file.mimetype || ''))
+  )
+}
+
 function validateBitrate(br) {
   return typeof br === 'string' && /^[1-9]\d{1,3}k$/i.test(br)
 }
@@ -219,6 +228,7 @@ app.post('/api/convert', upload.single('file'), async (req, res) => {
     const outPath = path.join(FILES_DIR, outName)
 
     const args = ['-y', '-i', req.file.path]
+    if (isWebmInput(req.file)) args.push('-vn')
     if (samplerate) args.push('-ar', String(samplerate))
     if (channels) args.push('-ac', String(channels))
     if (normalize) args.push('-filter:a', 'loudnorm=I=-16:TP=-1.5:LRA=11')

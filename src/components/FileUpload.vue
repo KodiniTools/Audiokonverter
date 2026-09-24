@@ -11,7 +11,7 @@
         ref="fileInput"
         type="file"
         multiple
-        accept="audio/*,.mp3,.wav,.flac,.ogg,.aac,.m4a,.opus,.aiff,.aif,.wma"
+        accept="audio/*,.mp3,.wav,.flac,.ogg,.aac,.m4a,.opus,.aiff,.aif,.wma,.webm,.weba"
         style="display: none"
         @change="handleFileSelect"
       />
@@ -74,6 +74,7 @@ const SUPPORTED_FORMATS = [
   'audio/aiff',
   'audio/x-aiff',
   'audio/x-ms-wma',
+  'audio/webm',
 ]
 const MAX_FILE_SIZE = 300 * 1024 * 1024
 
@@ -205,7 +206,7 @@ function processFiles(files: File[]): void {
 
     const isAudio =
       SUPPORTED_FORMATS.some((format) => file.type.includes(format.split('/')[1])) ||
-      /\.(mp3|wav|flac|ogg|aac|m4a|opus|aiff|aif|wma)$/i.test(file.name)
+      /\.(mp3|wav|flac|ogg|aac|m4a|opus|aiff|aif|wma|webm|weba)$/i.test(file.name)
 
     if (!isAudio) {
       errors.push(`${file.name}: ${t('errors.unsupportedFile')}`)
