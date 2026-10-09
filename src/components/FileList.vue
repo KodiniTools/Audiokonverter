@@ -43,7 +43,7 @@
                   {{ formatFileSize(file.size) }}
                 </span>
                 <template v-if="file.status === 'completed' && file.convertedSize">
-                  <span class="size-arrow">→</span>
+                  <span class="size-arrow" aria-hidden="true">→</span>
                   <span class="file-size converted">
                     {{ file.convertedFormat }} {{ formatFileSize(file.convertedSize) }}
                   </span>
@@ -64,6 +64,7 @@
 
             <!-- Status Badge -->
             <span v-if="file.status !== 'pending'" class="status-badge" :class="file.status">
+              <span class="status-dot" aria-hidden="true"></span>
               {{ t(`status.${file.status}`) }}
             </span>
 
@@ -91,7 +92,19 @@
               aria-label="Download"
               @click="downloadFile(file)"
             >
-              &#8595;
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M12 3v12" />
+                <path d="m7 10 5 5 5-5" />
+                <path d="M5 21h14" />
+              </svg>
             </button>
 
             <!-- Retry Button -->
@@ -102,7 +115,18 @@
               aria-label="Retry"
               @click="audioStore.convertFile(file)"
             >
-              &#8635;
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                <path d="M3 3v5h5" />
+              </svg>
             </button>
 
             <!-- Remove Button -->
@@ -112,7 +136,18 @@
               aria-label="Remove"
               @click="removeFile(file.id)"
             >
-              &times;
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
+              </svg>
             </button>
           </div>
         </div>
@@ -155,205 +190,198 @@ function removeFile(fileId: string): void {
 </script>
 
 <style scoped>
+/* Panel (UiPanel): Fläche 1, Hairline, großer Radius */
 .file-list-section {
-  padding: 1.25rem;
-  animation: slideInUp 0.35s ease;
+  padding: var(--ds-space-4) var(--ds-space-5) var(--ds-space-5);
 }
 
 .file-list-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.75rem;
+  align-items: baseline;
+  gap: var(--ds-space-3);
+  margin-bottom: var(--ds-space-3);
 }
 
 .file-list-title {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--text-color);
+  font-size: var(--ds-text-lg);
+  font-weight: var(--ds-weight-semibold);
+  color: var(--ds-text);
 }
 
 .file-list-size {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  font-weight: 500;
+  font-size: var(--ds-text-sm);
+  color: var(--ds-text-2);
+  font-variant-numeric: tabular-nums;
 }
 
 .file-list {
   list-style: none;
-  padding: 0;
-  margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  max-height: 300px;
+  gap: var(--ds-space-2);
+  max-height: 320px;
   overflow-y: auto;
-  padding-right: 0.25rem;
-}
-
-.file-list::-webkit-scrollbar {
-  width: 4px;
-}
-
-.file-list::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.file-list::-webkit-scrollbar-thumb {
-  background: rgba(1, 79, 153, 0.35);
-  border-radius: 2px;
-}
-
-.file-list {
+  padding-right: var(--ds-space-1);
   scrollbar-width: thin;
-  scrollbar-color: rgba(1, 79, 153, 0.35) transparent;
+  scrollbar-color: var(--ds-border-strong) transparent;
 }
 
+/* Zeile: Eingabefläche mit Hairline; laufende Datei im Auswahl-Muster */
 .file-item {
-  background: var(--card-background);
-  border: 1px solid rgba(1, 79, 153, 0.15);
-  border-radius: 8px;
-  padding: 0.75rem;
-  transition: all 0.2s ease;
+  padding: var(--ds-space-2) var(--ds-space-3);
+  background: var(--ds-surface-2);
+  border: var(--ds-border-width) solid var(--ds-border);
+  border-radius: var(--ds-radius-md);
+  transition:
+    background-color var(--ds-duration) var(--ds-ease),
+    border-color var(--ds-duration) var(--ds-ease);
 }
 
 .file-item:hover {
-  transform: translateX(2px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-color: var(--ds-border-strong);
 }
 
-.file-item.completed {
-  border-left: 3px solid var(--success-color);
-}
-
-.file-item.error {
-  border-left: 3px solid var(--error-color);
-}
-
-.file-item.converting {
-  border-left: 3px solid var(--primary-color);
+.file-item.playing {
+  background: var(--ds-accent-soft);
+  border-color: var(--ds-accent);
 }
 
 .file-item-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--ds-space-3);
+  min-height: var(--ds-control-md);
 }
 
+/* Klickbarer Bereich: spielt die Datei im Sticky-Player */
 .file-item-info {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--ds-space-3);
   flex: 1;
   min-width: 0;
+  border-radius: var(--ds-radius-sm);
+  cursor: pointer;
+}
+
+.file-item-info:focus-visible {
+  outline: none;
+  box-shadow: var(--ds-focus-ring);
+}
+
+.btn-play-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ds-control-sm);
+  height: var(--ds-control-sm);
+  flex-shrink: 0;
+  background: var(--ds-surface-1);
+  border: var(--ds-border-width) solid var(--ds-border-strong);
+  border-radius: var(--ds-radius-full);
+  color: var(--ds-text-2);
+  transition:
+    background-color var(--ds-duration) var(--ds-ease),
+    border-color var(--ds-duration) var(--ds-ease),
+    color var(--ds-duration) var(--ds-ease);
+}
+
+.file-item-info:hover .btn-play-indicator {
+  background: var(--ds-surface-3);
+  color: var(--ds-text);
+}
+
+.btn-play-indicator.active {
+  background: var(--ds-accent);
+  border-color: var(--ds-accent);
+  color: var(--ds-on-accent);
 }
 
 .file-details {
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
   min-width: 0;
   flex: 1;
 }
 
 .file-name {
-  font-weight: 500;
-  font-size: 0.85rem;
-  color: var(--text-color);
-  white-space: nowrap;
   overflow: hidden;
+  font-size: var(--ds-text-md);
+  font-weight: var(--ds-weight-medium);
+  color: var(--ds-text);
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .file-size-info {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
   flex-wrap: wrap;
-}
-
-.file-size {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-}
-
-.file-size.original {
-  color: var(--text-secondary);
-  opacity: 0.7;
+  gap: var(--ds-space-1);
+  font-size: var(--ds-text-xs);
+  color: var(--ds-text-2);
+  font-variant-numeric: tabular-nums;
 }
 
 .size-arrow {
-  font-size: 0.7rem;
-  color: var(--success-color);
-  font-weight: bold;
+  color: var(--ds-text-3);
 }
 
 .file-size.converted {
-  color: var(--success-color);
-  font-weight: 500;
+  color: var(--ds-text);
+  font-weight: var(--ds-weight-medium);
 }
 
 .file-item-status {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--ds-space-1);
   flex-shrink: 0;
 }
 
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: 12px;
-  font-size: 0.7rem;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.status-badge.completed {
-  background: rgba(16, 185, 129, 0.1);
-  color: var(--success-color);
-}
-
-.status-badge.error {
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--error-color);
-}
-
-.status-badge.converting {
-  background: rgba(1, 79, 153, 0.15);
-  color: var(--primary-color);
-}
-
+/* Badges: neutrale Pille, Status nur über den Punkt (Status spricht über Icon und Linie) */
+.status-badge,
 .mode-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.2rem;
-  padding: 0.2rem 0.45rem;
-  border-radius: 10px;
-  font-size: 0.6rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
+  gap: var(--ds-space-1);
+  height: 22px;
+  padding: 0 var(--ds-space-2);
+  background: var(--ds-surface-1);
+  border: var(--ds-border-width) solid var(--ds-border);
+  border-radius: var(--ds-radius-full);
+  font-size: var(--ds-text-xs);
+  font-weight: var(--ds-weight-medium);
+  color: var(--ds-text-2);
   white-space: nowrap;
 }
 
-.mode-badge.local {
-  background: rgba(16, 185, 129, 0.1);
-  color: var(--success-color);
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
 }
 
-.mode-badge.server {
-  background: rgba(1, 79, 153, 0.1);
-  color: var(--primary-color);
+.status-badge.completed .status-dot {
+  background: var(--ds-success);
 }
 
+.status-badge.error .status-dot {
+  background: var(--ds-danger);
+}
+
+.status-badge.converting .status-dot {
+  background: var(--ds-accent);
+}
+
+/* Fortschrittsring: Spur in Rahmenfarbe, Füllung in Akzent */
 .progress-circle {
   position: relative;
-  width: 36px;
-  height: 36px;
+  width: var(--ds-control-lg);
+  height: var(--ds-control-lg);
   flex-shrink: 0;
 }
 
@@ -365,16 +393,15 @@ function removeFile(fileId: string): void {
 
 .progress-ring-bg {
   fill: none;
-  stroke: rgba(1, 79, 153, 0.15);
+  stroke: var(--ds-border-strong);
   stroke-width: 3;
 }
 
 .progress-ring-fill {
   fill: none;
-  stroke: var(--primary-color);
+  stroke: var(--ds-accent);
   stroke-width: 3;
   stroke-linecap: round;
-  transition: stroke-dasharray 0.3s ease;
 }
 
 .progress-text {
@@ -383,158 +410,47 @@ function removeFile(fileId: string): void {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.55rem;
-  font-weight: 600;
-  color: var(--primary-color);
+  font-size: var(--ds-text-xs);
+  font-weight: var(--ds-weight-semibold);
+  letter-spacing: var(--ds-tracking-tight);
+  color: var(--ds-text);
+  font-variant-numeric: tabular-nums;
 }
 
-.btn-icon {
-  background: transparent;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  padding: 0.35rem;
-  border-radius: 4px;
-  transition: all 0.15s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
-}
-
-.btn-icon:hover {
-  background: rgba(1, 79, 153, 0.12);
-}
-
-.btn-download:hover {
-  color: var(--success-color);
-}
-
-.btn-retry:hover {
-  color: var(--primary-color);
-}
-
-.btn-remove:hover {
-  color: var(--error-color);
-}
-
-/* Klickbare Datei-Zeile (spielt im Sticky-Player) */
-.file-item-info {
-  cursor: pointer;
-  border-radius: 6px;
-  outline: none;
-}
-
-.file-item-info:focus-visible {
-  box-shadow: 0 0 0 2px rgba(1, 79, 153, 0.35);
-}
-
-.btn-play-indicator {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  color: var(--primary-color);
-  background: rgba(1, 79, 153, 0.08);
-  transition: all 0.15s ease;
-}
-
-.file-item-info:hover .btn-play-indicator {
-  background: rgba(1, 79, 153, 0.16);
-}
-
-.btn-play-indicator.active {
-  background: var(--primary-color);
-  color: #f5f4d6;
-}
-
-/* Aktuell im Sticky-Player laufende Datei hervorheben */
-.file-item.playing {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 1px var(--primary-color) inset;
+/* Löschen ist destruktiv: Icon in --ds-danger bei Hover, flache Fläche */
+.btn-remove:hover:not(:disabled) {
+  color: var(--ds-danger);
 }
 
 .file-error {
-  margin-top: 0.5rem;
-  padding: 0.5rem;
-  background: rgba(239, 68, 68, 0.08);
-  border-radius: 4px;
-  color: var(--error-color);
-  font-size: 0.75rem;
-}
-
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  margin-top: var(--ds-space-2);
+  font-size: var(--ds-text-sm);
+  color: var(--ds-danger);
 }
 
 @media (max-width: 768px) {
   .file-list {
-    max-height: 250px;
+    max-height: 260px;
+  }
+}
+
+@media (max-width: 480px) {
+  .file-list-section {
+    padding: var(--ds-space-4);
   }
 
   .file-item-content {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+    flex-wrap: wrap;
   }
 
   .file-item-status {
     width: 100%;
     justify-content: flex-end;
   }
-}
-
-@media (max-width: 480px) {
-  .file-list-section {
-    padding: 1rem;
-  }
-
-  .file-list {
-    max-height: 220px;
-    gap: 0.4rem;
-  }
-
-  .file-item {
-    padding: 0.6rem;
-    border-radius: 6px;
-  }
-
-  .file-item-info {
-    gap: 0.5rem;
-  }
-
-  .file-name {
-    font-size: 0.8rem;
-  }
-
-  .file-size {
-    font-size: 0.7rem;
-  }
-
-  .status-badge {
-    padding: 0.2rem 0.4rem;
-    font-size: 0.65rem;
-  }
 
   .btn-icon {
-    padding: 0.4rem;
-    min-width: 32px;
-    min-height: 32px;
-  }
-
-  .file-error {
-    font-size: 0.7rem;
-    padding: 0.4rem;
+    width: var(--ds-control-md);
+    height: var(--ds-control-md);
   }
 }
 </style>

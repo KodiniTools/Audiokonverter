@@ -1,19 +1,11 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useThemeStore } from '@/stores/themeStore'
 import { setLocale } from '@/locales'
-import type { Theme } from '@/types'
 
+// Brücke zur globalen SSI-Navigation (Sprache). Das Theme übernimmt der Theme-Store
+// (theme-changed-Event und data-theme auf <html>).
 const { locale } = useI18n()
-const themeStore = useThemeStore()
-
-function onThemeChanged(e: Event): void {
-  const newTheme = (e as CustomEvent<{ theme?: string }>).detail?.theme
-  if (newTheme && (newTheme === 'light' || newTheme === 'dark') && newTheme !== themeStore.theme) {
-    themeStore.setTheme(newTheme as Theme)
-  }
-}
 
 function onLanguageChanged(e: Event): void {
   const newLang = (e as CustomEvent<{ lang?: string }>).detail?.lang
@@ -23,16 +15,6 @@ function onLanguageChanged(e: Event): void {
 }
 
 function initBridge(): void {
-  const storedTheme = localStorage.getItem('theme')
-  if (
-    storedTheme &&
-    (storedTheme === 'light' || storedTheme === 'dark') &&
-    storedTheme !== themeStore.theme
-  ) {
-    themeStore.setTheme(storedTheme as Theme)
-  }
-
-  window.addEventListener('theme-changed', onThemeChanged)
   window.addEventListener('language-changed', onLanguageChanged)
 
   const storedLocale = localStorage.getItem('locale')
@@ -55,7 +37,6 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  window.removeEventListener('theme-changed', onThemeChanged)
   window.removeEventListener('language-changed', onLanguageChanged)
   window.removeEventListener('load', initBridge)
 })

@@ -13,6 +13,20 @@
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f6f5f1" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0a1324" media="(prefers-color-scheme: dark)">
+
+  <!-- Theme vor dem ersten Paint setzen (Tokens: Dunkel auf :root, Hell über data-theme), damit
+       Nutzer des hellen Themes keinen dunklen Flash sehen. Standard ist Hell; localStorage.theme
+       teilen sich alle KodiniTools-Seiten. Der Theme-Store (src/stores/themeStore.ts) übernimmt danach. -->
+  <script>
+    try {
+      var storedTheme = localStorage.getItem('theme')
+      document.documentElement.setAttribute('data-theme', storedTheme === 'dark' ? 'dark' : 'light')
+    } catch (e) {
+      document.documentElement.setAttribute('data-theme', 'light')
+    }
+  </script>
   <meta name="description" content="Audio Konverter - Konvertiere deine Audiodateien schnell und einfach. MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF, WMA. Kostenlos, sicher und direkt im Browser.">
   <meta name="keywords" content="audio, converter, mp3, wav, flac, ogg, aac, m4a, opus, aiff, wma, konverter, online, kostenlos">
   <meta name="author" content="KodiniTools">
@@ -30,9 +44,6 @@
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" href="/favicon.ico">
-
-  <!-- Global CSS (shared with Vue) -->
-  <link rel="stylesheet" href="/src/assets/styles/main.css">
 
   <!-- Structured Data (SEO) -->
   <script type="application/ld+json">
@@ -69,215 +80,6 @@
   }
   </script>
 
-  <style>
-    /* =============================================================
-       LANDING PAGE STYLES
-       Anchor-Nav, Features, Tools, FAQ — static sections
-       Global styles (variables, hero, glass-card, etc.) from main.css
-       ============================================================= */
-
-    /* Scroll offset for sticky navs */
-    html {
-      scroll-padding-top: calc(var(--nav-height, 60px) + 56px);
-    }
-
-    /* ===== ANCHOR NAVIGATION ===== */
-    .anchor-nav {
-      position: sticky;
-      top: var(--nav-height, 60px);
-      z-index: 90;
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      -webkit-backdrop-filter: var(--glass-blur);
-      border-bottom: 1px solid var(--glass-border);
-      height: 44px;
-      transition: box-shadow 0.3s ease;
-    }
-    .anchor-nav.scrolled {
-      box-shadow: 0 2px 12px rgba(0, 57, 113, 0.1);
-    }
-    [data-theme="dark"] .anchor-nav.scrolled {
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
-    }
-    .anchor-nav__list {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.25rem;
-      height: 100%;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-    .anchor-nav__link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.4rem 1rem;
-      border-radius: 20px;
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: var(--text-secondary);
-      text-decoration: none;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      white-space: nowrap;
-    }
-    .anchor-nav__link:hover {
-      color: var(--primary-color);
-      background: rgba(1, 79, 153, 0.08);
-    }
-    [data-theme="dark"] .anchor-nav__link:hover {
-      background: rgba(158, 190, 193, 0.1);
-    }
-    .anchor-nav__link.active {
-      color: #F5F4D6;
-      background: var(--primary-color);
-      font-weight: 600;
-      box-shadow: 0 2px 8px rgba(1, 79, 153, 0.3);
-    }
-    [data-theme="dark"] .anchor-nav__link.active {
-      color: #1a2f2f;
-    }
-    .anchor-nav__icon {
-      font-size: 0.9rem;
-      line-height: 1;
-    }
-
-    /* ===== FEATURES ===== */
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1.25rem;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-    .feature-card {
-      padding: 1.25rem 1rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-    .feature-card-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--text-color);
-      margin: 0 0 0.4rem;
-    }
-    .feature-card-desc {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      line-height: 1.5;
-      margin: 0;
-    }
-
-    /* ===== SECTION TITLE (static sections) ===== */
-    .landing-section-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: var(--text-color);
-      text-align: center;
-      margin-bottom: 0.5rem;
-    }
-
-    /* ===== TOOL CARDS ===== */
-    .tools-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.25rem;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-    .tool-card {
-      padding: 1.5rem 1.25rem;
-      text-decoration: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-    .tool-card:hover {
-      border-color: var(--primary-color);
-      box-shadow: 0 12px 40px rgba(1, 79, 153, 0.15);
-      transform: translateY(-6px) scale(1.02);
-    }
-    .tool-card-title { font-size: 1rem; font-weight: 600; color: var(--text-color); margin: 0 0 0.5rem; }
-    .tool-card-desc { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; margin: 0 0 1rem; flex: 1; }
-    .tool-card-link {
-      font-size: 0.8rem; font-weight: 600; color: var(--primary-color);
-      display: inline-flex; align-items: center; gap: 0.35rem; transition: gap 0.2s ease;
-    }
-    .tool-card:hover .tool-card-link { gap: 0.6rem; color: var(--accent-color); }
-
-    /* ===== FAQ ===== */
-    .faq-grid { display: grid; gap: 0.6rem; max-width: 800px; margin: 0 auto; }
-    .faq-item {
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      -webkit-backdrop-filter: var(--glass-blur);
-      border: 1px solid var(--glass-border);
-      border-radius: 12px;
-      padding: 1rem 1.25rem;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: var(--glass-shadow);
-    }
-    .faq-item:hover { border-color: var(--primary-color); transform: translateX(4px); }
-    .faq-item.active {
-      border-color: var(--primary-color);
-      box-shadow: 0 4px 20px rgba(1, 79, 153, 0.12);
-      background: var(--card-background);
-    }
-    .faq-question { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; }
-    .faq-question span { font-size: 0.9rem; font-weight: 500; color: var(--text-color); }
-    .faq-toggle {
-      color: var(--primary-color); font-size: 1rem; font-weight: 600;
-      line-height: 1; flex-shrink: 0; width: 1.25rem; text-align: center;
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .faq-answer {
-      margin-top: 0.75rem; padding-top: 0.75rem;
-      border-top: 1px solid rgba(1, 79, 153, 0.12);
-      max-height: 0; overflow: hidden; opacity: 0;
-      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .faq-item.active .faq-answer { max-height: 200px; opacity: 1; }
-    .faq-answer p { color: var(--text-secondary); line-height: 1.5; margin: 0; font-size: 0.85rem; }
-
-    /* ===== LANDING RESPONSIVE ===== */
-    @media (max-width: 768px) {
-      .anchor-nav__link { padding: 0.35rem 0.75rem; font-size: 0.78rem; }
-      .anchor-nav__list { gap: 0.15rem; }
-      .features-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-      .landing-section-title { font-size: 1.1rem; }
-      .tools-grid { grid-template-columns: 1fr; gap: 1rem; }
-      .tool-card { padding: 1.25rem 1rem; }
-      .faq-item { padding: 0.85rem; }
-      .faq-question span { font-size: 0.85rem; }
-    }
-    @media (min-width: 769px) and (max-width: 960px) {
-      .tools-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 480px) {
-      .anchor-nav__link { padding: 0.3rem 0.6rem; font-size: 0.72rem; }
-      .anchor-nav__icon { display: none; }
-      .features-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
-      .feature-card { padding: 1rem 0.85rem; }
-      .feature-card-title { font-size: 0.85rem; }
-      .feature-card-desc { font-size: 0.75rem; }
-      .tools-grid { gap: 0.75rem; }
-      .tool-card { padding: 1rem 0.85rem; }
-      .tool-card-title { font-size: 0.9rem; }
-      .tool-card-desc { font-size: 0.75rem; margin-bottom: 0.75rem; }
-      .tool-card-link { font-size: 0.75rem; }
-      .faq-grid { gap: 0.5rem; }
-      .faq-item { padding: 0.75rem 1rem; border-radius: 10px; }
-      .faq-question span { font-size: 0.8rem; }
-      .faq-toggle { font-size: 0.9rem; }
-      .faq-answer { margin-top: 0.6rem; padding-top: 0.6rem; }
-      .faq-answer p { font-size: 0.78rem; }
-    }
-  </style>
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -292,31 +94,31 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
      ANCHOR NAVIGATION — Interne Seitennavigation
      App | Features | FAQ | Blog (extern)
      ============================================================= -->
-<nav class="anchor-nav" id="anchor-nav" aria-label="Seitennavigation">
+<nav class="anchor-nav app-surface" id="anchor-nav" aria-label="Seitennavigation">
   <div class="container">
     <ul class="anchor-nav__list">
       <li>
         <a href="#converter" class="anchor-nav__link active" data-anchor="converter">
-          <span class="anchor-nav__icon" aria-hidden="true">&#9654;</span>
+          <svg class="anchor-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
           <span data-i18n="nav.anchorApp">App</span>
         </a>
       </li>
       <li>
         <a href="#features" class="anchor-nav__link" data-anchor="features">
-          <span class="anchor-nav__icon" aria-hidden="true">&#10024;</span>
+          <svg class="anchor-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
           <span data-i18n="nav.anchorFeatures">Features</span>
         </a>
       </li>
       <li>
         <a href="#faq" class="anchor-nav__link" data-anchor="faq">
-          <span class="anchor-nav__icon" aria-hidden="true">&#10067;</span>
+          <svg class="anchor-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
           <span data-i18n="nav.anchorFaq">FAQ</span>
         </a>
       </li>
       <li>
         <!-- Externer Link (kein data-anchor): wird von initAnchorNav ignoriert -->
         <a href="https://kodinitools.com/blog/audiodatei-format-aendern/" class="anchor-nav__link">
-          <span class="anchor-nav__icon" aria-hidden="true">&#128221;</span>
+          <svg class="anchor-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
           <span data-i18n="nav.anchorBlog">Blog</span>
         </a>
       </li>
@@ -334,29 +136,34 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <!-- =============================================================
      FEATURES SECTION — Statisches HTML
+     .app-surface: von der Partial-Angleichung in main.css ausgenommen
      ============================================================= -->
-<section class="full-width-section" id="features" data-reveal>
+<section class="full-width-section app-surface" id="features" data-reveal>
   <div class="container">
     <h2 class="landing-section-title" data-i18n="landing.features.title">Features</h2>
     <div class="section-divider"></div>
     <div class="features-grid">
 
       <div class="feature-card glass-card">
+        <svg class="feature-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
         <h3 class="feature-card-title" data-i18n="landing.features.formats.title">9 Audio-Formate</h3>
         <p class="feature-card-desc" data-i18n="landing.features.formats.desc">MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF und WMA werden vollständig unterstützt.</p>
       </div>
 
       <div class="feature-card glass-card">
+        <svg class="feature-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21v-7"/><path d="M4 10V3"/><path d="M12 21v-9"/><path d="M12 8V3"/><path d="M20 21v-5"/><path d="M20 12V3"/><path d="M2 14h4"/><path d="M10 8h4"/><path d="M18 16h4"/></svg>
         <h3 class="feature-card-title" data-i18n="landing.features.quality.title">Qualitätskontrolle</h3>
         <p class="feature-card-desc" data-i18n="landing.features.quality.desc">Von niedrig bis Maximum – wähle die Qualität, die zu dir passt.</p>
       </div>
 
       <div class="feature-card glass-card">
+        <svg class="feature-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
         <h3 class="feature-card-title" data-i18n="landing.features.privacy.title">100% Privatsphäre</h3>
         <p class="feature-card-desc" data-i18n="landing.features.privacy.desc">Dateien werden nach Konvertierung automatisch gelöscht.</p>
       </div>
 
       <div class="feature-card glass-card">
+        <svg class="feature-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></svg>
         <h3 class="feature-card-title" data-i18n="landing.features.batch.title">Batch-Konvertierung</h3>
         <p class="feature-card-desc" data-i18n="landing.features.batch.desc">Mehrere Dateien gleichzeitig konvertieren – schnell und effizient.</p>
       </div>
@@ -366,9 +173,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </section>
 
 <!-- =============================================================
-     TOOL CARDS — Statisches HTML (aus ToolCards.vue)
+     TOOL CARDS — Statisches HTML
      ============================================================= -->
-<section class="full-width-section full-width-section--alt" data-reveal>
+<section class="full-width-section full-width-section--alt app-surface" data-reveal>
   <div class="container">
     <h2 class="landing-section-title" data-i18n="tools.title">Unsere Audio-Tools</h2>
     <div class="section-divider"></div>
@@ -380,7 +187,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
          rel="noopener noreferrer">
         <h3 class="tool-card-title" data-i18n="tools.visualizer.title">Audio Visualizer</h3>
         <p class="tool-card-desc" data-i18n="tools.visualizer.description">Verwandle deine Musik in ein visuelles Erlebnis! Dieses moderne Tool bietet eine professionelle Echtzeit-Visualisierung deiner Audiodaten direkt im Browser.</p>
-        <span class="tool-card-link"><span data-i18n="tools.visitTool">Zum Tool</span> &rarr;</span>
+        <span class="tool-card-link"><span data-i18n="tools.visitTool">Zum Tool</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
       </a>
 
       <a href="https://kodinitools.com/audionormalisierer/"
@@ -389,7 +196,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
          rel="noopener noreferrer">
         <h3 class="tool-card-title" data-i18n="tools.normalizer.title">Audio Normalisierer</h3>
         <p class="tool-card-desc" data-i18n="tools.normalizer.description">Mit dem Audio Normalizer bringst du deine gesamte Musikbibliothek auf ein einheitliches Lautstärkeniveau, ohne die Klangqualität zu beeinträchtigen.</p>
-        <span class="tool-card-link"><span data-i18n="tools.visitTool">Zum Tool</span> &rarr;</span>
+        <span class="tool-card-link"><span data-i18n="tools.visitTool">Zum Tool</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
       </a>
 
       <a href="https://kodinitools.com/equaliser19/"
@@ -398,7 +205,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
          rel="noopener noreferrer">
         <h3 class="tool-card-title" data-i18n="tools.equalizer.title">Equalizer 19</h3>
         <p class="tool-card-desc" data-i18n="tools.equalizer.description">Der Equalizer 19 ist ein leistungsstarker 19-Band-Equalizer, der auf der Web Audio API basiert und eine chirurgisch genaue Frequenzkontrolle ermöglicht.</p>
-        <span class="tool-card-link"><span data-i18n="tools.visitTool">Zum Tool</span> &rarr;</span>
+        <span class="tool-card-link"><span data-i18n="tools.visitTool">Zum Tool</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
       </a>
     </div>
   </div>
@@ -407,53 +214,51 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- =============================================================
      FAQ SECTION — Statisches HTML + Vanilla JS Accordion
      ============================================================= -->
-<section class="full-width-section" id="faq" data-reveal>
+<section class="full-width-section app-surface" id="faq" data-reveal>
   <div class="container">
     <h2 class="landing-section-title" data-i18n="faq.title">FAQ</h2>
     <div class="section-divider"></div>
 
     <div class="faq-grid" id="faq-grid">
-
       <div class="faq-item" data-faq="formats">
-        <div class="faq-question">
+        <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-answer-formats">
           <span data-i18n="faq.questions.formats.q">Welche Formate werden unterstützt?</span>
-          <span class="faq-toggle">+</span>
-        </div>
-        <div class="faq-answer">
+          <svg class="faq-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer" id="faq-answer-formats">
           <p data-i18n="faq.questions.formats.a">MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF und WMA werden unterstützt. Zusätzlich lassen sich WebM-Dateien (z. B. Aufnahmen aus dem Browser) als Quelle in jedes dieser Formate umwandeln.</p>
         </div>
       </div>
 
       <div class="faq-item" data-faq="quality">
-        <div class="faq-question">
+        <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-answer-quality">
           <span data-i18n="faq.questions.quality.q">Was bedeutet die Qualitätseinstellung?</span>
-          <span class="faq-toggle">+</span>
-        </div>
-        <div class="faq-answer">
+          <svg class="faq-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer" id="faq-answer-quality">
           <p data-i18n="faq.questions.quality.a">Höhere Qualität = besserer Sound, größere Datei.</p>
         </div>
       </div>
 
       <div class="faq-item" data-faq="privacy">
-        <div class="faq-question">
+        <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-answer-privacy">
           <span data-i18n="faq.questions.privacy.q">Sind meine Dateien sicher?</span>
-          <span class="faq-toggle">+</span>
-        </div>
-        <div class="faq-answer">
+          <svg class="faq-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer" id="faq-answer-privacy">
           <p data-i18n="faq.questions.privacy.a">Ja! Dateien werden nach Konvertierung automatisch gelöscht.</p>
         </div>
       </div>
 
       <div class="faq-item" data-faq="batch">
-        <div class="faq-question">
+        <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-answer-batch">
           <span data-i18n="faq.questions.batch.q">Kann ich mehrere Dateien gleichzeitig konvertieren?</span>
-          <span class="faq-toggle">+</span>
-        </div>
-        <div class="faq-answer">
+          <svg class="faq-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="faq-answer" id="faq-answer-batch">
           <p data-i18n="faq.questions.batch.a">Klar! Einfach mehrere Dateien hochladen.</p>
         </div>
       </div>
-
     </div>
   </div>
 </section>
@@ -573,19 +378,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     if (!grid) return;
 
     grid.addEventListener('click', function(e) {
-      var item = e.target.closest('.faq-item');
+      var button = e.target.closest('.faq-question');
+      if (!button) return;
+      var item = button.closest('.faq-item');
       if (!item) return;
 
       var wasActive = item.classList.contains('active');
 
       grid.querySelectorAll('.faq-item.active').forEach(function(el) {
         el.classList.remove('active');
-        el.querySelector('.faq-toggle').textContent = '+';
+        el.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
       });
 
       if (!wasActive) {
         item.classList.add('active');
-        item.querySelector('.faq-toggle').textContent = '\u2212';
+        button.setAttribute('aria-expanded', 'true');
       }
     });
   }

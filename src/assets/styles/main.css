@@ -1,58 +1,57 @@
-/* ===== CUSTOM FONT ===== */
+/* ==========================================================================
+   Audio Konverter · Globale Styles
+   --------------------------------------------------------------------------
+   Design-System: KodiniTools-Tokens v2 (--ds-*), übernommen aus dem Collage
+   Maker (dort aus dem Playlist Generator). Laufzeit-Quelle:
+   src/design-system/tokens-v2.css, in src/main.ts vor dieser Datei geladen.
+
+   Regeln wie im Collage Maker:
+   - Flache Flächen: Seite surface-0, Panel/Karte surface-1, Eingabe/Chip
+     surface-2, Hover surface-3. Ein Rahmen (1 px), drei Radien (6/10/16)
+     plus voll gerundet.
+   - Gold (--ds-accent) ist Vollfläche nur für die Primäraktion, Fokus und
+     aktive Zustände. Destruktive Aktionen sind textbasiert (--ds-danger).
+   - Schatten nur für Overlays (Player-Leiste, Toast) und als Fokus-Ring.
+   - Hover ändert Farbe, nie Größe; 150 ms (--ds-duration, --ds-ease).
+   - Typografie in sieben Stufen 12/13/14/16/20/24/32 px, Supreme 400/500/700.
+   - Keine festen Farbwerte, keine Verläufe, keine Unschärfe.
+   ========================================================================== */
+
+/* === Schrift: Supreme in den drei genutzten Gewichten, gebündelt aus src/assets/fonts === */
 @font-face {
   font-family: 'Supreme';
-  src: url('/fonts/Supreme-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
+  src: url('../fonts/Supreme-Regular.woff2') format('woff2');
 }
 
-/* ===== GLOBAL VARIABLES ===== */
-:root {
-  /* Colors - Light Theme */
-  /* Farbpalette: #c9984d, #014f99, #003971, #f8e1a9, #f9f2d5 */
-  --background: #f9f2d5;
-  --card-background: #ffffff;
-  --text-color: #003971;
-  --text-secondary: #4a6e94;
-  --primary-color: #014f99;
-  --primary-hover: #003971;
-  --secondary-color: #f8e1a9;
-  --accent-color: #c9984d;
-  --success-color: #10b981;
-  --error-color: #ef4444;
-  --warning-color: #f59e0b;
-
-  /* Gradients */
-  --accent-gradient: linear-gradient(135deg, #003971 0%, #014f99 50%, #c9984d 100%);
-
-  /* Glassmorphism */
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(1, 79, 153, 0.12);
-  --glass-shadow: 0 8px 32px rgba(0, 57, 113, 0.08);
-  --glass-blur: blur(12px);
-
-  /* Transitions */
-  --transition-speed: 0.2s;
+@font-face {
+  font-family: 'Supreme';
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  src: url('../fonts/Supreme-Medium.woff2') format('woff2');
 }
 
-/* Dark Theme */
-[data-theme='dark'] {
-  --background: #1a2f2f;
-  --card-background: #243d3d;
-  --text-color: #e9e9eb;
-  --text-secondary: #a8a992;
-  --secondary-color: #2d4a4a;
-  --accent-color: #609198;
-  --primary-color: #9ebec1;
-  --primary-hover: #bce5e5;
-
-  --glass-bg: rgba(36, 61, 61, 0.75);
-  --glass-border: rgba(158, 190, 193, 0.15);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+@font-face {
+  font-family: 'Supreme';
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url('../fonts/Supreme-Bold.woff2') format('woff2');
 }
 
-/* ===== RESET & BASE ===== */
+/* === Farbschema für native Controls (Select-Listen, Scrollbalken) === */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+/* === Reset === */
 *,
 *::before,
 *::after {
@@ -62,70 +61,83 @@
 }
 
 html {
-  font-size: 15px;
   scroll-behavior: smooth;
+  /* Sticky globale Navigation + Anker-Navigation */
+  scroll-padding-top: calc(var(--nav-height, 60px) + var(--ds-row-height) + var(--ds-space-3));
 }
 
+/* === Body === */
 body {
-  font-family:
-    'Supreme',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Cantarell,
-    sans-serif;
-  background: var(--background);
-  color: var(--text-color);
-  line-height: 1.5;
-  transition:
-    background var(--transition-speed),
-    color var(--transition-speed);
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-text-lg);
+  line-height: var(--ds-leading);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--ds-surface-0);
+  color: var(--ds-text);
   min-height: 100vh;
+  transition:
+    background-color var(--ds-duration-slow) var(--ds-ease),
+    color var(--ds-duration-slow) var(--ds-ease);
+}
+
+/* Verhindert horizontales Scrollen auf Mobilgeräten */
+html,
+body {
+  overflow-x: hidden;
 }
 
 #app {
   min-height: 0;
 }
 
-/* ===== TYPOGRAPHY ===== */
+/* === Typografie === */
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  font-weight: 600;
-  line-height: 1.3;
-  color: var(--text-color);
+  font-weight: var(--ds-weight-semibold);
+  line-height: var(--ds-leading-tight);
+  color: var(--ds-text);
 }
 
 h1 {
-  font-size: 1.75rem;
+  font-size: var(--ds-text-3xl);
 }
+
 h2 {
-  font-size: 1.35rem;
+  font-size: var(--ds-text-2xl);
 }
+
 h3 {
-  font-size: 1.1rem;
+  font-size: var(--ds-text-lg);
 }
+
 h4 {
-  font-size: 1rem;
+  font-size: var(--ds-text-md);
 }
 
 a {
-  color: var(--primary-color);
+  color: var(--ds-link);
   text-decoration: none;
-  transition: color var(--transition-speed);
+  transition: color var(--ds-duration) var(--ds-ease);
 }
 
 a:hover {
-  color: var(--primary-hover);
+  color: var(--ds-accent);
 }
 
-/* ===== LAYOUT ===== */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* === Layout === */
 .app-container {
   display: flex;
   flex-direction: column;
@@ -136,220 +148,248 @@ a:hover {
 }
 
 .container {
-  max-width: 1100px;
+  max-width: var(--ds-container);
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 var(--ds-gutter);
 }
 
-/* ===== HERO SECTION ===== */
+/* Hero: flache Seitenfläche, Titel + Upload */
 .hero-section {
   position: relative;
-  background: var(--accent-gradient);
-  padding: 1.5rem 0 1rem;
-  overflow: hidden;
+  background: var(--ds-surface-0);
+  padding: var(--ds-space-8) 0 var(--ds-space-4);
 }
 
-.hero-section::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse at 20% 50%, rgba(201, 152, 77, 0.15) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
-  pointer-events: none;
-}
-
-[data-theme='dark'] .hero-section {
-  background: linear-gradient(135deg, #1a3a3a 0%, #243d3d 50%, #2d4a4a 100%);
-}
-
-/* ===== TWO-COLUMN CONVERTER LAYOUT ===== */
+/* Zweispaltiger Konverter: Dateiliste | Einstellungen + Aktionen */
 .converter-area {
   display: grid;
-  grid-template-columns: 1.4fr 1fr;
-  gap: 1.25rem;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: var(--ds-space-4);
   align-items: start;
-  margin: 0.75rem 0 0;
+  margin: var(--ds-space-3) 0 0;
 }
 
-/* ===== GLASS CARD ===== */
-.glass-card {
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  border-radius: 16px;
-  box-shadow: var(--glass-shadow);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* === Karte / Panel ===
+   Fläche 1, Hairline, großer Radius, kein Schatten. Der Klassenname stammt aus der
+   Glas-Zeit und bleibt für Komponenten und statische Sektionen erhalten. */
+.glass-card,
+.card {
+  background: var(--ds-surface-1);
+  border: var(--ds-border-width) solid var(--ds-border);
+  border-radius: var(--ds-radius-lg);
+  transition: border-color var(--ds-duration) var(--ds-ease);
 }
 
-.glass-card:hover {
-  box-shadow: 0 12px 40px rgba(0, 57, 113, 0.12);
-  transform: translateY(-2px);
+.card {
+  padding: var(--ds-space-5);
 }
 
-/* ===== FULL-WIDTH SECTIONS ===== */
+/* === Abschnitte === */
 .full-width-section {
   width: 100%;
-  padding: 0.75rem 0;
+  padding: var(--ds-space-12) 0;
   position: relative;
 }
 
 .full-width-section--alt {
-  background: linear-gradient(180deg, transparent 0%, rgba(1, 79, 153, 0.03) 50%, transparent 100%);
+  background: var(--ds-surface-1);
+  border-top: var(--ds-border-width) solid var(--ds-border);
+  border-bottom: var(--ds-border-width) solid var(--ds-border);
 }
 
-[data-theme='dark'] .full-width-section--alt {
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    rgba(158, 190, 193, 0.04) 50%,
-    transparent 100%
-  );
-}
-
-/* ===== SECTION DIVIDER ===== */
+/* Trenner unter Abschnittstiteln: 1-px-Hairline statt Verlaufsbalken */
 .section-divider {
-  width: 60px;
-  height: 3px;
-  background: var(--accent-gradient);
-  border-radius: 2px;
-  margin: 0 auto 1.5rem;
+  width: var(--ds-space-12);
+  height: var(--ds-border-width);
+  background: var(--ds-border-strong);
+  margin: var(--ds-space-3) auto var(--ds-space-8);
 }
 
-/* ===== BUTTONS ===== */
+/* === Buttons (Muster aus UiButton des Collage Makers) === */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 500;
+  gap: var(--ds-space-2);
+  min-height: var(--ds-control-md);
+  padding: 0 var(--ds-space-4);
+  border: var(--ds-border-width) solid transparent;
+  border-radius: var(--ds-radius-md);
+  font-size: var(--ds-text-md);
+  font-weight: var(--ds-weight-medium);
+  line-height: 1;
   cursor: pointer;
-  transition: all var(--transition-speed);
   text-decoration: none;
-  font-family: inherit;
+  white-space: nowrap;
+  transition:
+    background-color var(--ds-duration) var(--ds-ease),
+    border-color var(--ds-duration) var(--ds-ease),
+    color var(--ds-duration) var(--ds-ease);
 }
 
 .btn:disabled {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: not-allowed;
-  pointer-events: none;
 }
 
+.btn svg {
+  width: var(--ds-icon-sm);
+  height: var(--ds-icon-sm);
+  flex-shrink: 0;
+}
+
+/* Primär: die eine Goldfläche der Ansicht */
 .btn-primary {
-  background: var(--accent-gradient);
-  color: #f5f4d6;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(1, 79, 153, 0.35);
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+  background: var(--ds-accent);
+  color: var(--ds-on-accent);
 }
 
 .btn-primary:hover:not(:disabled) {
-  transform: translateY(-1px) scale(1.02);
-  box-shadow: 0 4px 16px rgba(1, 79, 153, 0.45);
+  background: var(--ds-accent-hover);
 }
 
-[data-theme='dark'] .btn-primary {
-  background: linear-gradient(135deg, #609198 0%, #4a7a80 100%);
-  color: #ffffff;
-}
-
+/* Sekundär: Eingabefläche mit kräftigem Rahmen */
 .btn-secondary {
-  background: var(--secondary-color);
-  color: var(--text-color);
-  font-weight: 500;
-  border: 1px solid rgba(1, 79, 153, 0.25);
+  background: var(--ds-surface-2);
+  border-color: var(--ds-border-strong);
+  color: var(--ds-text);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: var(--accent-color);
-  border-color: var(--primary-color);
-  transform: translateY(-1px);
+  background: var(--ds-surface-3);
 }
 
-[data-theme='dark'] .btn-secondary {
-  background: var(--secondary-color);
-  color: var(--text-color);
-  border: 1px solid rgba(158, 190, 193, 0.3);
-}
-
-[data-theme='dark'] .btn-secondary:hover:not(:disabled) {
-  background: rgba(96, 145, 152, 0.4);
-}
-
-.btn-success {
-  background: var(--success-color);
-  color: white;
-}
-
-.btn-success:hover:not(:disabled) {
-  filter: brightness(1.1);
-  transform: translateY(-1px);
-}
-
-.btn-icon {
+/* Ghost: ohne Fläche, Hover auf Eingabefläche */
+.btn-ghost {
   background: transparent;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  padding: 0.4rem;
-  border-radius: 6px;
-  transition: all 0.15s ease;
-  display: flex;
+  color: var(--ds-text-2);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--ds-surface-2);
+  color: var(--ds-text);
+}
+
+/* Destruktiv: Text in --ds-danger auf flacher Fläche, nie rote Vollfläche */
+.btn-danger {
+  background: transparent;
+  border-color: var(--ds-border-strong);
+  color: var(--ds-danger);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--ds-surface-2);
+}
+
+.btn-lg {
+  min-height: var(--ds-control-lg);
+  font-size: var(--ds-text-lg);
+  font-weight: var(--ds-weight-semibold);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* Icon-Button (UiIconButton): quadratisch, Icon in --ds-text-2 */
+.btn-icon {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: var(--ds-control-sm);
+  height: var(--ds-control-sm);
+  flex-shrink: 0;
+  background: transparent;
+  border: var(--ds-border-width) solid transparent;
+  border-radius: var(--ds-radius-sm);
+  color: var(--ds-text-2);
+  cursor: pointer;
+  transition:
+    background-color var(--ds-duration) var(--ds-ease),
+    color var(--ds-duration) var(--ds-ease);
 }
 
-.btn-icon:hover {
-  background: rgba(1, 79, 153, 0.15);
-  color: var(--primary-color);
-  transform: scale(1.1);
+.btn-icon:hover:not(:disabled) {
+  background: var(--ds-surface-3);
+  color: var(--ds-text);
 }
 
-/* ===== CARDS ===== */
-.card {
-  background: var(--card-background);
-  border: 1px solid rgba(1, 79, 153, 0.15);
-  border-radius: 12px;
-  padding: 1.25rem;
-  transition: all var(--transition-speed);
+.btn-icon svg {
+  width: var(--ds-icon-sm);
+  height: var(--ds-icon-sm);
 }
 
-.card:hover {
-  box-shadow: 0 4px 20px rgba(1, 79, 153, 0.12);
-  transform: translateY(-1px);
-}
-
-/* ===== FORMS ===== */
-input[type='text'],
-input[type='email'],
-input[type='number'],
-select,
-textarea {
+/* === Formulare (UiSelect, ControlSlider) === */
+select {
   width: 100%;
-  padding: 0.6rem 0.9rem;
-  border: 1px solid rgba(1, 79, 153, 0.25);
-  border-radius: 6px;
-  background: var(--background);
-  color: var(--text-color);
-  font-size: 0.9rem;
-  font-family: inherit;
-  transition: all var(--transition-speed);
+  min-height: var(--ds-control-md);
+  padding: 0 var(--ds-space-3);
+  background: var(--ds-surface-2);
+  border: var(--ds-border-width) solid var(--ds-border-strong);
+  border-radius: var(--ds-radius-md);
+  color: var(--ds-text);
+  font-size: var(--ds-text-md);
+  font-weight: var(--ds-weight-medium);
+  cursor: pointer;
+  transition: border-color var(--ds-duration) var(--ds-ease);
 }
 
-input:focus,
-select:focus,
-textarea:focus {
+select:hover {
+  border-color: var(--ds-text-3);
+}
+
+select:focus-visible {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(1, 79, 153, 0.2);
+  border-color: var(--ds-accent);
+  box-shadow: var(--ds-focus-ring);
 }
 
-/* ===== UTILITIES ===== */
+select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--ds-surface-3);
+  border-radius: var(--ds-radius-full);
+  cursor: pointer;
+}
+
+input[type='range']:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: var(--ds-accent);
+  border: 2px solid var(--ds-surface-1);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+input[type='range']::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: var(--ds-accent);
+  border: 2px solid var(--ds-surface-1);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+input[type='range']:focus-visible {
+  outline: none;
+  box-shadow: var(--ds-focus-ring);
+}
+
+/* === Utilities === */
 .hidden {
   display: none !important;
 }
@@ -365,253 +405,11 @@ textarea:focus {
 }
 
 .text-muted {
-  color: var(--text-secondary);
+  color: var(--ds-text-2);
 }
 
-/* ===== SCROLL REVEAL ===== */
-[data-reveal] {
-  opacity: 0;
-  transform: translateY(24px);
-  transition:
-    opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-[data-reveal].revealed {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-[data-reveal='slide-left'] {
-  transform: translateX(-30px);
-}
-
-[data-reveal='slide-left'].revealed {
-  transform: translateX(0);
-}
-
-[data-reveal='slide-right'] {
-  transform: translateX(30px);
-}
-
-[data-reveal='slide-right'].revealed {
-  transform: translateX(0);
-}
-
-[data-reveal='scale'] {
-  transform: scale(0.92);
-}
-
-[data-reveal='scale'].revealed {
-  transform: scale(1);
-}
-
-/* ===== ANIMATIONS ===== */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-@keyframes popIn {
-  0% {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-  70% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes gradientShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-/* ===== SCROLLBAR ===== */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(1, 79, 153, 0.35);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(1, 79, 153, 0.55);
-}
-
-/* ===== RESPONSIVE ===== */
-
-/* Prevent horizontal scrollbar from animations on mobile */
-html,
-body {
-  overflow-x: hidden;
-}
-
-@media (max-width: 768px) {
-  html {
-    font-size: 14px;
-  }
-
-  .container {
-    padding: 0 1rem;
-  }
-
-  .main-content {
-    padding: 0;
-  }
-
-  h1 {
-    font-size: 1.5rem;
-  }
-  h2 {
-    font-size: 1.2rem;
-  }
-  h3 {
-    font-size: 1rem;
-  }
-  h4 {
-    font-size: 0.9rem;
-  }
-
-  .hero-section {
-    padding: 1rem 0 0.75rem;
-  }
-
-  .converter-area {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .glass-card {
-    border-radius: 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  html {
-    font-size: 13px;
-  }
-
-  .container {
-    padding: 0 0.75rem;
-  }
-
-  h1 {
-    font-size: 1.35rem;
-  }
-  h2 {
-    font-size: 1.1rem;
-  }
-
-  .btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.85rem;
-    min-height: 44px;
-  }
-
-  .card {
-    padding: 1rem;
-    border-radius: 10px;
-  }
-
-  .hero-section {
-    padding: 0.75rem 0 0.5rem;
-  }
-
-  .glass-card {
-    border-radius: 10px;
-  }
-}
-
-/* ===== ACCESSIBILITY ===== */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-
-  [data-reveal] {
-    opacity: 1 !important;
-    transform: none !important;
-  }
-}
-
-.sr-only {
+.sr-only,
+.visually-hidden {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -620,17 +418,528 @@ body {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
-  border-width: 0;
+  border: 0;
 }
 
-/* ===== FOCUS VISIBLE ===== */
+/* === Einblenden beim Scrollen: Fade plus 8 px, wie der Dialog === */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity var(--ds-duration-slow) var(--ds-ease),
+    transform var(--ds-duration-slow) var(--ds-ease);
+}
+
+[data-reveal].revealed {
+  opacity: 1;
+  transform: none;
+}
+
+/* Einziges dauerhaft bewegtes Element: das Lade-Icon */
+@keyframes ds-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.ds-spin {
+  animation: ds-spin 1s linear infinite;
+}
+
+/* === Fokus ===
+   Steuerelemente setzen den Fokus-Ring der Tokens (box-shadow); alles andere bekommt
+   eine Outline in der Akzentfarbe. */
 :focus-visible {
-  outline: 2px solid var(--primary-color);
+  outline: 2px solid var(--ds-accent);
   outline-offset: 2px;
 }
 
-button:focus-visible,
-a:focus-visible {
-  outline: 2px solid var(--primary-color);
-  outline-offset: 2px;
+.btn:focus-visible,
+.btn-icon:focus-visible {
+  outline: none;
+  box-shadow: var(--ds-focus-ring);
+}
+
+/* === Scrollbalken === */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ds-border-strong);
+  border-radius: var(--ds-radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ds-text-3);
+}
+
+/* === Platz für die fixe Player-Leiste (StickyPlayer setzt die Klasse) === */
+body.has-sticky-player {
+  padding-bottom: 88px;
+}
+
+/* ==========================================================================
+   SSI-Partials (nav/footer außerhalb von #app)
+   --------------------------------------------------------------------------
+   Übernommen aus dem Collage Maker (src/style.css) mit den Ergänzungen des
+   MP3 Konverters: Die globalen Partials werden nicht selbst gestylt, sondern
+   an die Tokens angeglichen. Eigene Hintergründe entfernen, damit die
+   Seitenfläche durchscheint – außer beim Cookie-Banner.
+
+   Audio-Konverter-Ergänzung: Die statischen Landing-Sektionen liegen wie die
+   Partials außerhalb von #app. Sie tragen .app-surface und sind von der
+   Angleichung ausgenommen.
+   ========================================================================== */
+body
+  > :not(#app):not(script):not(.app-surface):not(.cookie-banner):not(.cookie-consent):not(
+    [class*='cookie']
+  ) {
+  background-color: transparent !important;
+}
+
+/* Alle inneren Nachfahren: :where() hat Spezifität 0, damit die Restore-Regeln gewinnen */
+:where(
+    body
+      > :not(#app):not(script):not(.app-surface):not(.cookie-banner):not(.cookie-consent):not(
+        [class*='cookie']
+      )
+  )
+  :where(*:not(.cookie-banner):not(.cookie-consent):not([class*='cookie'])) {
+  background-color: transparent !important;
+}
+
+/* Dropdowns/Submenüs der SSI-Navigation bekommen wieder eine feste Fläche */
+body > :not(#app):not(script):not(.app-surface) [class*='drop'],
+body > :not(#app):not(script):not(.app-surface) [class*='sub-menu'],
+body > :not(#app):not(script):not(.app-surface) [class*='submenu'],
+body > :not(#app):not(script):not(.app-surface) [class*='popup'],
+body > :not(#app):not(script):not(.app-surface) [class*='popover'],
+body > :not(#app):not(script):not(.app-surface) [class*='megamenu'] {
+  background-color: var(--ds-surface-1) !important;
+}
+
+/* Das geöffnete mobile Menü liegt über dem Inhalt und braucht eine feste Fläche */
+body > :not(#app):not(script):not(.app-surface) .global-nav-links.is-open {
+  background-color: var(--ds-surface-1) !important;
+}
+
+/* Hamburger / Toggle-Menü: Cookie-Banner und -Modal sind ausgenommen, sonst würden
+   die Schalter-Spuren (span.toggle-slider) einfarbig und an/aus nicht unterscheidbar. */
+/* 1. Leere Spans sind dekorative Elemente (Hamburger-Balken via background-color) */
+body > :not(#app):not(script):not(.app-surface):not([class*='cookie']) span:empty {
+  background-color: currentColor !important;
+  border-color: currentColor !important;
+}
+
+/* 2. Spans in Toggle-Buttons */
+body > :not(#app):not(script):not(.app-surface):not([class*='cookie']) [aria-expanded] > span:empty,
+body
+  > :not(#app):not(script):not(.app-surface):not([class*='cookie'])
+  [aria-expanded]
+  > span
+  > span:empty,
+body
+  > :not(#app):not(script):not(.app-surface):not([class*='cookie'])
+  [aria-expanded]
+  > div
+  > span:empty {
+  background-color: currentColor !important;
+}
+
+/* 3. SVG-Icons in Buttons */
+body > :not(#app):not(script):not(.app-surface):not([class*='cookie']) button svg line,
+body > :not(#app):not(script):not(.app-surface):not([class*='cookie']) button svg path,
+body > :not(#app):not(script):not(.app-surface):not([class*='cookie']) button svg rect,
+body > :not(#app):not(script):not(.app-surface):not([class*='cookie']) [aria-expanded] svg line,
+body > :not(#app):not(script):not(.app-surface):not([class*='cookie']) [aria-expanded] svg path,
+body > :not(#app):not(script):not(.app-surface):not([class*='cookie']) [aria-expanded] svg rect {
+  stroke: currentColor !important;
+  fill: currentColor !important;
+}
+
+/* 4. Bootstrap toggler-icon (background-image SVG) – Kontrast per CSS-Filter */
+body > :not(#app):not(script):not(.app-surface) [class*='toggler-icon'] {
+  filter: brightness(0) saturate(100%) !important;
+}
+
+:root[data-theme='dark'] body > :not(#app):not(script):not(.app-surface) [class*='toggler-icon'] {
+  filter: brightness(0) saturate(100%) invert(1) !important;
+}
+
+/* Cookie Banner: immer im Vordergrund, über Nav und Dropdowns */
+.cookie-banner,
+.cookie-consent,
+[class*='cookie-banner'],
+[class*='cookie-consent'],
+[id*='cookie-banner'],
+[id*='cookie-consent'] {
+  z-index: 10000 !important;
+  position: fixed !important;
+}
+
+/* Textfarben der SSI-Partials aus den Tokens; die Variablen wechseln mit dem
+   Theme, deshalb gibt es keine Dark-Varianten. Cookie-Banner ausgenommen. */
+body
+  > :not(#app):not(script):not(.app-surface):not(.cookie-banner):not(.cookie-consent):not(
+    [class*='cookie']
+  ):not([id*='cookie']),
+body
+  > :not(#app):not(script):not(.app-surface):not(.cookie-banner):not(.cookie-consent):not(
+    [class*='cookie']
+  ):not([id*='cookie'])
+  *:not([class*='cookie']):not([id*='cookie']) {
+  color: var(--ds-text) !important;
+}
+
+body
+  > :not(#app):not(script):not(.app-surface):not(.cookie-banner):not(.cookie-consent):not(
+    [class*='cookie']
+  ):not([id*='cookie'])
+  a:not([class*='cookie']):not([id*='cookie']),
+body
+  > :not(#app):not(script):not(.app-surface):not(.cookie-banner):not(.cookie-consent):not(
+    [class*='cookie']
+  ):not([id*='cookie'])
+  a:not([class*='cookie']):not([id*='cookie'])
+  * {
+  color: var(--ds-link) !important;
+}
+
+body
+  > :not(#app):not(script):not(.app-surface):not(.cookie-banner):not(.cookie-consent):not(
+    [class*='cookie']
+  ):not([id*='cookie'])
+  a:hover:not([class*='cookie']):not([id*='cookie']),
+body
+  > :not(#app):not(script):not(.app-surface):not(.cookie-banner):not(.cookie-consent):not(
+    [class*='cookie']
+  ):not([id*='cookie'])
+  a:hover:not([class*='cookie']):not([id*='cookie'])
+  * {
+  color: var(--ds-accent) !important;
+}
+
+/* Die Angleichung oben macht alle Hintergründe transparent und alle Texte einfarbig –
+   damit wäre die aktive Sprache nicht mehr erkennbar. Umschalter zeigen „an“ wie im
+   Design-System als Primärfläche. Gleicher Präfix, eine Klasse mehr, damit diese Regel gewinnt. */
+body
+  > :not(#app):not(script):not(.app-surface):not(.cookie-banner):not(.cookie-consent):not(
+    [class*='cookie']
+  ):not([id*='cookie'])
+  [data-lang].global-nav-lang-btn.active {
+  background-color: var(--ds-accent) !important;
+  color: var(--ds-on-accent) !important;
+}
+
+/* ==========================================================================
+   Landing-Sektionen (statisches HTML in index.html)
+   Anker-Navigation, Features, Tools, FAQ
+   ========================================================================== */
+
+/* === Anker-Navigation === */
+.anchor-nav {
+  position: sticky;
+  top: var(--nav-height, 60px);
+  z-index: 90;
+  height: var(--ds-row-height);
+  background: var(--ds-surface-1);
+  border-bottom: var(--ds-border-width) solid var(--ds-border);
+}
+
+.anchor-nav__list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-space-1);
+  height: 100%;
+  list-style: none;
+  overflow-x: auto;
+}
+
+.anchor-nav__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-2);
+  height: var(--ds-control-sm);
+  padding: 0 var(--ds-space-3);
+  border: var(--ds-border-width) solid transparent;
+  border-radius: var(--ds-radius-full);
+  font-size: var(--ds-text-sm);
+  font-weight: var(--ds-weight-medium);
+  color: var(--ds-text-2);
+  white-space: nowrap;
+  transition:
+    background-color var(--ds-duration) var(--ds-ease),
+    border-color var(--ds-duration) var(--ds-ease),
+    color var(--ds-duration) var(--ds-ease);
+}
+
+.anchor-nav__link:hover {
+  background: var(--ds-surface-2);
+  color: var(--ds-text);
+}
+
+/* Aktiver Abschnitt: Auswahl-Muster (accent-soft + 1-px-Akzentrahmen), Text bleibt ds-text */
+.anchor-nav__link.active {
+  background: var(--ds-accent-soft);
+  border-color: var(--ds-accent);
+  color: var(--ds-text);
+}
+
+.anchor-nav__icon {
+  width: var(--ds-icon-sm);
+  height: var(--ds-icon-sm);
+  flex-shrink: 0;
+}
+
+/* === Abschnittstitel === */
+.landing-section-title {
+  font-size: var(--ds-text-2xl);
+  font-weight: var(--ds-weight-bold);
+  letter-spacing: var(--ds-tracking-tight);
+  color: var(--ds-text);
+  text-align: center;
+}
+
+/* === Features === */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--ds-space-4);
+}
+
+.feature-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-2);
+  padding: var(--ds-space-5);
+}
+
+.feature-card-icon {
+  width: var(--ds-icon-md);
+  height: var(--ds-icon-md);
+  color: var(--ds-text-2);
+}
+
+.feature-card-title {
+  font-size: var(--ds-text-lg);
+  font-weight: var(--ds-weight-semibold);
+  color: var(--ds-text);
+}
+
+.feature-card-desc {
+  font-size: var(--ds-text-md);
+  color: var(--ds-text-2);
+}
+
+/* === Tool-Karten === */
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--ds-space-4);
+}
+
+.tool-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-2);
+  padding: var(--ds-space-5);
+  color: var(--ds-text);
+  text-decoration: none;
+}
+
+.tool-card:hover {
+  border-color: var(--ds-border-strong);
+  color: var(--ds-text);
+}
+
+.tool-card-title {
+  font-size: var(--ds-text-lg);
+  font-weight: var(--ds-weight-semibold);
+  color: var(--ds-text);
+}
+
+.tool-card-desc {
+  flex: 1;
+  font-size: var(--ds-text-md);
+  color: var(--ds-text-2);
+}
+
+.tool-card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-1);
+  font-size: var(--ds-text-md);
+  font-weight: var(--ds-weight-medium);
+  color: var(--ds-link);
+  transition: color var(--ds-duration) var(--ds-ease);
+}
+
+.tool-card:hover .tool-card-link {
+  color: var(--ds-accent);
+}
+
+.tool-card-link svg {
+  width: var(--ds-icon-sm);
+  height: var(--ds-icon-sm);
+}
+
+/* === FAQ === */
+.faq-grid {
+  display: grid;
+  gap: var(--ds-space-2);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.faq-item {
+  background: var(--ds-surface-1);
+  border: var(--ds-border-width) solid var(--ds-border);
+  border-radius: var(--ds-radius-md);
+  transition: border-color var(--ds-duration) var(--ds-ease);
+}
+
+.faq-item:hover,
+.faq-item.active {
+  border-color: var(--ds-border-strong);
+}
+
+.faq-question {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--ds-space-3);
+  width: 100%;
+  min-height: var(--ds-row-height);
+  padding: var(--ds-space-3) var(--ds-space-4);
+  background: transparent;
+  border: 0;
+  border-radius: var(--ds-radius-md);
+  text-align: left;
+  font-size: var(--ds-text-lg);
+  font-weight: var(--ds-weight-semibold);
+  color: var(--ds-text);
+  cursor: pointer;
+}
+
+.faq-question:focus-visible {
+  outline: none;
+  box-shadow: var(--ds-focus-ring);
+}
+
+.faq-toggle {
+  width: var(--ds-icon-md);
+  height: var(--ds-icon-md);
+  flex-shrink: 0;
+  color: var(--ds-text-2);
+}
+
+.faq-item.active .faq-toggle {
+  transform: rotate(180deg);
+}
+
+.faq-answer {
+  display: none;
+  padding: 0 var(--ds-space-4) var(--ds-space-4);
+}
+
+.faq-item.active .faq-answer {
+  display: block;
+}
+
+.faq-answer p {
+  font-size: var(--ds-text-md);
+  color: var(--ds-text-2);
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .features-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tools-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 var(--ds-space-4);
+  }
+
+  h1 {
+    font-size: var(--ds-text-2xl);
+  }
+
+  h2 {
+    font-size: var(--ds-text-xl);
+  }
+
+  .hero-section {
+    padding: var(--ds-space-6) 0 var(--ds-space-3);
+  }
+
+  .converter-area {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--ds-space-3);
+  }
+
+  .full-width-section {
+    padding: var(--ds-space-10) 0;
+  }
+
+  .landing-section-title {
+    font-size: var(--ds-text-xl);
+  }
+
+  .anchor-nav__list {
+    justify-content: flex-start;
+  }
+
+  body.has-sticky-player {
+    padding-bottom: 120px;
+  }
+}
+
+@media (max-width: 640px) {
+  .features-grid,
+  .tools-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .anchor-nav__icon {
+    display: none;
+  }
+
+  .btn {
+    min-height: var(--ds-row-height);
+  }
+}
+
+/* === Barrierefreiheit: reduzierte Bewegung === */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }

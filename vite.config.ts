@@ -33,8 +33,8 @@ export default defineConfig(({ mode }) => {
           short_name: 'Audio Konverter',
           description:
             'Konvertiere Audiodateien schnell und einfach. MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF, WMA. Kostenlos, sicher und direkt im Browser.',
-          theme_color: '#014F99',
-          background_color: '#E9E9EB',
+          theme_color: '#f6f5f1',
+          background_color: '#f6f5f1',
           display: 'standalone',
           scope: isProduction ? '/audiokonverter/' : '/',
           start_url: isProduction ? '/audiokonverter/' : '/',

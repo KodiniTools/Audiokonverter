@@ -1,7 +1,19 @@
 <template>
   <div v-if="audioStore.hasConvertedFiles" class="status-display">
-    <div class="completion-banner">
-      <span class="completion-check" aria-hidden="true">&#10003;</span>
+    <div class="completion-banner" role="status">
+      <svg
+        class="completion-check"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="10" />
+        <path d="m9 12 2 2 4-4" />
+      </svg>
       <span class="completion-label">{{ t('status.completed') }}!</span>
       <span class="completion-detail">{{
         t('status.completedOf', { completed: completedCount, total: audioStore.fileCount })
@@ -62,7 +74,7 @@
         </button>
       </div>
 
-      <button class="wizard-reset" @click="startNew">
+      <button class="btn btn-ghost wizard-reset" @click="startNew">
         {{ t('wizard.newFiles') }}
       </button>
     </div>
@@ -130,182 +142,112 @@ function startNew(): void {
 
 <style scoped>
 .status-display {
-  margin: 1rem 0;
-  animation: slideInUp 0.4s ease;
+  margin: var(--ds-space-4) 0;
 }
 
+/* Callout (UiCallout): Eingabefläche, Hairline, Status nur im Icon */
 .completion-banner {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--success-color);
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.08);
+  flex-wrap: wrap;
+  gap: var(--ds-space-2);
+  padding: var(--ds-space-3);
+  background: var(--ds-surface-2);
+  border: var(--ds-border-width) solid var(--ds-border);
+  border-radius: var(--ds-radius-md);
 }
 
 .completion-check {
-  color: var(--success-color);
-  font-size: 0.95rem;
-  font-weight: 700;
-  line-height: 1;
+  width: var(--ds-icon-sm);
+  height: var(--ds-icon-sm);
+  flex-shrink: 0;
+  color: var(--ds-success);
 }
 
 .completion-label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--success-color);
+  font-size: var(--ds-text-md);
+  font-weight: var(--ds-weight-semibold);
+  color: var(--ds-text);
 }
 
 .completion-detail {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
+  font-size: var(--ds-text-sm);
+  color: var(--ds-text-2);
 }
 
-/* ── Next-Step Wizard ────────────────────────────────────────────── */
+/* Nächster Schritt: Karten auf Fläche 1, Hover nur Rahmen */
 .wizard {
-  margin-top: 0.75rem;
-  animation: slideInUp 0.4s ease 0.1s both;
+  margin-top: var(--ds-space-5);
 }
 
 .wizard-title {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text-color);
+  margin-bottom: var(--ds-space-3);
+  font-size: var(--ds-text-lg);
+  font-weight: var(--ds-weight-semibold);
+  color: var(--ds-text);
   text-align: center;
-  margin-bottom: 0.75rem;
 }
 
 .wizard-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.75rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--ds-space-3);
 }
 
 .wizard-card {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 1rem 0.75rem;
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  border-radius: 12px;
-  box-shadow: var(--glass-shadow);
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  text-decoration: none;
+  align-items: flex-start;
+  gap: var(--ds-space-1);
+  padding: var(--ds-space-4);
+  background: var(--ds-surface-1);
+  border: var(--ds-border-width) solid var(--ds-border);
+  border-radius: var(--ds-radius-md);
   color: inherit;
-  font-family: inherit;
-  font-size: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--ds-duration) var(--ds-ease);
 }
 
 .wizard-card:hover:not(:disabled) {
-  border-color: var(--primary-color);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(1, 79, 153, 0.15);
+  border-color: var(--ds-border-strong);
+}
+
+.wizard-card:focus-visible {
+  outline: none;
+  box-shadow: var(--ds-focus-ring);
 }
 
 .wizard-card:disabled {
-  opacity: 0.6;
+  opacity: 0.45;
   cursor: wait;
 }
 
 .wizard-card-label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text-color);
-  margin-bottom: 0.2rem;
+  font-size: var(--ds-text-md);
+  font-weight: var(--ds-weight-semibold);
+  color: var(--ds-text);
 }
 
 .wizard-card-desc {
-  font-size: 0.68rem;
-  color: var(--text-secondary);
-  line-height: 1.4;
+  font-size: var(--ds-text-sm);
+  color: var(--ds-text-2);
 }
 
 .wizard-reset {
-  display: block;
-  margin: 1rem auto 0;
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  font-size: 0.8rem;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-  font-family: inherit;
+  display: flex;
+  margin: var(--ds-space-4) auto 0;
 }
 
-.wizard-reset:hover {
-  color: var(--primary-color);
-  background: rgba(1, 79, 153, 0.08);
-}
-
-/* ── Animations ─────────────────────────────────────────────────── */
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ── Responsive ─────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .wizard-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 480px) {
-  .completion-banner {
-    padding: 0.4rem 0.75rem;
-    border-radius: 6px;
-  }
-
-  .completion-label {
-    font-size: 0.8rem;
-  }
-
-  .completion-detail {
-    font-size: 0.7rem;
-  }
-
   .wizard-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
-  }
-
-  .wizard-card {
-    padding: 0.75rem 0.5rem;
-    border-radius: 10px;
-  }
-
-  .wizard-card-label {
-    font-size: 0.75rem;
-  }
-
-  .wizard-card-desc {
-    font-size: 0.65rem;
-  }
-
-  .wizard-reset {
-    font-size: 0.75rem;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 </style>

@@ -1,14 +1,10 @@
 <template>
   <div class="share-section">
-    <button
-      class="share-btn share-btn-facebook"
-      :title="t('share.facebook')"
-      @click="shareOnFacebook"
-    >
+    <button class="btn btn-secondary" :title="t('share.facebook')" @click="shareOnFacebook">
       <svg
-        class="share-icon"
         viewBox="0 0 24 24"
         fill="currentColor"
+        aria-hidden="true"
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
@@ -36,58 +32,6 @@ function shareOnFacebook() {
 .share-section {
   display: flex;
   justify-content: center;
-  margin: 1.5rem 0;
-  animation: fadeIn 0.35s ease;
-}
-
-.share-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.65rem 1.25rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-decoration: none;
-}
-
-.share-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.share-btn-facebook {
-  background: #1877f2;
-  color: #fff;
-}
-
-.share-btn-facebook:hover {
-  background: #166fe5;
-}
-
-.share-icon {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@media (max-width: 480px) {
-  .share-btn {
-    font-size: 0.8rem;
-    padding: 0.6rem 1rem;
-    min-height: 44px;
-  }
+  margin: var(--ds-space-6) 0;
 }
 </style>

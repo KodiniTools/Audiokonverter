@@ -13,68 +13,38 @@ const { t } = useI18n()
 
 <style scoped>
 .header-title {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-2);
+  margin: 0 0 var(--ds-space-6);
   text-align: center;
-  margin: 0 0 1.25rem;
-  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  position: relative;
-  z-index: 1;
 }
 
+/* Hero-H1: 32 px fett, eng gesetzt (mobil 24 px) */
 .main-title {
-  font-size: 2.25rem;
-  font-weight: 700;
-  color: #f5f4d6;
-  margin-bottom: 0.35rem;
-  letter-spacing: -0.02em;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  font-size: var(--ds-text-3xl);
+  font-weight: var(--ds-weight-bold);
+  letter-spacing: var(--ds-tracking-tight);
+  color: var(--ds-text);
 }
 
 .main-subtitle {
-  font-size: 1rem;
-  color: rgba(245, 244, 214, 0.75);
-  font-weight: 400;
-}
-
-@keyframes popIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.9) translateY(-10px);
-  }
-  70% {
-    transform: scale(1.02) translateY(0);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
+  font-size: var(--ds-text-lg);
+  color: var(--ds-text-2);
 }
 
 @media (max-width: 768px) {
   .header-title {
-    margin: 0 0 1rem;
+    margin: 0 0 var(--ds-space-4);
   }
 
   .main-title {
-    font-size: 1.75rem;
-  }
-
-  .main-subtitle {
-    font-size: 0.9rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .header-title {
-    margin: 0 0 0.75rem;
-  }
-
-  .main-title {
-    font-size: 1.5rem;
+    font-size: var(--ds-text-2xl);
     word-break: break-word;
   }
 
   .main-subtitle {
-    font-size: 0.8rem;
+    font-size: var(--ds-text-md);
   }
 }
 </style>

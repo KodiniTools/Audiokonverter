@@ -47,17 +47,30 @@
 
     <!-- Convert Button -->
     <button
-      class="btn btn-primary btn-convert"
+      class="btn btn-primary btn-lg btn-block btn-convert"
       :disabled="audioStore.isConverting || !hasPendingFiles"
       @click="startConversion"
     >
+      <svg
+        v-if="audioStore.isConverting"
+        class="ds-spin"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.75"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+      </svg>
       {{ audioStore.isConverting ? t('conversion.converting') : t('conversion.convert') }}
     </button>
 
     <!-- Cancel Button: nur während einer laufenden Konvertierung sichtbar -->
     <button
       v-if="audioStore.isConverting"
-      class="btn btn-cancel btn-convert"
+      class="btn btn-danger btn-block btn-cancel"
       :disabled="audioStore.isCancelling"
       @click="cancelConversion"
     >
@@ -160,210 +173,75 @@ function cancelConversion(): void {
 </script>
 
 <style scoped>
+/* Panel (UiPanel) */
 .conversion-settings {
-  padding: 1.25rem;
-  animation: slideInUp 0.35s ease;
+  padding: var(--ds-space-4) var(--ds-space-5) var(--ds-space-5);
 }
 
 .settings-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-color);
-  margin-bottom: 1rem;
+  margin-bottom: var(--ds-space-4);
+  font-size: var(--ds-text-lg);
+  font-weight: var(--ds-weight-semibold);
+  color: var(--ds-text);
 }
 
 .settings-grid {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  margin-bottom: 1.25rem;
+  gap: var(--ds-space-5);
+  margin-bottom: var(--ds-space-5);
 }
 
 .setting-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--ds-space-2);
 }
 
+/* Label über dem Feld: 13 px, 500, Text 2; der Wert steht im Label */
 .setting-label {
-  font-weight: 500;
-  color: var(--text-color);
-  font-size: 0.85rem;
+  font-size: var(--ds-text-sm);
+  font-weight: var(--ds-weight-medium);
+  color: var(--ds-text-2);
 }
 
-.setting-select {
-  padding: 0.6rem 0.9rem;
-  border: 1px solid rgba(1, 79, 153, 0.25);
-  border-radius: 6px;
-  background: var(--background);
-  color: var(--text-color);
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.setting-select:hover,
-.setting-select:focus {
-  border-color: var(--primary-color);
-  outline: none;
+.setting-label strong {
+  font-weight: var(--ds-weight-semibold);
+  color: var(--ds-text);
 }
 
 .quality-control {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
-}
-
-.quality-slider {
-  width: 100%;
-  height: 5px;
-  border-radius: 3px;
-  background: rgba(1, 79, 153, 0.25);
-  outline: none;
-  -webkit-appearance: none;
-}
-
-.quality-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--primary-color);
-  cursor: pointer;
-  transition: all 0.15s ease;
-  box-shadow: 0 2px 6px rgba(1, 79, 153, 0.4);
-}
-
-.quality-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.15);
-}
-
-.quality-slider::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--primary-color);
-  cursor: pointer;
-  border: none;
-  transition: all 0.15s ease;
+  gap: var(--ds-space-2);
 }
 
 .quality-markers {
   display: flex;
   justify-content: space-between;
-  font-size: 0.7rem;
-  color: var(--text-secondary);
+  font-size: var(--ds-text-xs);
+  color: var(--ds-text-2);
 }
 
-.quality-info {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  font-style: italic;
-}
-
+.quality-info,
 .format-hint {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  font-style: italic;
-  margin-top: 0.25rem;
+  font-size: var(--ds-text-sm);
+  color: var(--ds-text-2);
+  font-variant-numeric: tabular-nums;
 }
 
-.btn-convert {
-  width: 100%;
-  padding: 0.75rem 1.5rem;
-  font-size: 0.95rem;
-  gap: 0.5rem;
-}
-
-/* Abbrechen-Button: kontraststarkes Rot, aus der Fehlerfarbe abgeleitet.
-   Wird direkt unter dem Konvertieren-Button eingeblendet. */
+/* Konvertieren: die Primäraktion der Ansicht; Abbrechen textbasiert darunter */
 .btn-cancel {
-  margin-top: 0.5rem;
-  background: color-mix(in srgb, var(--error-color) 82%, #000);
-  color: #ffffff;
-  font-weight: 600;
-  box-shadow: 0 2px 8px color-mix(in srgb, var(--error-color) 35%, transparent);
-}
-
-.btn-cancel:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--error-color) 70%, #000);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 16px color-mix(in srgb, var(--error-color) 45%, transparent);
-}
-
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (max-width: 768px) {
-  .conversion-settings {
-    padding: 1rem;
-  }
-
-  .settings-grid {
-    gap: 1rem;
-  }
-
-  /* Larger touch targets for mobile slider */
-  .quality-slider::-webkit-slider-thumb {
-    width: 24px;
-    height: 24px;
-  }
-
-  .quality-slider::-moz-range-thumb {
-    width: 24px;
-    height: 24px;
-  }
-
-  .quality-slider {
-    height: 6px;
-  }
+  margin-top: var(--ds-space-2);
 }
 
 @media (max-width: 480px) {
   .conversion-settings {
-    padding: 0.85rem;
-  }
-
-  .settings-title {
-    font-size: 0.9rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .settings-grid {
-    gap: 0.85rem;
-    margin-bottom: 1rem;
-  }
-
-  .setting-label {
-    font-size: 0.8rem;
-  }
-
-  .setting-select {
-    padding: 0.55rem 0.75rem;
-    font-size: 0.85rem;
-    min-height: 44px;
+    padding: var(--ds-space-4);
   }
 
   .btn-convert {
-    padding: 0.65rem 1.25rem;
-    font-size: 0.9rem;
-    min-height: 44px;
-  }
-
-  .quality-markers {
-    font-size: 0.65rem;
-  }
-
-  .quality-info {
-    font-size: 0.7rem;
+    min-height: var(--ds-row-height);
   }
 }
 </style>
