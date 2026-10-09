@@ -2,7 +2,7 @@
   <div class="app-container">
     <NavControls />
 
-    <!-- Hero Section: Full-width gradient with title + upload -->
+    <!-- Hero: Titel + Upload -->
     <section id="converter" class="hero-section">
       <div class="container">
         <HeaderTitle />
@@ -61,7 +61,3 @@ onMounted(() => {
   console.log('Audio Converter Vue App initialized')
 })
 </script>
-
-<style>
-@import '@/assets/styles/main.css';
-</style>

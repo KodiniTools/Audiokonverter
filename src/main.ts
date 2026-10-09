@@ -1,5 +1,9 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+// Design-Tokens v2 (--ds-*, gemeinsam mit Collage Maker, Playlist Generator und MP3 Konverter),
+// danach die globalen Styles, die sie nutzen
+import './design-system/tokens-v2.css'
+import './assets/styles/main.css'
 import App from './App.vue'
 import i18n, { setLocale } from './locales/index.ts'
 

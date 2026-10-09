@@ -2,14 +2,15 @@
   <div class="global-actions">
     <div class="actions-grid">
       <!-- Clear All -->
-      <button class="action-btn btn-secondary" :title="t('actions.clearAll')" @click="clearAll">
+      <!-- Destruktiv: textbasiert in --ds-danger -->
+      <button class="btn btn-danger action-btn" :title="t('actions.clearAll')" @click="clearAll">
         <span>{{ t('actions.clearAll') }}</span>
       </button>
 
       <!-- Download All Separately -->
       <button
         v-if="audioStore.hasConvertedFiles"
-        class="action-btn btn-primary"
+        class="btn btn-secondary action-btn"
         :disabled="isDownloadingSeparate"
         :title="t('actions.downloadAll')"
         @click="downloadAllSeparately"
@@ -22,7 +23,7 @@
       <!-- Download All as ZIP -->
       <button
         v-if="audioStore.hasConvertedFiles"
-        class="action-btn btn-success"
+        class="btn btn-secondary action-btn"
         :disabled="isDownloading"
         :title="t('actions.downloadAllAsZip')"
         @click="downloadAllAsZip"
@@ -136,98 +137,16 @@ async function downloadAllAsZip(): Promise<void> {
 
 <style scoped>
 .global-actions {
-  margin: 0.75rem 0 0;
-  animation: fadeIn 0.35s ease;
+  margin: var(--ds-space-3) 0 0;
 }
 
 .actions-grid {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--ds-space-2);
 }
 
 .action-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  padding: 0.6rem 1.1rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  flex: 1;
-  min-width: 120px;
-}
-
-.action-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.action-btn:not(:disabled):hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-}
-
-.btn-secondary {
-  background: rgba(1, 79, 153, 0.1);
-  color: var(--text-color);
-  border: 1px solid rgba(1, 79, 153, 0.15);
-}
-
-.btn-secondary:hover:not(:disabled) {
-  background: rgba(1, 79, 153, 0.2);
-}
-
-.btn-primary {
-  background: var(--accent-gradient);
-  color: #f5f4d6;
-  font-weight: 600;
-}
-
-.btn-primary:hover:not(:disabled) {
-  filter: brightness(1.05);
-}
-
-.btn-success {
-  background: var(--success-color);
-  color: white;
-}
-
-.btn-success:hover:not(:disabled) {
-  filter: brightness(1.1);
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@media (max-width: 768px) {
-  .action-btn {
-    font-size: 0.8rem;
-    padding: 0.55rem 0.9rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .global-actions {
-    margin: 0.5rem 0 0;
-  }
-
-  .action-btn {
-    width: 100%;
-    min-width: unset;
-    font-size: 0.8rem;
-    padding: 0.6rem 0.9rem;
-    min-height: 44px;
-  }
+  width: 100%;
 }
 </style>
