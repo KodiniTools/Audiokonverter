@@ -330,3 +330,62 @@ describe('audioStore – Einstellungen und Dateiliste', () => {
     expect(store.hasConvertedFiles).toBe(false)
   })
 })
+
+describe('audioStore – Blob-URLs freigeben', () => {
+  /** Konvertiert die Dateien lokal; jede bekommt eine eigene Blob-URL. */
+  async function convertLocallyAll(names: string[]) {
+    const store = createStore(true)
+    let n = 0
+    URL.createObjectURL = vi.fn(() => `blob:converted-${++n}`)
+    convertLocally.mockResolvedValue(new Blob([new Uint8Array(8)], { type: 'audio/mpeg' }))
+    const files = store.addFiles(names.map((name) => audioFile(name)))
+    await flush()
+    await store.convertAllFiles()
+    return { store, files }
+  }
+
+  it('gibt beim Entfernen die Blob-URL der Datei frei, nicht die der anderen', async () => {
+    const { store, files } = await convertLocallyAll(['a.wav', 'b.wav'])
+    expect(store.convertedFiles).toHaveLength(2)
+
+    store.removeFile(files[0].id)
+
+    expect(URL.revokeObjectURL).toHaveBeenCalledTimes(1)
+    expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:converted-1')
+    expect(store.convertedFiles.map((f) => f.id)).toEqual([files[1].id])
+    expect(byId(store.audioFiles, files[1].id).convertedUrl).toBe('blob:converted-2')
+  })
+
+  it('gibt beim Leeren alle Blob-URLs frei', async () => {
+    const { store } = await convertLocallyAll(['a.wav', 'b.wav'])
+
+    store.clearAllFiles()
+
+    expect(URL.revokeObjectURL).toHaveBeenCalledTimes(2)
+    expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:converted-1')
+    expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:converted-2')
+  })
+
+  it('lässt Server-Ergebnisse unangetastet (keine Blob-URL)', async () => {
+    const store = createStore(false)
+    post.mockResolvedValue(serverOk())
+    const [file] = store.addFiles([audioFile()])
+    await store.convertAllFiles()
+
+    store.removeFile(file.id)
+    store.clearAllFiles()
+
+    expect(URL.revokeObjectURL).not.toHaveBeenCalled()
+    expect(store.hasConvertedFiles).toBe(false)
+  })
+
+  it('ignoriert unbekannte IDs', () => {
+    const store = useAudioStore()
+    store.addFiles([audioFile()])
+
+    store.removeFile('gibt-es-nicht')
+
+    expect(store.fileCount).toBe(1)
+    expect(URL.revokeObjectURL).not.toHaveBeenCalled()
+  })
+})

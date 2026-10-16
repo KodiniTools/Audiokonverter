@@ -87,10 +87,12 @@ import { useI18n } from 'vue-i18n'
 import { useAudioStore } from '@/stores/audioStore'
 import { useWorkflowStore } from '@/stores/workflowStore'
 import { useToast } from '@/composables/useToast'
+import { useAudioPlayer } from '@/composables/useAudioPlayer'
 import { shareFiles } from '@/services/SharedFileRepository'
 import type { SharedFileInput } from '@/types'
 
 const { t } = useI18n()
+const player = useAudioPlayer()
 const audioStore = useAudioStore()
 const workflowStore = useWorkflowStore()
 const { showToast } = useToast()
@@ -136,6 +138,7 @@ async function shareAndOpen(toolKey: string, toolUrl: string): Promise<void> {
 }
 
 function startNew(): void {
+  player.stopAll()
   audioStore.clearAllFiles()
 }
 </script>
