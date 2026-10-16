@@ -8,6 +8,14 @@ import {
   terminateFFmpeg,
 } from '@/services/WasmAudioService'
 import { runPool } from '@/utils/runPool'
+import {
+  API_BASE,
+  cancelServerJob,
+  followServerJob,
+  isServerJob,
+  type ServerConvertResult,
+  type ServerJobCreated,
+} from '@/services/serverJob'
 import type { AudioFile, AudioFormat, ConversionResult, SavedSettings } from '@/types'
 
 const STORAGE_KEY = 'audiokonverter_settings'
@@ -17,6 +25,9 @@ const STORAGE_KEY = 'audiokonverter_settings'
 // Lokal (FFmpeg.wasm) läuft immer nur eine Datei: es gibt eine FFmpeg-Instanz
 // und einen Fortschritts-Handler.
 export const SERVER_CONCURRENCY = 3
+
+/** Anteil des Uploads am Fortschritt einer Server-Konvertierung (in %); der Rest ist die Verarbeitung. */
+export const UPLOAD_SHARE = 50
 
 function loadSavedSettings(): SavedSettings {
   try {
@@ -182,28 +193,44 @@ export const useAudioStore = defineStore('audio', () => {
     formData.append('file', fileData.file)
     formData.append('format', currentFormat.value)
     formData.append('quality', String(currentQuality.value))
+    // Job-Modus: echter Fortschritt per Server-Sent Events. Ein Backend ohne
+    // Job-Modus ignoriert das Feld und antwortet wie bisher synchron.
+    formData.append('mode', 'job')
 
     updateFileProgress(fileData.id, 0, 'converting')
+    let jobId: string | null = null
 
     try {
-      const response = await axios.post<{
-        ok: boolean
-        url?: string
-        filename?: string
-        size?: number
-        error?: string
-      }>('/audiokonverter/api/convert', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        timeout: 600000,
-        signal,
-        onUploadProgress: (progressEvent) => {
-          const total = progressEvent.total ?? 1
-          const percent = Math.round((progressEvent.loaded * 100) / total)
-          updateFileProgress(fileData.id, Math.min(percent, 90))
-        },
-      })
+      const response = await axios.post<ServerConvertResult | ServerJobCreated>(
+        `${API_BASE}/convert`,
+        formData,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
+          timeout: 600000,
+          signal,
+          // Upload belegt 0–50 %, die Verarbeitung auf dem Server 50–100 %
+          onUploadProgress: (progressEvent) => {
+            const total = progressEvent.total ?? 1
+            const percent = Math.round((progressEvent.loaded * UPLOAD_SHARE) / total)
+            updateFileProgress(fileData.id, Math.min(percent, UPLOAD_SHARE))
+          },
+        }
+      )
 
-      const data = response.data
+      let data: ServerConvertResult = response.data
+      if (isServerJob(data)) {
+        jobId = data.jobId
+        updateFileProgress(fileData.id, UPLOAD_SHARE)
+        data = await followServerJob(
+          data.jobId,
+          (percent) => {
+            const total = UPLOAD_SHARE + Math.round((percent * (100 - UPLOAD_SHARE)) / 100)
+            updateFileProgress(fileData.id, Math.min(total, 99))
+          },
+          signal
+        )
+        jobId = null
+      }
       if (!data?.ok) throw new Error(data?.error ?? 'Konvertierung fehlgeschlagen')
       if (!data.url) throw new Error('Server-Antwort unvollständig: url fehlt')
       if (!data.filename) throw new Error('Server-Antwort unvollständig: filename fehlt')
@@ -230,6 +257,7 @@ export const useAudioStore = defineStore('audio', () => {
       // Abbruch durch den Nutzer ist kein Fehler: Datei sauber zurücksetzen,
       // die hochgeladene Datei bleibt in der Liste erhalten.
       if (signal?.aborted || axios.isCancel(error)) {
+        if (jobId) cancelServerJob(jobId)
         resetCancelledFile(fileData.id)
         return { success: false, error: 'cancelled' }
       }

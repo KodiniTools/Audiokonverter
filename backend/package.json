@@ -8,7 +8,8 @@
   "scripts": {
     "start": "node server.js",
     "test": "node test/convert.test.cjs",
-    "test:concurrency": "node test/concurrency.test.cjs"
+    "test:concurrency": "node test/concurrency.test.cjs",
+    "test:jobs": "node test/jobs.test.cjs"
   },
   "dependencies": {
     "express": "^4.21.2",

@@ -28,12 +28,40 @@ Sie ist entfernt; bei Bedarf liegt sie in der Git-History.
 | --- | --- |
 | `GET /health` | Statusprobe für nginx und Monitoring |
 | `GET /files/<name>` | Ergebnis herunterladen (statisch, kein Verzeichnis-Listing) |
-| `POST /api/convert` | Datei konvertieren, liefert `url`, `filename`, `size` |
+| `POST /api/convert` | Datei konvertieren, liefert `url`, `filename`, `size`. Mit `mode=job`: sofort `202` mit `jobId` |
+| `GET /api/jobs/:id/events` | Fortschritt eines Jobs als Server-Sent Events |
+| `DELETE /api/jobs/:id` | Job abbrechen (`409`, wenn er schon fertig ist) |
 
 Mehr ruft die Oberfläche nicht auf (`src/stores/audioStore.ts`). Entfernt sind
 Login/Auth, Playlists, Player-State, `/api/tracks`, `/api/upload`,
-`/api/files/*`, der Async-Job-Modus und der Konvertier-Zweig über `file_url`.
-Der Integrationstest prüft, dass diese Routen nicht mehr existieren.
+`/api/files/*`, der alte Async-Job-Modus (`/api/job/:id`) und der
+Konvertier-Zweig über `file_url`. Der Integrationstest prüft, dass diese Routen
+nicht mehr existieren.
+
+### Fortschritt im Job-Modus
+
+Die Oberfläche schickt `mode=job` mit. Das Backend antwortet nach dem Upload
+sofort mit `{ ok, jobId, events }` und konvertiert im Hintergrund. Die Dauer der
+Eingabe holt es per `ffprobe`, den Stand liest es aus `ffmpeg -progress pipe:1`.
+`GET /api/jobs/:id/events` sendet:
+
+| Ereignis | Daten |
+| --- | --- |
+| `progress` | `{ status: 'queued' \| 'running', percent }`, 0–99, nur steigend |
+| `done` | wie die synchrone Antwort: `{ ok: true, url, filename, format, size }` |
+| `failed` | `{ ok: false, error }`, z. B. `ffmpeg_timeout`, `cancelled`, `job_orphaned` |
+
+Liefert `ffprobe` keine Dauer, bleibt `percent` bei 0 bis `done`. Ein Job, mit
+dem `JOB_ORPHAN_MS` lang kein Client verbunden ist, wird abgebrochen; beendete
+Jobs bleiben `JOB_TTL_MS` lang abrufbar. Ohne `mode=job` antwortet
+`/api/convert` synchron wie bisher. Eine ältere Oberfläche funktioniert also
+weiter, und die neue fällt bei einem älteren Backend auf die synchrone Antwort
+zurück.
+
+**nginx:** Die Antwort trägt `X-Accel-Buffering: no`, damit nginx die
+Ereignisse nicht puffert. Alle 15 s geht ein Kommentar über die Leitung, damit
+`proxy_read_timeout` (Standard 60 s) die Verbindung nicht schließt. Eine
+Änderung an der nginx-Konfiguration ist dafür nicht nötig.
 
 Die Konvertierung selbst ist unverändert: dieselben ffmpeg-Argumente je Format,
 dieselbe Namensbildung (`<basis>-<nanoid6>.<ext>`), dasselbe Upload-Limit.
@@ -55,6 +83,8 @@ Repo-Root) prüft, dass beide Seiten für jede Stufe dieselben Argumente bilden.
 | `FFMPEG_TIMEOUT_MS` | `120000` | Abbruch langer Konvertierungen |
 | `MAX_UPLOAD_BYTES` | `314572800` | 300 MB |
 | `FFMPEG_MAX_CONCURRENT` | Anzahl CPU-Kerne | Höchstens so viele ffmpeg-Prozesse laufen gleichzeitig; weitere Anfragen warten (FIFO). Die Oberfläche schickt bis zu 3 Dateien parallel. |
+| `JOB_ORPHAN_MS` | `30000` | Job ohne verbundenen Client wird nach dieser Zeit abgebrochen |
+| `JOB_TTL_MS` | `300000` (5 min) | So lange bleibt das Ergebnis eines beendeten Jobs über `/api/jobs/:id/events` abrufbar |
 | `FFMPEG_MAX_QUEUE` | `4 × FFMPEG_MAX_CONCURRENT` | Ist die Warteschlange voll, antwortet `/api/convert` sofort mit `503 server_busy`. Bricht ein wartender Client ab, verlässt er die Schlange. `/health` meldet `ffmpeg.running` und `ffmpeg.queued`. |
 
 **Zum Aufräumen:** Die Oberfläche lädt das Ergebnis inzwischen sofort per
@@ -167,6 +197,13 @@ den Server selbst (freier Port, `ffmpeg-stub.sh` mit künstlicher Laufzeit):
 
 ```bash
 node backend/test/concurrency.test.cjs   # oder: npm --prefix backend run test:concurrency
+```
+
+Den Job-Modus (Fortschritt per SSE, Abbruch, verwaiste Jobs) prüft
+`test/jobs.test.cjs`, ebenfalls mit Stubs für `ffmpeg` und `ffprobe`:
+
+```bash
+node backend/test/jobs.test.cjs          # oder: npm --prefix backend run test:jobs
 ```
 
 ## Abhängigkeiten
