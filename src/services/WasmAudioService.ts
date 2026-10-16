@@ -84,6 +84,14 @@ export async function loadFFmpeg(): Promise<FFmpeg> {
     loaded = true
     return ffmpeg
   } catch (e) {
+    // Der Timeout beendet nur das Warten, nicht den Worker: ohne terminate()
+    // lädt und kompiliert er den Kern (rund 30 MB WASM) im Hintergrund weiter
+    // und hält den Speicher, während die Seite längst über den Server arbeitet.
+    try {
+      ffmpeg?.terminate()
+    } catch {
+      // Worker bereits beendet – ignorieren
+    }
     ffmpeg = null
     loaded = false
     throw e

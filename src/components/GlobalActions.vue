@@ -42,7 +42,7 @@ import { useToast } from '@/composables/useToast'
 import { useDownload } from '@/composables/useDownload'
 import { useAudioPlayer } from '@/composables/useAudioPlayer'
 import { saveBlobToDevice } from '@/utils/fileSaver'
-import JSZip from 'jszip'
+import { buildZipBlob, type ZipEntry } from '@/utils/zip'
 
 const { t } = useI18n()
 const audioStore = useAudioStore()
@@ -111,15 +111,18 @@ async function downloadAllAsZip(): Promise<void> {
   isDownloading.value = true
 
   try {
-    const zip = new JSZip()
-
+    const entries: ZipEntry[] = []
     for (const fileData of completedFiles) {
       const response = await fetch(fileData.convertedUrl!)
-      const blob = await response.blob()
-      zip.file(fileData.convertedName || `converted-${fileData.name}`, blob)
+      // Sonst landet z. B. die 404-Antwort einer abgelaufenen Serverdatei im ZIP
+      if (!response.ok) throw new Error(`${fileData.name}: HTTP ${response.status}`)
+      entries.push({
+        name: fileData.convertedName || `converted-${fileData.name}`,
+        data: await response.blob(),
+      })
     }
 
-    const zipBlob = await zip.generateAsync({ type: 'blob' })
+    const zipBlob = await buildZipBlob(entries)
 
     const result = await saveBlobToDevice(zipBlob, 'converted-audio-files.zip')
 
