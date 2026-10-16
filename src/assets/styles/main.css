@@ -227,7 +227,8 @@ textarea {
     color var(--ds-duration) var(--ds-ease);
 }
 
-.btn:disabled {
+.btn:disabled,
+.btn-icon:disabled {
   opacity: 0.45;
   cursor: not-allowed;
 }

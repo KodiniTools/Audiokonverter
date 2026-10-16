@@ -610,3 +610,114 @@ describe('audioStore – Server-Fortschritt im Job-Modus', () => {
     expect(reset.progress).toBe(0)
   })
 })
+
+describe('audioStore – retryFile', () => {
+  /** Store mit einer Datei, deren erster Server-Versuch fehlgeschlagen ist. */
+  async function storeWithFailedFile() {
+    const store = createStore(false)
+    post.mockRejectedValueOnce(new Error('Network Error'))
+    const [file] = store.addFiles([audioFile('song.wav')])
+    await store.convertAllFiles()
+    expect(byId(store.audioFiles, file.id).status).toBe('error')
+    post.mockReset()
+    return { store, file }
+  }
+
+  it('konvertiert die fehlgeschlagene Datei erneut', async () => {
+    const { store, file } = await storeWithFailedFile()
+    post.mockResolvedValue(serverOk('song-retry.mp3', 99))
+
+    const outcome = await store.retryFile(file.id)
+
+    expect(outcome).toMatchObject({ started: true, cancelled: false, result: { success: true } })
+    const retried = byId(store.audioFiles, file.id)
+    expect(retried.status).toBe('completed')
+    expect(retried.error).toBeNull()
+    expect(retried.convertedUrl).toBe('/audiokonverter/files/song-retry.mp3')
+    expect(store.convertedFiles).toHaveLength(1)
+    expect(store.isConverting).toBe(false)
+  })
+
+  it('setzt während des Versuchs isConverting und gibt danach frei', async () => {
+    const { store, file } = await storeWithFailedFile()
+    let resolvePost: (value: unknown) => void = () => {}
+    post.mockReturnValue(new Promise((resolve) => (resolvePost = resolve)))
+
+    const run = store.retryFile(file.id)
+    await flush()
+    expect(store.isConverting).toBe(true)
+    expect(byId(store.audioFiles, file.id).status).toBe('converting')
+
+    resolvePost(serverOk())
+    await run
+    expect(store.isConverting).toBe(false)
+  })
+
+  it('läuft nicht, solange eine Konvertierung aktiv ist', async () => {
+    const { store, file } = await storeWithFailedFile()
+    post.mockImplementation((_url, _body, config) =>
+      pendingUntilAborted((config as { signal?: AbortSignal }).signal)
+    )
+    store.addFiles([audioFile('other.wav')])
+    const run = store.convertAllFiles()
+    await flush()
+    const callsDuringRun = post.mock.calls.length
+
+    const outcome = await store.retryFile(file.id)
+
+    expect(outcome).toEqual({ started: false, cancelled: false })
+    expect(post).toHaveBeenCalledTimes(callsDuringRun)
+    store.cancelConversion()
+    await run
+  })
+
+  it('lässt sich mit cancelConversion abbrechen; die Datei steht danach auf pending', async () => {
+    const { store, file } = await storeWithFailedFile()
+    post.mockImplementation((_url, _body, config) =>
+      pendingUntilAborted((config as { signal?: AbortSignal }).signal)
+    )
+
+    const run = store.retryFile(file.id)
+    await flush()
+    store.cancelConversion()
+    expect(lastPostSignal()?.aborted).toBe(true)
+
+    await expect(run).resolves.toMatchObject({ started: true, cancelled: true })
+    const reset = byId(store.audioFiles, file.id)
+    expect(reset.status).toBe('pending')
+    expect(reset.progress).toBe(0)
+    expect(store.isConverting).toBe(false)
+    expect(store.isCancelling).toBe(false)
+    expect(terminateFFmpeg).toHaveBeenCalledTimes(1)
+  })
+
+  it('nutzt lokal FFmpeg.wasm, wenn die Datei dafür geeignet ist', async () => {
+    const store = createStore(true)
+    convertLocally.mockRejectedValueOnce(new Error('wasm kaputt'))
+    post.mockRejectedValueOnce(new Error('Network Error'))
+    const [file] = store.addFiles([audioFile('song.wav')])
+    await flush()
+    await store.convertAllFiles()
+    expect(byId(store.audioFiles, file.id).status).toBe('error')
+
+    convertLocally.mockResolvedValueOnce(new Blob(['x'], { type: 'audio/mpeg' }))
+    await store.retryFile(file.id)
+
+    expect(byId(store.audioFiles, file.id).status).toBe('completed')
+    expect(byId(store.audioFiles, file.id).processedLocally).toBe(true)
+  })
+
+  it.each([
+    ['unbekannte ID', () => 'gibt-es-nicht'],
+    ['Datei nicht im Fehlerstatus', (id: string) => id],
+  ])('tut nichts bei %s', async (_label, pickId) => {
+    const store = createStore(false)
+    const [file] = store.addFiles([audioFile('song.wav')])
+
+    const outcome = await store.retryFile(pickId(file.id))
+
+    expect(outcome).toEqual({ started: false, cancelled: false })
+    expect(post).not.toHaveBeenCalled()
+    expect(byId(store.audioFiles, file.id).status).toBe('pending')
+  })
+})
