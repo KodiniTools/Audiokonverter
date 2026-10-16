@@ -88,12 +88,26 @@ export const useAudioStore = defineStore('audio', () => {
     }
   }
 
+  // Lokal (FFmpeg.wasm) erzeugte Ergebnisse liegen als Blob-URL im Speicher und
+  // müssen freigegeben werden. Server-Ergebnisse sind normale Pfade.
+  // Aufrufer stoppen vorher den Player, falls er die URL gerade abspielt.
+  function revokeConvertedUrl(file: AudioFile): void {
+    if (file.convertedUrl?.startsWith('blob:')) {
+      URL.revokeObjectURL(file.convertedUrl)
+      file.convertedUrl = null
+    }
+  }
+
   function removeFile(fileId: string): void {
     const index = audioFiles.value.findIndex((f) => f.id === fileId)
-    if (index !== -1) audioFiles.value.splice(index, 1)
+    if (index === -1) return
+    revokeConvertedUrl(audioFiles.value[index])
+    audioFiles.value.splice(index, 1)
+    convertedFiles.value = convertedFiles.value.filter((f) => f.id !== fileId)
   }
 
   function clearAllFiles(): void {
+    audioFiles.value.forEach(revokeConvertedUrl)
     audioFiles.value = []
     convertedFiles.value = []
     conversionProgress.value = {}
