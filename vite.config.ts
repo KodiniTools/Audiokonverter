@@ -1,7 +1,51 @@
-import { defineConfig } from 'vite'
+import { defineConfig, type Plugin } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { VitePWA } from 'vite-plugin-pwa'
 import { fileURLToPath, URL } from 'node:url'
+import { createReadStream, readFileSync } from 'node:fs'
+import { createRequire } from 'node:module'
+import { dirname, join } from 'node:path'
+import { FFMPEG_CORE_DIR, FFMPEG_CORE_FILES } from './src/config/ffmpegCore'
+
+/**
+ * Liefert den FFmpeg-Kern (@ffmpeg/core, ESM) selbst aus, statt ihn zur
+ * Laufzeit von unpkg.com zu laden: beim Build als Asset nach
+ * dist/<FFMPEG_CORE_DIR>/, im Dev-Server direkt aus node_modules.
+ */
+function ffmpegCore(): Plugin {
+  // ESM-Build: der Worker von @ffmpeg/ffmpeg läuft als Modul-Worker, dort
+  // scheitert importScripts() und der Kern wird per import() geladen – das
+  // braucht einen Default-Export, den nur der ESM-Build hat.
+  const coreDir = join(dirname(createRequire(import.meta.url).resolve('@ffmpeg/core')), '..', 'esm')
+  const mimeTypes: Record<string, string> = {
+    '.js': 'text/javascript',
+    '.wasm': 'application/wasm',
+  }
+
+  return {
+    name: 'ffmpeg-core',
+    configureServer(server) {
+      const prefix = `${server.config.base}${FFMPEG_CORE_DIR}/`
+      server.middlewares.use((req, res, next) => {
+        const path = req.url?.split('?')[0] ?? ''
+        if (!path.startsWith(prefix)) return next()
+        const name = path.slice(prefix.length)
+        if (!(FFMPEG_CORE_FILES as readonly string[]).includes(name)) return next()
+        res.setHeader('Content-Type', mimeTypes[name.slice(name.lastIndexOf('.'))])
+        createReadStream(join(coreDir, name)).pipe(res)
+      })
+    },
+    generateBundle() {
+      for (const name of FFMPEG_CORE_FILES) {
+        this.emitFile({
+          type: 'asset',
+          fileName: `${FFMPEG_CORE_DIR}/${name}`,
+          source: readFileSync(join(coreDir, name)),
+        })
+      }
+    },
+  }
+}
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -10,6 +54,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       vue(),
+      ffmpegCore(),
       VitePWA({
         registerType: 'autoUpdate',
         workbox: {
@@ -17,9 +62,12 @@ export default defineConfig(({ mode }) => {
           skipWaiting: true,
           clientsClaim: true,
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+          // Der FFmpeg-Kern (~32 MB) wird nicht vorab gecacht, sondern erst bei
+          // Bedarf über die Laufzeitregel unten.
+          globIgnores: ['**/ffmpeg/**'],
           runtimeCaching: [
             {
-              urlPattern: /^https:\/\/unpkg\.com\/@ffmpeg/,
+              urlPattern: /\/ffmpeg\/[^/]+\/ffmpeg-core\.(?:js|wasm)$/,
               handler: 'CacheFirst',
               options: {
                 cacheName: 'ffmpeg-wasm-cache',
