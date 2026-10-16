@@ -7,9 +7,16 @@ import {
   loadFFmpeg,
   terminateFFmpeg,
 } from '@/services/WasmAudioService'
+import { runPool } from '@/utils/runPool'
 import type { AudioFile, AudioFormat, ConversionResult, SavedSettings } from '@/types'
 
 const STORAGE_KEY = 'audiokonverter_settings'
+
+// Höchstens so viele Server-Konvertierungen gleichzeitig. Das Backend begrenzt
+// zusätzlich die ffmpeg-Prozesse (FFMPEG_MAX_CONCURRENT in backend/server.js).
+// Lokal (FFmpeg.wasm) läuft immer nur eine Datei: es gibt eine FFmpeg-Instanz
+// und einen Fortschritts-Handler.
+export const SERVER_CONCURRENCY = 3
 
 function loadSavedSettings(): SavedSettings {
   try {
@@ -269,17 +276,19 @@ export const useAudioStore = defineStore('audio', () => {
       const pendingFiles = audioFiles.value.filter(
         (f) => f.status === 'pending' || f.status === 'error'
       )
-
+      const localFiles: AudioFile[] = []
+      const serverFiles: AudioFile[] = []
       for (const fileData of pendingFiles) {
-        // Vor jeder Datei prüfen, ob der Nutzer abgebrochen hat
-        if (signal.aborted) break
-
-        if (wasmReady.value && shouldProcessLocally(fileData.file)) {
-          await convertFileLocally(fileData, signal)
-        } else {
-          await convertFileRemotely(fileData, signal)
-        }
+        if (wasmReady.value && shouldProcessLocally(fileData.file)) localFiles.push(fileData)
+        else serverFiles.push(fileData)
       }
+
+      // Beide Warteschlangen laufen nebeneinander; nach einem Abbruch startet
+      // keine von beiden eine neue Datei.
+      await Promise.all([
+        runPool(localFiles, 1, signal, (f) => convertFileLocally(f, signal)),
+        runPool(serverFiles, SERVER_CONCURRENCY, signal, (f) => convertFileRemotely(f, signal)),
+      ])
 
       return { cancelled: signal.aborted }
     } finally {

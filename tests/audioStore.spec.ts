@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
 import axios from 'axios'
 import * as wasm from '@/services/WasmAudioService'
-import { useAudioStore } from '@/stores/audioStore'
+import { SERVER_CONCURRENCY, useAudioStore } from '@/stores/audioStore'
 import { audioFile, byId, flush, pendingUntilAborted, serverOk } from './storeTestUtils'
 
 vi.mock('axios', () => ({
@@ -154,17 +154,24 @@ describe('audioStore – Server-Konvertierung', () => {
 })
 
 describe('audioStore – Abbruch', () => {
-  it('setzt die laufende Datei auf pending zurück und lässt weitere Dateien unangetastet', async () => {
+  it('setzt laufende Dateien auf pending zurück und startet keine weiteren', async () => {
     const store = createStore(false)
     post.mockImplementation((_url, _body, config) =>
       pendingUntilAborted((config as { signal?: AbortSignal }).signal)
     )
-    const [first, second] = store.addFiles([audioFile('a.wav'), audioFile('b.wav')])
+    const files = store.addFiles(['a', 'b', 'c', 'd'].map((n) => audioFile(`${n}.wav`)))
 
     const run = store.convertAllFiles()
     await flush()
     expect(store.isConverting).toBe(true)
-    expect(byId(store.audioFiles, first.id).status).toBe('converting')
+    // Drei laufen parallel, die vierte wartet
+    expect(post).toHaveBeenCalledTimes(SERVER_CONCURRENCY)
+    expect(files.map((f) => byId(store.audioFiles, f.id).status)).toEqual([
+      'converting',
+      'converting',
+      'converting',
+      'pending',
+    ])
 
     store.cancelConversion()
     expect(store.isCancelling).toBe(true)
@@ -173,15 +180,15 @@ describe('audioStore – Abbruch', () => {
     const result = await run
 
     expect(result).toEqual({ cancelled: true })
-    expect(post).toHaveBeenCalledTimes(1)
-    for (const id of [first.id, second.id]) {
+    expect(post).toHaveBeenCalledTimes(SERVER_CONCURRENCY)
+    for (const { id } of files) {
       const f = byId(store.audioFiles, id)
       expect(f.status).toBe('pending')
       expect(f.progress).toBe(0)
       expect(f.error).toBeNull()
+      expect(store.conversionProgress[id]).toBeUndefined()
     }
-    expect(store.audioFiles).toHaveLength(2)
-    expect(store.conversionProgress[first.id]).toBeUndefined()
+    expect(store.audioFiles).toHaveLength(4)
     expect(store.isConverting).toBe(false)
     expect(store.isCancelling).toBe(false)
     expect(terminateFFmpeg).toHaveBeenCalledTimes(1)
@@ -387,5 +394,108 @@ describe('audioStore – Blob-URLs freigeben', () => {
 
     expect(store.fileCount).toBe(1)
     expect(URL.revokeObjectURL).not.toHaveBeenCalled()
+  })
+})
+
+describe('audioStore – parallele Konvertierung', () => {
+  /** Steuerbare Server-Antworten: jede Anfrage wartet, bis der Test sie beendet. */
+  function controllablePost() {
+    const open: Array<() => void> = []
+    let running = 0
+    let maxRunning = 0
+    post.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          running++
+          maxRunning = Math.max(maxRunning, running)
+          open.push(() => {
+            running--
+            resolve(serverOk())
+          })
+        })
+    )
+    return {
+      finishNext: () => open.shift()?.(),
+      get maxRunning() {
+        return maxRunning
+      },
+    }
+  }
+
+  it(`konvertiert höchstens ${SERVER_CONCURRENCY} Dateien gleichzeitig auf dem Server`, async () => {
+    const store = createStore(false)
+    const server = controllablePost()
+    store.addFiles(['1', '2', '3', '4', '5'].map((n) => audioFile(`${n}.wav`)))
+
+    const run = store.convertAllFiles()
+    await flush()
+    expect(post).toHaveBeenCalledTimes(3)
+
+    // Wird eine fertig, rückt genau eine nach
+    server.finishNext()
+    await flush()
+    expect(post).toHaveBeenCalledTimes(4)
+
+    for (let i = 0; i < 4; i++) {
+      server.finishNext()
+      await flush()
+    }
+    await run
+
+    expect(post).toHaveBeenCalledTimes(5)
+    expect(server.maxRunning).toBe(3)
+    expect(store.audioFiles.every((f) => f.status === 'completed')).toBe(true)
+    expect(store.convertedFiles).toHaveLength(5)
+  })
+
+  it('startet die Server-Dateien in Listenreihenfolge', async () => {
+    const store = createStore(false)
+    post.mockResolvedValue(serverOk())
+    store.addFiles(['a', 'b', 'c', 'd'].map((n) => audioFile(`${n}.wav`)))
+
+    await store.convertAllFiles()
+
+    const names = post.mock.calls.map(([, body]) => ((body as FormData).get('file') as File).name)
+    expect(names).toEqual(['a.wav', 'b.wav', 'c.wav', 'd.wav'])
+  })
+
+  it('konvertiert lokal immer nur eine Datei, parallel zu den Server-Dateien', async () => {
+    shouldProcessLocally.mockImplementation((file: File) => file.name.startsWith('lokal'))
+    const store = useAudioStore()
+    const server = controllablePost()
+    let localRunning = 0
+    let localMax = 0
+    const localDone: Array<() => void> = []
+    convertLocally.mockImplementation(
+      () =>
+        new Promise<Blob>((resolve) => {
+          localRunning++
+          localMax = Math.max(localMax, localRunning)
+          localDone.push(() => {
+            localRunning--
+            resolve(new Blob([new Uint8Array(4)], { type: 'audio/mpeg' }))
+          })
+        })
+    )
+    store.addFiles(['lokal-1', 'lokal-2', 'server-1', 'server-2'].map((n) => audioFile(`${n}.wav`)))
+    await flush() // WASM vorladen
+
+    const run = store.convertAllFiles()
+    await flush()
+    // Eine lokale und beide Server-Dateien laufen gleichzeitig
+    expect(convertLocally).toHaveBeenCalledTimes(1)
+    expect(post).toHaveBeenCalledTimes(2)
+
+    localDone.shift()?.()
+    await flush()
+    expect(convertLocally).toHaveBeenCalledTimes(2)
+
+    localDone.shift()?.()
+    server.finishNext()
+    server.finishNext()
+    await run
+
+    expect(localMax).toBe(1)
+    expect(store.audioFiles.every((f) => f.status === 'completed')).toBe(true)
   })
 })
