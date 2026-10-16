@@ -84,6 +84,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAudioStore } from '@/stores/audioStore'
 import { useToast } from '@/composables/useToast'
+import { describeQuality } from '@/config/codecProfiles'
 
 const { t } = useI18n()
 const audioStore = useAudioStore()
@@ -105,52 +106,9 @@ const qualityLabel = computed(() => {
   return t('conversion.qualityLevels.maximum')
 })
 
-const qualityInfo = computed((): string => {
-  const quality = audioStore.currentQuality
-  const format = audioStore.currentFormat
-
-  const bitrateMap: Record<string, number[]> = {
-    mp3: [64, 96, 128, 160, 192, 224, 256, 320, 320, 320],
-    aac: [64, 96, 128, 160, 192, 224, 256, 320, 320, 320],
-  }
-
-  if (format === 'mp3' || format === 'aac' || format === 'm4a') {
-    const bitrate = bitrateMap[format === 'm4a' ? 'aac' : format][quality - 1]
-    return `${bitrate} kbps`
-  }
-
-  if (format === 'flac') {
-    return `Lossless (Level ${Math.min(8, quality - 2)})`
-  }
-
-  if (format === 'wav') {
-    if (quality <= 4) return '16-bit PCM'
-    if (quality <= 7) return '24-bit PCM'
-    return '32-bit Float'
-  }
-
-  if (format === 'ogg') {
-    return `Q${quality}`
-  }
-
-  if (format === 'opus') {
-    const opusBitrates = [32, 48, 64, 96, 128, 160, 192, 256, 320, 510]
-    return `${opusBitrates[quality - 1]} kbps`
-  }
-
-  if (format === 'aiff') {
-    if (quality <= 4) return '16-bit PCM'
-    if (quality <= 7) return '24-bit PCM'
-    return '32-bit PCM'
-  }
-
-  if (format === 'wma') {
-    const wmaBitrates = [64, 96, 128, 160, 192, 224, 256, 320, 320, 320]
-    return `${wmaBitrates[quality - 1]} kbps`
-  }
-
-  return ''
-})
+const qualityInfo = computed((): string =>
+  describeQuality(audioStore.currentFormat, audioStore.currentQuality)
+)
 
 async function startConversion(): Promise<void> {
   try {

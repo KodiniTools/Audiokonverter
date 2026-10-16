@@ -34,6 +34,7 @@ const os = require('os')
 const { spawn } = require('child_process')
 const multer = require('multer')
 const { nanoid } = require('nanoid')
+const { isAllowedFormat, qualityToBitrate, audioCodecArgs } = require('./codecArgs')
 
 const app = express()
 app.disable('x-powered-by')
@@ -85,12 +86,6 @@ function sanitizeOutputName(base, wantedExt) {
   return ext ? cleanBase + '.' + ext : cleanBase
 }
 
-function isAllowedFormat(fmt) {
-  return ['mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a', 'wma', 'opus', 'aiff'].includes(
-    String(fmt || '').toLowerCase()
-  )
-}
-
 // WebM ist ein Video-Container. Bei solchen Eingaben wird die Videospur
 // verworfen (-vn); bei allen anderen bleibt z. B. eingebettetes Cover-Art erhalten.
 function isWebmInput(file) {
@@ -112,52 +107,6 @@ function validateSampleRate(sr) {
 function validateChannels(ch) {
   const n = Number(ch)
   return Number.isInteger(n) && n >= 1 && n <= 8
-}
-
-function qualityToBitrate(quality, format) {
-  const q = Math.max(1, Math.min(10, Number(quality) || 5))
-  if (format === 'opus') {
-    const rates = [32, 48, 64, 96, 128, 160, 192, 256, 320, 510]
-    return (rates[q - 1] || 128) + 'k'
-  }
-  const rates = [64, 96, 128, 160, 192, 224, 256, 320, 320, 320]
-  return (rates[q - 1] || 192) + 'k'
-}
-
-/** Codec-Argumente je Zielformat. Identisch zum gemeinsamen Backend. */
-function audioCodecArgs(fmt, bitrate, quality) {
-  switch (fmt) {
-    case 'mp3':
-      return ['-codec:a', 'libmp3lame', '-b:a', bitrate || '192k']
-    case 'aac':
-      return ['-codec:a', 'aac', '-b:a', bitrate || '192k']
-    case 'm4a':
-      return ['-vn', '-codec:a', 'aac', '-b:a', bitrate || '192k', '-movflags', '+faststart']
-    case 'ogg':
-      return quality
-        ? ['-codec:a', 'libvorbis', '-q:a', String(quality)]
-        : ['-codec:a', 'libvorbis', '-b:a', bitrate || '192k']
-    case 'flac': {
-      const comprLevel = quality ? Math.min(8, Math.max(0, quality - 2)) : 5
-      return ['-codec:a', 'flac', '-compression_level', String(comprLevel)]
-    }
-    case 'wav': {
-      const codec =
-        quality && quality > 7 ? 'pcm_f32le' : quality && quality > 4 ? 'pcm_s24le' : 'pcm_s16le'
-      return ['-codec:a', codec]
-    }
-    case 'wma':
-      return ['-codec:a', 'wmav2', '-b:a', bitrate || '192k']
-    case 'opus':
-      return ['-codec:a', 'libopus', '-b:a', bitrate || '128k']
-    case 'aiff': {
-      const codec =
-        quality && quality > 7 ? 'pcm_s32be' : quality && quality > 4 ? 'pcm_s24be' : 'pcm_s16be'
-      return ['-codec:a', codec]
-    }
-    default:
-      return []
-  }
 }
 
 function runFfmpeg(args, timeoutMs = FFMPEG_TIMEOUT_MS) {

@@ -2,6 +2,7 @@ import { FFmpeg } from '@ffmpeg/ffmpeg'
 import { fetchFile, toBlobURL } from '@ffmpeg/util'
 import type { AudioFormat } from '@/types'
 import { FFMPEG_CORE_DIR } from '@/config/ffmpegCore'
+import { codecArgs } from '@/config/codecProfiles'
 
 const WASM_THRESHOLD = 20 * 1024 * 1024 // 20MB
 const LOAD_TIMEOUT = 30000 // 30s für das Laden des Kerns
@@ -142,48 +143,7 @@ export function buildFFmpegArgs(
   // Zielcontainer wie OGG/M4A sie mitzukodieren.
   if (isWebmName(inputName)) args.push('-vn')
 
-  switch (format) {
-    case 'mp3': {
-      const bitrates = [64, 96, 128, 160, 192, 224, 256, 320, 320, 320]
-      args.push('-codec:a', 'libmp3lame', '-b:a', `${bitrates[quality - 1] ?? 192}k`)
-      break
-    }
-    case 'aac':
-    case 'm4a': {
-      const bitrates = [64, 96, 128, 160, 192, 224, 256, 320, 320, 320]
-      args.push('-codec:a', 'aac', '-b:a', `${bitrates[quality - 1] ?? 192}k`)
-      break
-    }
-    case 'ogg':
-      args.push('-codec:a', 'libvorbis', '-q:a', `${quality}`)
-      break
-    case 'flac': {
-      const level = Math.min(8, Math.max(0, quality - 2))
-      args.push('-codec:a', 'flac', '-compression_level', `${level}`)
-      break
-    }
-    case 'wav': {
-      const codec = quality <= 4 ? 'pcm_s16le' : quality <= 7 ? 'pcm_s24le' : 'pcm_f32le'
-      args.push('-codec:a', codec)
-      break
-    }
-    case 'opus': {
-      const bitrates = [32, 48, 64, 96, 128, 160, 192, 256, 320, 510]
-      args.push('-codec:a', 'libopus', '-b:a', `${bitrates[quality - 1] ?? 128}k`)
-      break
-    }
-    case 'aiff': {
-      const codec = quality <= 4 ? 'pcm_s16be' : quality <= 7 ? 'pcm_s24be' : 'pcm_s32be'
-      args.push('-codec:a', codec)
-      break
-    }
-    case 'wma': {
-      const bitrates = [64, 96, 128, 160, 192, 224, 256, 320, 320, 320]
-      args.push('-codec:a', 'wmav2', '-b:a', `${bitrates[quality - 1] ?? 192}k`)
-      break
-    }
-  }
-
+  args.push(...codecArgs(format, quality))
   args.push(outputName)
   return args
 }

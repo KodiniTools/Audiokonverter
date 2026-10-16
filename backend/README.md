@@ -38,6 +38,13 @@ Der Integrationstest prüft, dass diese Routen nicht mehr existieren.
 Die Konvertierung selbst ist unverändert: dieselben ffmpeg-Argumente je Format,
 dieselbe Namensbildung (`<basis>-<nanoid6>.<ext>`), dasselbe Upload-Limit.
 
+Bitraten, Bittiefen und Codecs je Format und Qualitätsstufe stehen in
+`codecProfiles.json`; `codecArgs.js` baut daraus die ffmpeg-Argumente. Die
+Oberfläche lädt dieselbe Datei (`src/config/codecProfiles.ts`) für die Anzeige
+und die lokale WASM-Konvertierung. Die Datei liegt hier, weil `deploy.sh` nur
+`backend/` auf den Server kopiert. `tests/codecProfiles.spec.ts` (Vitest im
+Repo-Root) prüft, dass beide Seiten für jede Stufe dieselben Argumente bilden.
+
 ## Konfiguration
 
 | Variable | Default | Bedeutung |

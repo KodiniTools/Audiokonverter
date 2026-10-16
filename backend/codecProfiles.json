@@ -1,0 +1,55 @@
+{
+  "$comment": "Codec-Profile je Zielformat und Qualitätsstufe 1–10 (Index = Qualität − 1). Einzige Quelle für Oberfläche (src/config/codecProfiles.ts) und Backend (backend/codecArgs.js); tests/codecProfiles.spec.ts vergleicht beide Seiten. Liegt in backend/, weil deploy.sh nur diesen Ordner auf den Server kopiert.",
+  "qualityLevels": 10,
+  "formats": {
+    "mp3": {
+      "codec": "libmp3lame",
+      "bitratesKbps": [64, 96, 128, 160, 192, 224, 256, 320, 320, 320],
+      "defaultBitrateKbps": 192
+    },
+    "aac": {
+      "codec": "aac",
+      "bitratesKbps": [64, 96, 128, 160, 192, 224, 256, 320, 320, 320],
+      "defaultBitrateKbps": 192
+    },
+    "m4a": {
+      "codec": "aac",
+      "bitratesKbps": [64, 96, 128, 160, 192, 224, 256, 320, 320, 320],
+      "defaultBitrateKbps": 192
+    },
+    "wma": {
+      "codec": "wmav2",
+      "bitratesKbps": [64, 96, 128, 160, 192, 224, 256, 320, 320, 320],
+      "defaultBitrateKbps": 192
+    },
+    "opus": {
+      "codec": "libopus",
+      "bitratesKbps": [32, 48, 64, 96, 128, 160, 192, 256, 320, 510],
+      "defaultBitrateKbps": 128
+    },
+    "ogg": {
+      "codec": "libvorbis",
+      "vbrQuality": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      "defaultBitrateKbps": 192
+    },
+    "flac": {
+      "codec": "flac",
+      "compressionLevels": [0, 0, 1, 2, 3, 4, 5, 6, 7, 8],
+      "defaultCompressionLevel": 5
+    },
+    "wav": {
+      "pcmLevels": [
+        { "upToQuality": 4, "codec": "pcm_s16le", "bitDepth": 16, "float": false },
+        { "upToQuality": 7, "codec": "pcm_s24le", "bitDepth": 24, "float": false },
+        { "upToQuality": 10, "codec": "pcm_f32le", "bitDepth": 32, "float": true }
+      ]
+    },
+    "aiff": {
+      "pcmLevels": [
+        { "upToQuality": 4, "codec": "pcm_s16be", "bitDepth": 16, "float": false },
+        { "upToQuality": 7, "codec": "pcm_s24be", "bitDepth": 24, "float": false },
+        { "upToQuality": 10, "codec": "pcm_s32be", "bitDepth": 32, "float": false }
+      ]
+    }
+  }
+}
