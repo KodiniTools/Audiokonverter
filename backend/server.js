@@ -7,11 +7,15 @@
  *
  *   GET  /health          Statusprobe (nginx, Monitoring)
  *   GET  /files/<name>    Ergebnis herunterladen (statisch)
- *   POST /api/convert     Datei konvertieren
+ *   POST /api/convert     Datei konvertieren (mit mode=job: sofort Job-ID, siehe jobs.js)
+ *   GET  /api/jobs/:id/events  Fortschritt eines Jobs (Server-Sent Events)
+ *   DELETE /api/jobs/:id  Job abbrechen
  *
  * Bewusst NICHT enthalten (steckte im gemeinsamen Backend, wurde hier nie
  * benutzt): Login/Auth, Playlists, Player-State, /api/tracks, /api/upload,
- * /api/files/*, der Async-Job-Modus und der Konvertier-Zweig über file_url.
+ * /api/files/*, der alte Async-Job-Modus (/api/job/:id) und der Konvertier-Zweig
+ * über file_url. Der heutige Job-Modus (/api/jobs/:id) ist neu und dient nur dem
+ * Fortschritt.
  * `GET /api/tracks` war ohne Auth erreichbar und gab Dateiname, Größe und URL
  * jeder Datei im FILES_DIR preis — also die Konvertierungen fremder Nutzer.
  *
@@ -25,6 +29,8 @@
  *   MAX_UPLOAD_BYTES   Default 314572800 (300 MB)
  *   FFMPEG_MAX_CONCURRENT  Gleichzeitige ffmpeg-Prozesse; Default Anzahl CPU-Kerne
  *   FFMPEG_MAX_QUEUE   Wartende Konvertierungen, danach 503; Default 4 × MAX_CONCURRENT
+ *   JOB_ORPHAN_MS      Job ohne verbundenen Client wird abgebrochen; Default 30000
+ *   JOB_TTL_MS         Beendete Jobs bleiben abrufbar; Default 300000 (5 min)
  */
 
 const express = require('express')
@@ -35,6 +41,7 @@ const { spawn } = require('child_process')
 const multer = require('multer')
 const { nanoid } = require('nanoid')
 const { isAllowedFormat, qualityToBitrate, audioCodecArgs } = require('./codecArgs')
+const { createJobStore, parseProgressSeconds, progressPercent } = require('./jobs')
 
 const app = express()
 app.disable('x-powered-by')
@@ -109,28 +116,92 @@ function validateChannels(ch) {
   return Number.isInteger(n) && n >= 1 && n <= 8
 }
 
-function runFfmpeg(args, timeoutMs = FFMPEG_TIMEOUT_MS) {
+/**
+ * Startet ffmpeg. Mit `onProgress` wird `-progress pipe:1` gesetzt und die
+ * bereits kodierte Zeit (Sekunden) gemeldet; mit `signal` lässt sich der
+ * Prozess abbrechen (Fehler `job_cancelled`).
+ */
+function runFfmpeg(args, timeoutMs = FFMPEG_TIMEOUT_MS, { signal, onProgress } = {}) {
   return new Promise((resolve, reject) => {
-    const ff = spawn('ffmpeg', ['-nostdin', ...args], { stdio: ['ignore', 'pipe', 'pipe'] })
+    if (signal && signal.aborted) return reject(new Error('job_cancelled'))
+    const progressArgs = onProgress ? ['-progress', 'pipe:1', '-nostats'] : []
+    const ff = spawn('ffmpeg', ['-nostdin', ...progressArgs, ...args], {
+      stdio: ['ignore', 'pipe', 'pipe'],
+    })
     let stderr = ''
+    let stdoutRest = ''
     let killedByTimeout = false
+    let killedByAbort = false
 
-    const timer = setTimeout(() => {
-      killedByTimeout = true
+    const kill = () => {
       try {
         ff.kill('SIGKILL')
       } catch (_) {}
+    }
+    const timer = setTimeout(() => {
+      killedByTimeout = true
+      kill()
     }, timeoutMs)
+    const onAbort = () => {
+      killedByAbort = true
+      kill()
+    }
+    if (signal) signal.addEventListener('abort', onAbort, { once: true })
 
+    // stdout immer lesen: ein voller Pipe-Puffer würde ffmpeg blockieren
+    ff.stdout.on('data', (d) => {
+      if (!onProgress) return
+      const lines = (stdoutRest + d.toString()).split('\n')
+      stdoutRest = lines.pop()
+      for (const line of lines) {
+        const seconds = parseProgressSeconds(line)
+        if (seconds !== null) onProgress(seconds)
+      }
+    })
     ff.stderr.on('data', (d) => (stderr += d.toString()))
     ff.on('error', (e) => {
       clearTimeout(timer)
+      if (signal) signal.removeEventListener('abort', onAbort)
       reject(new Error('ffmpeg_spawn_failed: ' + e.message))
     })
     ff.on('close', (code) => {
       clearTimeout(timer)
+      if (signal) signal.removeEventListener('abort', onAbort)
+      if (killedByAbort) return reject(new Error('job_cancelled'))
       if (killedByTimeout) return reject(new Error('ffmpeg_timeout'))
       code === 0 ? resolve() : reject(new Error(stderr || 'ffmpeg_exit_' + code))
+    })
+  })
+}
+
+/** Dauer der Eingabe in Sekunden per ffprobe; null, wenn sie nicht ermittelbar ist. */
+function probeDuration(file, timeoutMs = 15000) {
+  return new Promise((resolve) => {
+    let out = ''
+    let probe
+    try {
+      probe = spawn(
+        'ffprobe',
+        ['-v', 'error', '-show_entries', 'format=duration', '-of', 'default=nw=1:nk=1', file],
+        { stdio: ['ignore', 'pipe', 'ignore'] }
+      )
+    } catch (_) {
+      return resolve(null)
+    }
+    const timer = setTimeout(() => {
+      try {
+        probe.kill('SIGKILL')
+      } catch (_) {}
+    }, timeoutMs)
+    probe.stdout.on('data', (d) => (out += d.toString()))
+    probe.on('error', () => {
+      clearTimeout(timer)
+      resolve(null)
+    })
+    probe.on('close', (code) => {
+      clearTimeout(timer)
+      const seconds = Number.parseFloat(out.trim())
+      resolve(code === 0 && seconds > 0 ? seconds : null)
     })
   })
 }
@@ -168,6 +239,10 @@ function acquireFfmpegSlot(signal) {
   })
 }
 
+function ffmpegQueueFull() {
+  return ffmpegRunning >= FFMPEG_MAX_CONCURRENT && ffmpegWaiting.length >= FFMPEG_MAX_QUEUE
+}
+
 function releaseFfmpegSlot() {
   const next = ffmpegWaiting.shift()
   if (next) {
@@ -195,6 +270,10 @@ const CONVERT_EXTENSIONS = new Set([
 
 ensureDir(FILES_DIR)
 
+const JOB_ORPHAN_MS = Number(process.env.JOB_ORPHAN_MS) || 30000
+const JOB_TTL_MS = Number(process.env.JOB_TTL_MS) || 5 * 60 * 1000
+const jobs = createJobStore({ newId: () => nanoid(16), orphanMs: JOB_ORPHAN_MS, ttlMs: JOB_TTL_MS })
+
 // ---- Routen ----
 
 app.get('/health', (_req, res) =>
@@ -209,6 +288,7 @@ app.get('/health', (_req, res) =>
       maxConcurrent: FFMPEG_MAX_CONCURRENT,
       maxQueue: FFMPEG_MAX_QUEUE,
     },
+    jobs: jobs.stats(),
   })
 )
 
@@ -217,7 +297,47 @@ app.get('/health', (_req, res) =>
 app.use('/files', express.static(FILES_DIR, { index: false, dotfiles: 'deny' }))
 app.use('/files', (_req, res) => res.status(404).json({ ok: false, error: 'file_not_found' }))
 
+/** Konvertierung im Job-Modus: läuft nach der 202-Antwort weiter und meldet Fortschritt. */
+async function runJob(job, conv) {
+  const { signal } = job.abort
+  try {
+    await acquireFfmpegSlot(signal)
+    try {
+      if (signal.aborted) throw new Error('job_cancelled')
+      jobs.setStatus(job, 'running')
+      const duration = await probeDuration(conv.inputPath)
+      console.log('[convert start]', { ...conv.log, job: job.id, duration })
+      await runFfmpeg(conv.args, FFMPEG_TIMEOUT_MS, {
+        signal,
+        onProgress: (seconds) => jobs.setPercent(job, progressPercent(seconds, duration)),
+      })
+    } finally {
+      releaseFfmpegSlot()
+    }
+    const stats = fs.statSync(conv.outPath)
+    console.log('[convert ok]', conv.outName, stats.size + 'B', 'job=' + job.id)
+    jobs.finish(job, 'done', {
+      ok: true,
+      url: '/files/' + conv.outName,
+      filename: conv.outName,
+      format: conv.fmt,
+      size: stats.size,
+    })
+  } catch (e) {
+    if (signal.aborted) {
+      console.log('[convert cancelled] job=' + job.id)
+      safeUnlink(conv.outPath)
+    } else {
+      console.error('[convert err]', e.message, 'job=' + job.id)
+      jobs.finish(job, 'failed', { ok: false, error: e.message })
+    }
+  } finally {
+    if (fs.existsSync(conv.inputPath)) safeUnlink(conv.inputPath)
+  }
+}
+
 app.post('/api/convert', upload.single('file'), async (req, res) => {
+  let inputOwnedByJob = false
   try {
     if (!req.file) throw new Error('no_input')
 
@@ -246,6 +366,27 @@ app.post('/api/convert', upload.single('file'), async (req, res) => {
     if (channels) args.push('-ac', String(channels))
     if (normalize) args.push('-filter:a', 'loudnorm=I=-16:TP=-1.5:LRA=11')
     args.push(...audioCodecArgs(fmt, bitrate, quality), outPath)
+
+    // Job-Modus: sofort mit Job-ID antworten, Fortschritt über
+    // GET /api/jobs/:id/events. Ohne mode=job bleibt die Antwort synchron.
+    if (String(req.body.mode || '').toLowerCase() === 'job') {
+      if (ffmpegQueueFull()) throw new Error('server_busy')
+      const job = jobs.create()
+      inputOwnedByJob = true
+      runJob(job, {
+        inputPath: req.file.path,
+        args,
+        outName,
+        outPath,
+        fmt,
+        log: { fmt, bitrate, samplerate, channels, normalize, out: outName },
+      })
+      return res.status(202).json({
+        ok: true,
+        jobId: job.id,
+        events: '/api/jobs/' + job.id + '/events',
+      })
+    }
 
     // Bricht der Client ab, solange die Anfrage noch auf einen Platz wartet,
     // gibt sie ihn nicht erst nach einer nutzlosen Konvertierung frei.
@@ -287,8 +428,20 @@ app.post('/api/convert', upload.single('file'), async (req, res) => {
             : 500
     res.status(code).json({ ok: false, error: e.message })
   } finally {
-    if (req.file && fs.existsSync(req.file.path)) safeUnlink(req.file.path)
+    if (!inputOwnedByJob && req.file && fs.existsSync(req.file.path)) safeUnlink(req.file.path)
   }
+})
+
+app.get('/api/jobs/:id/events', (req, res) => {
+  const job = jobs.get(req.params.id)
+  if (!job) return res.status(404).json({ ok: false, error: 'job_not_found' })
+  jobs.subscribe(job, req, res)
+})
+
+app.delete('/api/jobs/:id', (req, res) => {
+  if (!jobs.get(req.params.id)) return res.status(404).json({ ok: false, error: 'job_not_found' })
+  if (!jobs.cancel(req.params.id)) return res.status(409).json({ ok: false, error: 'job_finished' })
+  res.json({ ok: true })
 })
 
 // Aufräumen alter Ergebnisse. Standardmäßig an (Default 6 h), abschaltbar über

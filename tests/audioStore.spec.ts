@@ -2,11 +2,12 @@
  * audioStore: Konvertierung über Server und lokal (FFmpeg.wasm), Fehler,
  * Abbruch und Fallback. axios und WasmAudioService sind gemockt.
  */
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
 import axios from 'axios'
 import * as wasm from '@/services/WasmAudioService'
-import { SERVER_CONCURRENCY, useAudioStore } from '@/stores/audioStore'
+import { SERVER_CONCURRENCY, UPLOAD_SHARE, useAudioStore } from '@/stores/audioStore'
+import { FakeEventSource } from './fakeEventSource'
 import { audioFile, byId, flush, pendingUntilAborted, serverOk } from './storeTestUtils'
 
 vi.mock('axios', () => ({
@@ -91,6 +92,7 @@ describe('audioStore – Server-Konvertierung', () => {
     const form = body as FormData
     expect(form.get('format')).toBe('flac')
     expect(form.get('quality')).toBe('9')
+    expect(form.get('mode')).toBe('job')
     expect((form.get('file') as File).name).toBe('song.wav')
   })
 
@@ -497,5 +499,114 @@ describe('audioStore – parallele Konvertierung', () => {
 
     expect(localMax).toBe(1)
     expect(store.audioFiles.every((f) => f.status === 'completed')).toBe(true)
+  })
+})
+
+describe('audioStore – Server-Fortschritt im Job-Modus', () => {
+  const fetchMock = vi.fn(() => Promise.resolve(new Response(null)))
+
+  beforeEach(() => {
+    FakeEventSource.instances = []
+    fetchMock.mockClear()
+    vi.stubGlobal('EventSource', FakeEventSource)
+    vi.stubGlobal('fetch', fetchMock)
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  /** POST meldet Upload-Fortschritt und antwortet mit einer Job-ID. */
+  function serverJob(jobId = 'job1') {
+    post.mockImplementation(async (_url, _body, config) => {
+      const onUploadProgress = (config as { onUploadProgress?: (e: object) => void })
+        .onUploadProgress
+      onUploadProgress?.({ loaded: 50, total: 100 })
+      onUploadProgress?.({ loaded: 100, total: 100 })
+      return { data: { ok: true, jobId, events: `/api/jobs/${jobId}/events` } }
+    })
+  }
+
+  it('Upload belegt 0–50 %, die Verarbeitung 50–100 %', async () => {
+    const store = createStore(false)
+    serverJob()
+    const [file] = store.addFiles([audioFile('song.wav')])
+    const progress: number[] = []
+    const done = store.convertAllFiles()
+    await flush()
+    progress.push(byId(store.audioFiles, file.id).progress)
+
+    const source = FakeEventSource.last()
+    expect(source.url).toBe('/audiokonverter/api/jobs/job1/events')
+    for (const percent of [0, 40, 99]) {
+      source.emit('progress', { status: 'running', percent })
+      progress.push(byId(store.audioFiles, file.id).progress)
+    }
+    source.emit('done', serverOk('song-abc123.mp3', 777).data)
+    await done
+
+    expect(progress).toEqual([UPLOAD_SHARE, 50, 70, 99])
+    const converted = byId(store.audioFiles, file.id)
+    expect(converted.status).toBe('completed')
+    expect(converted.progress).toBe(100)
+    expect(converted.convertedUrl).toBe('/audiokonverter/files/song-abc123.mp3')
+    expect(converted.convertedSize).toBe(777)
+    expect(source.readyState).toBe(FakeEventSource.CLOSED)
+  })
+
+  it('meldet beim Upload höchstens 50 %', async () => {
+    const store = createStore(false)
+    const seen: number[] = []
+    post.mockImplementation(async (_url, _body, config) => {
+      const onUploadProgress = (config as { onUploadProgress?: (e: object) => void })
+        .onUploadProgress
+      for (const loaded of [0, 30, 100]) {
+        onUploadProgress?.({ loaded, total: 100 })
+        seen.push(store.audioFiles[0].progress)
+      }
+      return serverOk()
+    })
+    store.addFiles([audioFile('song.wav')])
+
+    await store.convertAllFiles()
+
+    expect(seen).toEqual([0, 15, 50])
+  })
+
+  it('übernimmt die Fehlermeldung eines fehlgeschlagenen Jobs', async () => {
+    const store = createStore(false)
+    serverJob()
+    const [file] = store.addFiles([audioFile('song.wav')])
+    const done = store.convertAllFiles()
+    await flush()
+
+    FakeEventSource.last().emit('failed', { ok: false, error: 'ffmpeg_timeout' })
+    await done
+
+    const failed = byId(store.audioFiles, file.id)
+    expect(failed.status).toBe('error')
+    expect(failed.error).toBe('ffmpeg_timeout')
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('bricht beim Abbruch den Job auf dem Server ab und setzt die Datei zurück', async () => {
+    const store = createStore(false)
+    serverJob('job7')
+    const [file] = store.addFiles([audioFile('song.wav')])
+    const done = store.convertAllFiles()
+    await flush()
+    FakeEventSource.last().emit('progress', { status: 'running', percent: 30 })
+
+    store.cancelConversion()
+    await expect(done).resolves.toEqual({ cancelled: true })
+
+    expect(fetchMock).toHaveBeenCalledWith('/audiokonverter/api/jobs/job7', {
+      method: 'DELETE',
+      keepalive: true,
+    })
+    expect(FakeEventSource.last().readyState).toBe(FakeEventSource.CLOSED)
+    const reset = byId(store.audioFiles, file.id)
+    expect(reset.status).toBe('pending')
+    expect(reset.progress).toBe(0)
   })
 })
