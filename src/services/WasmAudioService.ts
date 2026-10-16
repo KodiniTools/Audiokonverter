@@ -105,7 +105,7 @@ export function terminateFFmpeg(): void {
   currentProgressHandler = null
 }
 
-function buildFFmpegArgs(
+export function buildFFmpegArgs(
   inputName: string,
   outputName: string,
   format: AudioFormat,
