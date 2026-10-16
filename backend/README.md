@@ -47,6 +47,8 @@ dieselbe Namensbildung (`<basis>-<nanoid6>.<ext>`), dasselbe Upload-Limit.
 | `CONVERT_TTL_MS` | `21600000` (6 h) | Ergebnisse älter als dieser Wert werden automatisch gelöscht; `0` schaltet das Aufräumen ab. Siehe unten. |
 | `FFMPEG_TIMEOUT_MS` | `120000` | Abbruch langer Konvertierungen |
 | `MAX_UPLOAD_BYTES` | `314572800` | 300 MB |
+| `FFMPEG_MAX_CONCURRENT` | Anzahl CPU-Kerne | Höchstens so viele ffmpeg-Prozesse laufen gleichzeitig; weitere Anfragen warten (FIFO). Die Oberfläche schickt bis zu 3 Dateien parallel. |
+| `FFMPEG_MAX_QUEUE` | `4 × FFMPEG_MAX_CONCURRENT` | Ist die Warteschlange voll, antwortet `/api/convert` sofort mit `503 server_busy`. Bricht ein wartender Client ab, verlässt er die Schlange. `/health` meldet `ffmpeg.running` und `ffmpeg.queued`. |
 
 **Zum Aufräumen:** Die Oberfläche lädt das Ergebnis inzwischen sofort per
 `fetch` als Blob herunter (Speicherort-Dialog), hält aber weiterhin einen Link
@@ -152,6 +154,13 @@ Parametervalidierung und dass die entfernten Endpunkte 404 liefern. Ein anderer
 Port als der Produktivport (9000) ist Pflicht — der Test startet einen eigenen
 Serverprozess. Ohne installiertes `ffmpeg` kann `test/ffmpeg-stub.sh` als Ersatz
 in den `PATH` gelegt werden (kopiert die Eingabe auf die Ausgabe).
+
+Die Begrenzung gleichzeitiger ffmpeg-Prozesse prüft ein eigener Test. Er startet
+den Server selbst (freier Port, `ffmpeg-stub.sh` mit künstlicher Laufzeit):
+
+```bash
+node backend/test/concurrency.test.cjs   # oder: npm --prefix backend run test:concurrency
+```
 
 ## Abhängigkeiten
 

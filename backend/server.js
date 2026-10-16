@@ -23,6 +23,8 @@
  *                      Download-Links brechen, die noch offen im Browser liegen.
  *   FFMPEG_TIMEOUT_MS  Default 120000
  *   MAX_UPLOAD_BYTES   Default 314572800 (300 MB)
+ *   FFMPEG_MAX_CONCURRENT  Gleichzeitige ffmpeg-Prozesse; Default Anzahl CPU-Kerne
+ *   FFMPEG_MAX_QUEUE   Wartende Konvertierungen, danach 503; Default 4 × MAX_CONCURRENT
  */
 
 const express = require('express')
@@ -45,6 +47,14 @@ const CONVERT_TTL_MS =
     : 6 * 60 * 60 * 1000
 const FFMPEG_TIMEOUT_MS = Number(process.env.FFMPEG_TIMEOUT_MS) || 120000
 const MAX_UPLOAD_BYTES = Number(process.env.MAX_UPLOAD_BYTES) || 300 * 1024 * 1024
+// Die Oberfläche schickt bis zu 3 Dateien gleichzeitig. Mehr ffmpeg-Prozesse
+// als Kerne machen jede einzelne Konvertierung nur langsamer.
+const FFMPEG_MAX_CONCURRENT =
+  Number(process.env.FFMPEG_MAX_CONCURRENT) || Math.max(1, os.cpus().length)
+const FFMPEG_MAX_QUEUE =
+  process.env.FFMPEG_MAX_QUEUE !== undefined && process.env.FFMPEG_MAX_QUEUE !== ''
+    ? Number(process.env.FFMPEG_MAX_QUEUE)
+    : FFMPEG_MAX_CONCURRENT * 4
 
 // Die Audiodaten kommen als multipart und laufen hier vorbei; für alles andere
 // reichen kleine Bodies.
@@ -176,6 +186,49 @@ function runFfmpeg(args, timeoutMs = FFMPEG_TIMEOUT_MS) {
   })
 }
 
+// ---- Begrenzung gleichzeitiger ffmpeg-Prozesse ----
+// Ist kein Platz frei, wartet die Anfrage in einer FIFO-Schlange. Ist auch die
+// voll, gibt es sofort 503 (server_busy). Bricht der Client ab, solange er noch
+// wartet, wird er aus der Schlange genommen und belegt keinen Platz mehr.
+let ffmpegRunning = 0
+const ffmpegWaiting = []
+
+function acquireFfmpegSlot(signal) {
+  if (signal && signal.aborted) return Promise.reject(new Error('client_closed'))
+  if (ffmpegRunning < FFMPEG_MAX_CONCURRENT) {
+    ffmpegRunning++
+    return Promise.resolve()
+  }
+  if (ffmpegWaiting.length >= FFMPEG_MAX_QUEUE) {
+    return Promise.reject(new Error('server_busy'))
+  }
+  return new Promise((resolve, reject) => {
+    const onAbort = () => {
+      const i = ffmpegWaiting.indexOf(entry)
+      if (i !== -1) ffmpegWaiting.splice(i, 1)
+      reject(new Error('client_closed'))
+    }
+    const entry = {
+      start() {
+        if (signal) signal.removeEventListener('abort', onAbort)
+        resolve()
+      },
+    }
+    if (signal) signal.addEventListener('abort', onAbort, { once: true })
+    ffmpegWaiting.push(entry)
+  })
+}
+
+function releaseFfmpegSlot() {
+  const next = ffmpegWaiting.shift()
+  if (next) {
+    // Platz direkt weitergeben: ffmpegRunning bleibt gleich
+    next.start()
+  } else {
+    ffmpegRunning--
+  }
+}
+
 // Endungen, die der Sweeper aufräumen darf — genau die Zielformate. So bleibt
 // alles Nicht-Audio (z. B. versehentlich abgelegte Dateien) unangetastet, selbst
 // wenn FILES_DIR wider Erwarten geteilt würde.
@@ -196,7 +249,18 @@ ensureDir(FILES_DIR)
 // ---- Routen ----
 
 app.get('/health', (_req, res) =>
-  res.json({ ok: true, port: PORT, filesDir: FILES_DIR, service: 'audiokonverter' })
+  res.json({
+    ok: true,
+    port: PORT,
+    filesDir: FILES_DIR,
+    service: 'audiokonverter',
+    ffmpeg: {
+      running: ffmpegRunning,
+      queued: ffmpegWaiting.length,
+      maxConcurrent: FFMPEG_MAX_CONCURRENT,
+      maxQueue: FFMPEG_MAX_QUEUE,
+    },
+  })
 )
 
 // Ergebnis herunterladen. Kein Verzeichnis-Listing; die Namen tragen eine
@@ -234,8 +298,19 @@ app.post('/api/convert', upload.single('file'), async (req, res) => {
     if (normalize) args.push('-filter:a', 'loudnorm=I=-16:TP=-1.5:LRA=11')
     args.push(...audioCodecArgs(fmt, bitrate, quality), outPath)
 
+    // Bricht der Client ab, solange die Anfrage noch auf einen Platz wartet,
+    // gibt sie ihn nicht erst nach einer nutzlosen Konvertierung frei.
+    const clientGone = new AbortController()
+    res.on('close', () => {
+      if (!res.writableEnded) clientGone.abort()
+    })
+    await acquireFfmpegSlot(clientGone.signal)
     console.log('[convert start]', { fmt, bitrate, samplerate, channels, normalize, out: outName })
-    await runFfmpeg(args)
+    try {
+      await runFfmpeg(args)
+    } finally {
+      releaseFfmpegSlot()
+    }
 
     const stats = fs.statSync(outPath)
 
@@ -248,8 +323,19 @@ app.post('/api/convert', upload.single('file'), async (req, res) => {
       size: stats.size,
     })
   } catch (e) {
+    if (e.message === 'client_closed') {
+      console.log('[convert cancelled] Client hat vor dem Start abgebrochen')
+      return
+    }
     console.error('[convert err]', e.message)
-    const code = e.message === 'ffmpeg_timeout' ? 504 : e.message.startsWith('bad_') ? 400 : 500
+    const code =
+      e.message === 'ffmpeg_timeout'
+        ? 504
+        : e.message === 'server_busy'
+          ? 503
+          : e.message.startsWith('bad_')
+            ? 400
+            : 500
     res.status(code).json({ ok: false, error: e.message })
   } finally {
     if (req.file && fs.existsSync(req.file.path)) safeUnlink(req.file.path)
