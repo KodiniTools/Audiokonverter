@@ -1,15 +1,20 @@
 import { FFmpeg } from '@ffmpeg/ffmpeg'
 import { fetchFile, toBlobURL } from '@ffmpeg/util'
 import type { AudioFormat } from '@/types'
+import { FFMPEG_CORE_DIR } from '@/config/ffmpegCore'
 
 const WASM_THRESHOLD = 20 * 1024 * 1024 // 20MB
-const LOAD_TIMEOUT = 30000 // 30s für CDN-Load
-const EXEC_TIMEOUT = 120000 // 2min für Konvertierung
+const LOAD_TIMEOUT = 30000 // 30s für das Laden des Kerns
+// Konvertierungs-Timeout: Grundzeit plus einmal die Eingabedauer (Echtzeit),
+// begrenzt nach oben. Die Dauer kommt aus dem FFmpeg-Log ("Duration: …").
+const EXEC_TIMEOUT_BASE = 120000 // 2 min
+const EXEC_TIMEOUT_MAX = 30 * 60 * 1000 // 30 min
 
 let ffmpeg: FFmpeg | null = null
 let loaded = false
 let loading = false
 let currentProgressHandler: ((progress: number) => void) | null = null
+let currentLogHandler: ((message: string) => void) | null = null
 let cachedCoreURL: string | null = null
 let cachedWasmURL: string | null = null
 
@@ -46,8 +51,13 @@ export async function loadFFmpeg(): Promise<FFmpeg> {
     ffmpeg.on('progress', ({ progress }) => {
       currentProgressHandler?.(Math.round(progress * 100))
     })
+    ffmpeg.on('log', ({ message }) => {
+      currentLogHandler?.(message)
+    })
 
-    const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd'
+    // Selbst gehostet (siehe src/config/ffmpegCore.ts), absolut zur Seite,
+    // weil toBlobURL die Datei per fetch lädt.
+    const baseURL = new URL(`${import.meta.env.BASE_URL}${FFMPEG_CORE_DIR}`, location.href).href
 
     if (!cachedCoreURL) {
       cachedCoreURL = await withTimeout(
@@ -103,6 +113,22 @@ export function terminateFFmpeg(): void {
   loaded = false
   loading = false
   currentProgressHandler = null
+  currentLogHandler = null
+}
+
+/** Liest die Eingabedauer in Sekunden aus einer FFmpeg-Logzeile wie "Duration: 00:03:25.12, …". */
+export function parseDurationSeconds(message: string): number | null {
+  const match = /Duration:\s*(\d+):(\d{2}):(\d{2}(?:\.\d+)?)/.exec(message)
+  if (!match) return null
+  return Number(match[1]) * 3600 + Number(match[2]) * 60 + Number(match[3])
+}
+
+/** Timeout für die Konvertierung: Grundzeit plus Eingabedauer, begrenzt auf EXEC_TIMEOUT_MAX. */
+export function execTimeoutFor(durationSeconds: number | null): number {
+  if (durationSeconds === null || !Number.isFinite(durationSeconds) || durationSeconds <= 0) {
+    return EXEC_TIMEOUT_BASE
+  }
+  return Math.min(EXEC_TIMEOUT_MAX, EXEC_TIMEOUT_BASE + Math.ceil(durationSeconds * 1000))
 }
 
 export function buildFFmpegArgs(
@@ -179,6 +205,43 @@ const MIME_TYPES: Record<AudioFormat, string> = {
   wma: 'audio/x-ms-wma',
 }
 
+/**
+ * Führt FFmpeg aus. Startet mit dem Grund-Timeout und verlängert ihn einmalig,
+ * sobald FFmpeg die Eingabedauer meldet. Bei Timeout wird der Worker beendet,
+ * damit er nicht im Hintergrund weiterrechnet; der nächste Aufruf lädt neu.
+ */
+async function execWithDurationTimeout(instance: FFmpeg, args: string[]): Promise<void> {
+  let timer: ReturnType<typeof setTimeout> | undefined
+  let rejectTimeout: (error: Error) => void = () => {}
+  const timeout = new Promise<never>((_, reject) => {
+    rejectTimeout = reject
+  })
+  const arm = (ms: number): void => {
+    clearTimeout(timer)
+    timer = setTimeout(() => rejectTimeout(new Error('wasm_exec_timeout')), ms)
+  }
+
+  let durationKnown = false
+  currentLogHandler = (message) => {
+    if (durationKnown) return
+    const duration = parseDurationSeconds(message)
+    if (duration === null) return
+    durationKnown = true
+    arm(execTimeoutFor(duration))
+  }
+  arm(execTimeoutFor(null))
+
+  try {
+    await Promise.race([instance.exec(args), timeout])
+  } catch (error) {
+    if ((error as Error)?.message === 'wasm_exec_timeout') terminateFFmpeg()
+    throw error
+  } finally {
+    clearTimeout(timer)
+    currentLogHandler = null
+  }
+}
+
 export async function convertLocally(
   file: File,
   targetFormat: AudioFormat,
@@ -197,7 +260,7 @@ export async function convertLocally(
     await instance.writeFile(inputName, await fetchFile(file))
 
     const args = buildFFmpegArgs(inputName, outputName, targetFormat, quality)
-    await withTimeout(instance.exec(args), EXEC_TIMEOUT, 'wasm_exec_timeout')
+    await execWithDurationTimeout(instance, args)
 
     const data = (await instance.readFile(outputName)) as Uint8Array
     if (!data || data.length === 0) throw new Error('wasm_empty_output')
