@@ -113,7 +113,8 @@
               class="btn-icon btn-retry"
               :title="t('actions.retry')"
               aria-label="Retry"
-              @click="audioStore.convertFile(file)"
+              :disabled="audioStore.isConverting"
+              @click="audioStore.retryFile(file.id)"
             >
               <svg
                 viewBox="0 0 24 24"

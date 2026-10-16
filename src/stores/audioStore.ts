@@ -291,8 +291,14 @@ export const useAudioStore = defineStore('audio', () => {
     return convertFileRemotely(fileData, signal)
   }
 
-  async function convertAllFiles(): Promise<{ cancelled: boolean }> {
-    if (isConverting.value) return { cancelled: false }
+  /**
+   * Führt einen Konvertier-Lauf exklusiv aus: setzt isConverting, legt den
+   * Abbruch-Controller an, den cancelConversion() auslöst, und setzt nach einem
+   * Abbruch noch laufende Dateien auf 'pending' zurück. Läuft bereits eine
+   * Konvertierung, gibt es null zurück und es passiert nichts.
+   */
+  async function runExclusive<T>(task: (signal: AbortSignal) => Promise<T>): Promise<T | null> {
+    if (isConverting.value) return null
 
     isConverting.value = true
     isCancelling.value = false
@@ -301,6 +307,23 @@ export const useAudioStore = defineStore('audio', () => {
     const signal = abortController.signal
 
     try {
+      return await task(signal)
+    } finally {
+      // Falls abgebrochen: noch als 'converting' markierte Dateien sauber
+      // zurücksetzen. Die hochgeladenen Dateien bleiben immer erhalten.
+      if (signal.aborted) {
+        for (const f of audioFiles.value) {
+          if (f.status === 'converting') resetCancelledFile(f.id)
+        }
+      }
+      isConverting.value = false
+      isCancelling.value = false
+      abortController = null
+    }
+  }
+
+  async function convertAllFiles(): Promise<{ cancelled: boolean }> {
+    const outcome = await runExclusive(async (signal) => {
       const pendingFiles = audioFiles.value.filter(
         (f) => f.status === 'pending' || f.status === 'error'
       )
@@ -319,18 +342,28 @@ export const useAudioStore = defineStore('audio', () => {
       ])
 
       return { cancelled: signal.aborted }
-    } finally {
-      // Falls abgebrochen: noch als 'converting' markierte Dateien sauber
-      // zurücksetzen. Die hochgeladenen Dateien bleiben immer erhalten.
-      if (signal.aborted) {
-        for (const f of audioFiles.value) {
-          if (f.status === 'converting') resetCancelledFile(f.id)
-        }
-      }
-      isConverting.value = false
-      isCancelling.value = false
-      abortController = null
-    }
+    })
+    return outcome ?? { cancelled: false }
+  }
+
+  /**
+   * Konvertiert eine fehlgeschlagene Datei erneut. Läuft nur, wenn gerade
+   * keine Konvertierung aktiv ist, und lässt sich wie convertAllFiles() über
+   * cancelConversion() abbrechen. `started: false`, wenn sie nicht lief
+   * (Konvertierung aktiv, Datei unbekannt oder nicht im Status 'error').
+   */
+  async function retryFile(
+    fileId: string
+  ): Promise<{ started: boolean; cancelled: boolean; result?: ConversionResult }> {
+    const fileData = audioFiles.value.find((f) => f.id === fileId)
+    if (!fileData || fileData.status !== 'error') return { started: false, cancelled: false }
+
+    const outcome = await runExclusive(async (signal) => {
+      fileData.error = null
+      const result = await convertFile(fileData, signal)
+      return { started: true, cancelled: signal.aborted, result }
+    })
+    return outcome ?? { started: false, cancelled: false }
   }
 
   // Laufende Konvertierung sauber abbrechen (Nutzer-Aktion).
@@ -376,8 +409,8 @@ export const useAudioStore = defineStore('audio', () => {
     removeFile,
     clearAllFiles,
     updateFileProgress,
-    convertFile,
     convertAllFiles,
+    retryFile,
     cancelConversion,
     setFormat,
     setQuality,
