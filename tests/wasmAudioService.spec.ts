@@ -8,7 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 const ffmpegMock = vi.hoisted(() => {
   class FakeFFmpeg {
     handlers: Record<string, (event: { message?: string; progress?: number }) => void> = {}
-    load = vi.fn(async () => true)
+    load = vi.fn((): Promise<boolean> => ffmpegMock.loadImpl())
     exec = vi.fn((): Promise<number> => ffmpegMock.execImpl())
     writeFile = vi.fn(async () => true)
     readFile = vi.fn(async () => new Uint8Array([1, 2, 3]))
@@ -32,6 +32,7 @@ const ffmpegMock = vi.hoisted(() => {
     instances: [] as FakeFFmpeg[],
     // Standard: FFmpeg rechnet, bis der Test etwas anderes vorgibt
     execImpl: (): Promise<number> => new Promise<number>(() => {}),
+    loadImpl: (): Promise<boolean> => Promise.resolve(true),
   }
 })
 
@@ -54,6 +55,7 @@ function audioFile(): File {
 beforeEach(() => {
   ffmpegMock.instances.length = 0
   ffmpegMock.execImpl = () => new Promise<number>(() => {})
+  ffmpegMock.loadImpl = () => Promise.resolve(true)
 })
 
 afterEach(() => {
@@ -108,6 +110,32 @@ describe('loadFFmpeg', () => {
       `${location.origin}/${FFMPEG_CORE_DIR}/ffmpeg-core.wasm`,
     ])
     expect(urls.some((url) => url.includes('unpkg.com'))).toBe(false)
+  })
+
+  it('beendet den Worker, wenn die Initialisierung in den Timeout läuft', async () => {
+    vi.useFakeTimers()
+    ffmpegMock.loadImpl = () => new Promise<boolean>(() => {})
+    const { loadFFmpeg } = await loadService()
+
+    const result = loadFFmpeg()
+    const assertion = expect(result).rejects.toThrow('wasm_init_timeout')
+    await vi.advanceTimersByTimeAsync(30_000)
+    await assertion
+
+    expect(ffmpegMock.instances).toHaveLength(1)
+    expect(ffmpegMock.instances[0].terminate).toHaveBeenCalledTimes(1)
+  })
+
+  it('beendet den Worker, wenn das Laden fehlschlägt, und versucht es beim nächsten Mal neu', async () => {
+    ffmpegMock.loadImpl = () => Promise.reject(new Error('failed to import ffmpeg-core.js'))
+    const { loadFFmpeg } = await loadService()
+
+    await expect(loadFFmpeg()).rejects.toThrow('failed to import ffmpeg-core.js')
+    expect(ffmpegMock.instances[0].terminate).toHaveBeenCalledTimes(1)
+
+    ffmpegMock.loadImpl = () => Promise.resolve(true)
+    await expect(loadFFmpeg()).resolves.toBe(ffmpegMock.instances[1])
+    expect(ffmpegMock.instances[1].terminate).not.toHaveBeenCalled()
   })
 })
 
