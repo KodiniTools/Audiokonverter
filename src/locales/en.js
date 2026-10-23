@@ -11,11 +11,22 @@ export default {
   upload: {
     title: 'Upload',
     dragDrop: 'Drop files here or click to browse',
-    supportedFormats: 'MP3 • WAV • FLAC • OGG • AAC • M4A • OPUS • AIFF • WMA • WEBM',
+    supportedFormats: 'MP3 • WAV • FLAC • OGG • AAC • M4A • OPUS • AIFF • WMA • WEBM • ZIP',
     selectFiles: 'Choose files',
     selectFolder: 'Choose folder',
     pasteHint: 'or paste from clipboard (Ctrl + V)',
     filesSelected: '{count} file | {count} files',
+    extracting: 'Extracting ZIP …',
+  },
+  zip: {
+    extracted: '{count} audio file extracted. | {count} audio files extracted.',
+    skipped: '{count} other file skipped. | {count} other files skipped.',
+    noAudio: 'Contains no supported audio files',
+    archiveTooLarge: 'Archive too large (max. 500MB)',
+    tooManyEntries: 'Archive has too many entries (max. 1000)',
+    invalid: 'Not a valid ZIP archive, or it is encrypted',
+    entryFailed: 'Could not be extracted',
+    limitReached: 'Extraction limit of 2GB reached, remaining files skipped',
   },
   player: {
     noTrack: 'No track selected – click a file in the list',
