@@ -128,6 +128,10 @@ export default {
         'Der Equalizer 19 ist ein leistungsstarker 19-Band-Equalizer, der auf der Web Audio API basiert und eine chirurgisch genaue Frequenzkontrolle ermöglicht.',
     },
   },
+  import: {
+    received: '{count} übergebene Datei übernommen | {count} übergebene Dateien übernommen',
+    failed: 'Übergebene Dateien konnten nicht gelesen werden',
+  },
   wizard: {
     title: 'Wie geht es weiter?',
     playlist: 'Playlist erstellen',

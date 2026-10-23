@@ -128,6 +128,10 @@ export default {
         'Equalizer 19 is a powerful 19-band equalizer based on the Web Audio API that enables surgically precise frequency control.',
     },
   },
+  import: {
+    received: '{count} handed-over file added | {count} handed-over files added',
+    failed: 'Handed-over files could not be read',
+  },
   wizard: {
     title: "What's next?",
     playlist: 'Create Playlist',

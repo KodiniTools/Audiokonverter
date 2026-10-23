@@ -97,7 +97,8 @@ export interface SharedFile {
   name: string
   blob: Blob
   mimeType: string
-  source: 'audiokonverter'
+  /** Kennung des übergebenden Tools, z. B. 'audiokonverter' oder 'audio-cutter'. */
+  source: string
   sharedAt: number
 }
 
