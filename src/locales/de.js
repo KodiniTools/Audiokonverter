@@ -11,11 +11,22 @@ export default {
   upload: {
     title: 'Upload',
     dragDrop: 'Dateien hierher ziehen oder klicken',
-    supportedFormats: 'MP3 • WAV • FLAC • OGG • AAC • M4A • OPUS • AIFF • WMA • WEBM',
+    supportedFormats: 'MP3 • WAV • FLAC • OGG • AAC • M4A • OPUS • AIFF • WMA • WEBM • ZIP',
     selectFiles: 'Dateien wählen',
     selectFolder: 'Ordner wählen',
     pasteHint: 'oder aus der Zwischenablage einfügen (Strg + V)',
     filesSelected: '{count} Datei | {count} Dateien',
+    extracting: 'ZIP wird entpackt …',
+  },
+  zip: {
+    extracted: '{count} Audiodatei entpackt. | {count} Audiodateien entpackt.',
+    skipped: '{count} andere Datei übersprungen. | {count} andere Dateien übersprungen.',
+    noAudio: 'Enthält keine unterstützten Audiodateien',
+    archiveTooLarge: 'Archiv zu groß (max. 500MB)',
+    tooManyEntries: 'Archiv enthält zu viele Einträge (max. 1000)',
+    invalid: 'Kein gültiges oder ein verschlüsseltes ZIP-Archiv',
+    entryFailed: 'Konnte nicht entpackt werden',
+    limitReached: 'Entpack-Limit von 2GB erreicht, restliche Dateien übersprungen',
   },
   player: {
     noTrack: 'Kein Titel ausgewählt – Datei in der Liste anklicken',

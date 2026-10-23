@@ -11,7 +11,7 @@
         ref="fileInput"
         type="file"
         multiple
-        accept="audio/*,.mp3,.wav,.flac,.ogg,.aac,.m4a,.opus,.aiff,.aif,.wma,.webm,.weba"
+        accept="audio/*,.mp3,.wav,.flac,.ogg,.aac,.m4a,.opus,.aiff,.aif,.wma,.webm,.weba,.zip,application/zip"
         style="display: none"
         @change="handleFileSelect"
       />
@@ -57,6 +57,9 @@
       </div>
 
       <p class="upload-paste-hint">{{ t('upload.pasteHint') }}</p>
+      <p class="upload-status" role="status" aria-live="polite">
+        <template v-if="extractingCount > 0">{{ t('upload.extracting') }}</template>
+      </p>
     </div>
   </div>
 </template>
@@ -66,6 +69,8 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAudioStore } from '@/stores/audioStore'
 import { useToast } from '@/composables/useToast'
+import { MAX_FILE_SIZE, isAudioFile, isZipFile } from '@/utils/audioFiles'
+import { ZipExtractError, extractAudioFromZip, type ZipErrorCode } from '@/utils/unzipAudio'
 
 const { t } = useI18n()
 const audioStore = useAudioStore()
@@ -75,21 +80,8 @@ const fileInput = ref<HTMLInputElement | null>(null)
 const folderInput = ref<HTMLInputElement | null>(null)
 const isDragging = ref(false)
 
-const SUPPORTED_FORMATS = [
-  'audio/mpeg',
-  'audio/wav',
-  'audio/flac',
-  'audio/ogg',
-  'audio/aac',
-  'audio/x-m4a',
-  'audio/mp4',
-  'audio/opus',
-  'audio/aiff',
-  'audio/x-aiff',
-  'audio/x-ms-wma',
-  'audio/webm',
-]
-const MAX_FILE_SIZE = 300 * 1024 * 1024
+// Laufende ZIP-Entpackvorgänge (mehrere Drops können sich überlappen)
+const extractingCount = ref(0)
 
 function triggerFileInput(): void {
   if (!fileInput.value) return
@@ -207,21 +199,72 @@ function readEntry(entry: FileSystemEntry): Promise<File[]> {
   return Promise.resolve([])
 }
 
-function processFiles(files: File[]): void {
+const ZIP_ERROR_KEYS: Record<ZipErrorCode, string> = {
+  archive_too_large: 'zip.archiveTooLarge',
+  too_many_entries: 'zip.tooManyEntries',
+  invalid_zip: 'zip.invalid',
+}
+
+/** Entpackt ein ZIP und meldet das Ergebnis; liefert die enthaltenen Audiodateien. */
+async function unpackZip(archive: File, errors: string[]): Promise<File[]> {
+  try {
+    const result = await extractAudioFromZip(archive)
+
+    result.tooLarge.forEach((name) => errors.push(`${name}: ${t('errors.fileTooLarge')}`))
+    result.failed.forEach((name) => errors.push(`${name}: ${t('zip.entryFailed')}`))
+    if (result.limitReached) errors.push(`${archive.name}: ${t('zip.limitReached')}`)
+
+    if (result.files.length > 0) {
+      const skipped =
+        result.skipped.length > 0 ? ` ${t('zip.skipped', { count: result.skipped.length })}` : ''
+      showToast('info', archive.name, {
+        message: t('zip.extracted', { count: result.files.length }) + skipped,
+      })
+    } else if (result.tooLarge.length === 0 && result.failed.length === 0) {
+      errors.push(`${archive.name}: ${t('zip.noAudio')}`)
+    }
+    return result.files
+  } catch (error) {
+    if (error instanceof ZipExtractError) {
+      errors.push(`${archive.name}: ${t(ZIP_ERROR_KEYS[error.code])}`)
+    } else {
+      console.error('ZIP konnte nicht entpackt werden:', error)
+      errors.push(`${archive.name}: ${t('zip.invalid')}`)
+    }
+    return []
+  }
+}
+
+async function processFiles(files: File[]): Promise<void> {
   const validFiles: File[] = []
   const errors: string[] = []
 
-  files.forEach((file) => {
+  // ZIP-Inhalte ersetzen das Archiv an seiner Stelle, die Reihenfolge bleibt erhalten
+  let candidates = files
+  if (files.some((file) => isZipFile(file))) {
+    candidates = []
+    extractingCount.value++
+    try {
+      // Nacheinander, damit nie mehrere Archive gleichzeitig im Speicher liegen
+      for (const file of files) {
+        if (isZipFile(file)) {
+          candidates.push(...(await unpackZip(file, errors)))
+        } else {
+          candidates.push(file)
+        }
+      }
+    } finally {
+      extractingCount.value--
+    }
+  }
+
+  candidates.forEach((file) => {
     if (file.size > MAX_FILE_SIZE) {
       errors.push(`${file.name}: ${t('errors.fileTooLarge')}`)
       return
     }
 
-    const isAudio =
-      SUPPORTED_FORMATS.some((format) => file.type.includes(format.split('/')[1])) ||
-      /\.(mp3|wav|flac|ogg|aac|m4a|opus|aiff|aif|wma|webm|weba)$/i.test(file.name)
-
-    if (!isAudio) {
+    if (!isAudioFile(file)) {
       errors.push(`${file.name}: ${t('errors.unsupportedFile')}`)
       return
     }
@@ -232,7 +275,7 @@ function processFiles(files: File[]): void {
   if (validFiles.length > 0) {
     audioStore.addFiles(validFiles)
     showToast('success', t('toast.fileAdded'), {
-      message: `${validFiles.length} ${t('upload.filesSelected', { count: validFiles.length })}`,
+      message: t('upload.filesSelected', { count: validFiles.length }),
     })
   }
 
@@ -304,6 +347,16 @@ onBeforeUnmount(() => {
 .upload-paste-hint {
   font-size: var(--ds-text-xs);
   color: var(--ds-text-2);
+}
+
+.upload-status {
+  font-size: var(--ds-text-sm);
+  font-weight: var(--ds-weight-medium);
+  color: var(--ds-text);
+}
+
+.upload-status:empty {
+  display: none;
 }
 
 @media (max-width: 480px) {
