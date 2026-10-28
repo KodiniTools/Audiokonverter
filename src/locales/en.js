@@ -160,6 +160,15 @@ export default {
   },
   share: {
     facebook: 'Share on Facebook',
+    file: 'Share',
+    all: 'Share all',
+    sharing: 'Preparing...',
+    done: '{count} file shared | {count} files shared',
+    ready: 'Files are ready to share',
+    shareNow: 'Share now',
+    unsupported: 'Sharing not available here',
+    downloadInstead: 'This browser cannot share the file, so it will be downloaded instead.',
+    failed: 'Sharing failed',
   },
   faq: {
     title: 'FAQ',
