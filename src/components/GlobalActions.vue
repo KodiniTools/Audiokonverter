@@ -7,6 +7,17 @@
         <span>{{ t('actions.clearAll') }}</span>
       </button>
 
+      <!-- Share All: System-Teilen-Menü, nur wenn der Browser Dateien teilen kann -->
+      <button
+        v-if="audioStore.hasConvertedFiles && share.canShare"
+        class="btn btn-secondary action-btn"
+        :disabled="share.sharingId.value !== null"
+        :title="t('share.all')"
+        @click="share.shareAll(audioStore.audioFiles)"
+      >
+        <span>{{ share.sharingId.value === 'all' ? t('share.sharing') : t('share.all') }}</span>
+      </button>
+
       <!-- Download All Separately -->
       <button
         v-if="audioStore.hasConvertedFiles"
@@ -41,6 +52,7 @@ import { useAudioStore } from '@/stores/audioStore'
 import { useToast } from '@/composables/useToast'
 import { useDownload } from '@/composables/useDownload'
 import { useAudioPlayer } from '@/composables/useAudioPlayer'
+import { useShare } from '@/composables/useShare'
 import { saveBlobToDevice } from '@/utils/fileSaver'
 import { buildZipBlob, type ZipEntry } from '@/utils/zip'
 
@@ -49,6 +61,7 @@ const audioStore = useAudioStore()
 const { showToast, showConfirmToast } = useToast()
 const { downloadFile } = useDownload()
 const player = useAudioPlayer()
+const share = useShare()
 const isDownloading = ref(false)
 const isDownloadingSeparate = ref(false)
 

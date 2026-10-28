@@ -160,6 +160,16 @@ export default {
   },
   share: {
     facebook: 'Auf Facebook teilen',
+    file: 'Teilen',
+    all: 'Alle teilen',
+    sharing: 'Wird vorbereitet...',
+    done: '{count} Datei geteilt | {count} Dateien geteilt',
+    ready: 'Dateien sind bereit zum Teilen',
+    shareNow: 'Jetzt teilen',
+    unsupported: 'Teilen hier nicht möglich',
+    downloadInstead:
+      'Dieser Browser kann die Datei nicht teilen, sie wird stattdessen heruntergeladen.',
+    failed: 'Teilen fehlgeschlagen',
   },
   faq: {
     title: 'FAQ',

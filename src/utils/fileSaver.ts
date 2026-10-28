@@ -23,6 +23,11 @@ function getExtension(fileName: string): string {
   return match ? match[1].toLowerCase() : ''
 }
 
+/** MIME type for a file name, falling back to the blob's own type. */
+export function mimeTypeFor(fileName: string, fallback = ''): string {
+  return MIME_BY_EXTENSION[getExtension(fileName)] || fallback || 'application/octet-stream'
+}
+
 type SaveFilePicker = (options?: SaveFilePickerOptions) => Promise<FileSystemFileHandle>
 
 function getFilePicker(): SaveFilePicker | null {
@@ -55,7 +60,7 @@ export async function saveBlobToDevice(blob: Blob, suggestedName: string): Promi
   const showSaveFilePicker = getFilePicker()
   if (showSaveFilePicker) {
     const extension = getExtension(suggestedName)
-    const mimeType = MIME_BY_EXTENSION[extension] || blob.type || 'application/octet-stream'
+    const mimeType = mimeTypeFor(suggestedName, blob.type)
 
     const options: SaveFilePickerOptions = { suggestedName }
     if (extension) {

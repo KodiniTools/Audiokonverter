@@ -107,6 +107,30 @@
               </svg>
             </button>
 
+            <!-- Share Button: nur, wenn der Browser Dateien teilen kann -->
+            <button
+              v-if="file.status === 'completed' && share.canShare"
+              class="btn-icon btn-share"
+              :title="t('share.file')"
+              :aria-label="t('share.file')"
+              :disabled="share.sharingId.value !== null"
+              @click="share.shareFile(file)"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M12 15V3" />
+                <path d="m7 8 5-5 5 5" />
+                <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
+              </svg>
+            </button>
+
             <!-- Retry Button -->
             <button
               v-if="file.status === 'error'"
@@ -169,6 +193,7 @@ import { useAudioStore } from '@/stores/audioStore'
 import { useToast } from '@/composables/useToast'
 import { useDownload } from '@/composables/useDownload'
 import { useAudioPlayer } from '@/composables/useAudioPlayer'
+import { useShare } from '@/composables/useShare'
 import { formatFileSize } from '@/utils/fileUtils'
 
 const { t } = useI18n()
@@ -176,6 +201,7 @@ const audioStore = useAudioStore()
 const { showToast } = useToast()
 const { downloadFile } = useDownload()
 const player = useAudioPlayer()
+const share = useShare()
 
 const formattedTotalSize = computed(() => formatFileSize(audioStore.totalSize))
 
