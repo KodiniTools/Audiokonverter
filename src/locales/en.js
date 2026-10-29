@@ -138,6 +138,21 @@ export default {
       description:
         'Equalizer 19 is a powerful 19-band equalizer based on the Web Audio API that enables surgically precise frequency control.',
     },
+    musicPlayer: {
+      title: 'Ultimate Music Player',
+      description:
+        'Play MP3, WAV, FLAC and more right in your browser – with visualization, playlist management and an equalizer. Your files stay on your device.',
+    },
+    playlistGenerator: {
+      title: 'Playlist Generator',
+      description:
+        'Create M3U, XSPF or JSON playlists from your MP3, WAV or FLAC files – sort and name the tracks, then download.',
+    },
+    playlistConverter: {
+      title: 'Playlist Converter',
+      description:
+        'Merge multiple MP3 or WAV files into a single audio file – as WebM, MP3 or OGG with selectable quality.',
+    },
   },
   import: {
     received: '{count} handed-over file added | {count} handed-over files added',
