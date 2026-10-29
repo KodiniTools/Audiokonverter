@@ -138,6 +138,21 @@ export default {
       description:
         'Der Equalizer 19 ist ein leistungsstarker 19-Band-Equalizer, der auf der Web Audio API basiert und eine chirurgisch genaue Frequenzkontrolle ermöglicht.',
     },
+    musicPlayer: {
+      title: 'Ultimativer Musikplayer',
+      description:
+        'Spiele MP3, WAV, FLAC und mehr direkt im Browser ab – mit Visualisierung, Playlist-Verwaltung und Equalizer. Deine Dateien bleiben auf deinem Gerät.',
+    },
+    playlistGenerator: {
+      title: 'Playlist Generator',
+      description:
+        'Erstelle aus deinen MP3-, WAV- oder FLAC-Dateien Playlists im Format M3U, XSPF oder JSON – Titel sortieren, benennen und herunterladen.',
+    },
+    playlistConverter: {
+      title: 'Playlist Konverter',
+      description:
+        'Füge mehrere MP3- oder WAV-Dateien zu einer einzigen Audiodatei zusammen – als WebM, MP3 oder OGG in wählbarer Qualität.',
+    },
   },
   import: {
     received: '{count} übergebene Datei übernommen | {count} übergebene Dateien übernommen',
