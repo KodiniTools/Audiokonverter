@@ -477,7 +477,9 @@ if (CONVERT_TTL_MS > 0) {
 }
 
 app.listen(PORT, '127.0.0.1', () => {
-  console.log('Audiokonverter Backend auf http://127.0.0.1:' + PORT + ' (FILES_DIR=' + FILES_DIR + ')')
+  console.log(
+    'Audiokonverter Backend auf http://127.0.0.1:' + PORT + ' (FILES_DIR=' + FILES_DIR + ')'
+  )
   // ecosystem.config.js setzt wait_ready: true — ohne dieses Signal wartet pm2
   // beim Start unnötig bis zum listen_timeout.
   if (typeof process.send === 'function') process.send('ready')
