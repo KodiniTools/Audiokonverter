@@ -25,6 +25,12 @@ module.exports = {
         // 0 schaltet das Aufräumen ab.
         CONVERT_TTL_MS: 21600000,
         MAX_UPLOAD_BYTES: 314572800,
+        // Fest statt Default (= Anzahl Kerne): Der VPS teilt sich 8 Kerne mit
+        // weiteren ffmpeg-Diensten (Video-Cutter, Videokonverter u. a.). Mit 4
+        // bleibt für sie Luft; die Oberfläche schickt ohnehin höchstens 3 Dateien
+        // gleichzeitig. Warteschlange 4 × MAX_CONCURRENT wie im Backend-Default.
+        FFMPEG_MAX_CONCURRENT: 4,
+        FFMPEG_MAX_QUEUE: 16,
       },
 
       // ⚙️ PM2 Einstellungen
