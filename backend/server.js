@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * Audiokonverter — eigenständiges Backend
  * ========================================
@@ -75,16 +76,23 @@ const upload = multer({
 })
 
 // ---- Utils ----
+/** @param {string} p */
 function ensureDir(p) {
   if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true })
 }
 
+/** @param {string} p */
 function safeUnlink(p) {
   try {
     fs.unlinkSync(p)
   } catch (_) {}
 }
 
+/**
+ * @param {string} base
+ * @param {string} [wantedExt]
+ * @returns {string}
+ */
 function sanitizeOutputName(base, wantedExt) {
   const cleanBase = String(base)
     .replace(/[^a-z0-9_\-.]+/gi, '_')
@@ -95,6 +103,7 @@ function sanitizeOutputName(base, wantedExt) {
 
 // WebM ist ein Video-Container. Bei solchen Eingaben wird die Videospur
 // verworfen (-vn); bei allen anderen bleibt z. B. eingebettetes Cover-Art erhalten.
+/** @param {Pick<Express.Multer.File, 'originalname' | 'mimetype'>} file */
 function isWebmInput(file) {
   return (
     /\.(webm|weba)$/i.test(String(file.originalname || '')) ||
@@ -102,15 +111,18 @@ function isWebmInput(file) {
   )
 }
 
+/** @param {unknown} br */
 function validateBitrate(br) {
   return typeof br === 'string' && /^[1-9]\d{1,3}k$/i.test(br)
 }
 
+/** @param {unknown} sr */
 function validateSampleRate(sr) {
   const n = Number(sr)
   return Number.isInteger(n) && n >= 8000 && n <= 192000
 }
 
+/** @param {unknown} ch */
 function validateChannels(ch) {
   const n = Number(ch)
   return Number.isInteger(n) && n >= 1 && n <= 8
@@ -120,9 +132,14 @@ function validateChannels(ch) {
  * Startet ffmpeg. Mit `onProgress` wird `-progress pipe:1` gesetzt und die
  * bereits kodierte Zeit (Sekunden) gemeldet; mit `signal` lässt sich der
  * Prozess abbrechen (Fehler `job_cancelled`).
+ *
+ * @param {string[]} args
+ * @param {number} [timeoutMs]
+ * @param {{ signal?: AbortSignal, onProgress?: (seconds: number) => void }} [options]
+ * @returns {Promise<void>}
  */
 function runFfmpeg(args, timeoutMs = FFMPEG_TIMEOUT_MS, { signal, onProgress } = {}) {
-  return new Promise((resolve, reject) => {
+  return new Promise((/** @type {(value?: void) => void} */ resolve, reject) => {
     if (signal && signal.aborted) return reject(new Error('job_cancelled'))
     const progressArgs = onProgress ? ['-progress', 'pipe:1', '-nostats'] : []
     const ff = spawn('ffmpeg', ['-nostdin', ...progressArgs, ...args], {
@@ -152,7 +169,8 @@ function runFfmpeg(args, timeoutMs = FFMPEG_TIMEOUT_MS, { signal, onProgress } =
     ff.stdout.on('data', (d) => {
       if (!onProgress) return
       const lines = (stdoutRest + d.toString()).split('\n')
-      stdoutRest = lines.pop()
+      // split() liefert immer mindestens ein Element
+      stdoutRest = /** @type {string} */ (lines.pop())
       for (const line of lines) {
         const seconds = parseProgressSeconds(line)
         if (seconds !== null) onProgress(seconds)
@@ -174,7 +192,13 @@ function runFfmpeg(args, timeoutMs = FFMPEG_TIMEOUT_MS, { signal, onProgress } =
   })
 }
 
-/** Dauer der Eingabe in Sekunden per ffprobe; null, wenn sie nicht ermittelbar ist. */
+/**
+ * Dauer der Eingabe in Sekunden per ffprobe; null, wenn sie nicht ermittelbar ist.
+ *
+ * @param {string} file
+ * @param {number} [timeoutMs]
+ * @returns {Promise<number | null>}
+ */
 function probeDuration(file, timeoutMs = 15000) {
   return new Promise((resolve) => {
     let out = ''
@@ -211,8 +235,13 @@ function probeDuration(file, timeoutMs = 15000) {
 // voll, gibt es sofort 503 (server_busy). Bricht der Client ab, solange er noch
 // wartet, wird er aus der Schlange genommen und belegt keinen Platz mehr.
 let ffmpegRunning = 0
+/** @type {Array<{ start(): void }>} */
 const ffmpegWaiting = []
 
+/**
+ * @param {AbortSignal} [signal]
+ * @returns {Promise<void>}
+ */
 function acquireFfmpegSlot(signal) {
   if (signal && signal.aborted) return Promise.reject(new Error('client_closed'))
   if (ffmpegRunning < FFMPEG_MAX_CONCURRENT) {
@@ -222,7 +251,7 @@ function acquireFfmpegSlot(signal) {
   if (ffmpegWaiting.length >= FFMPEG_MAX_QUEUE) {
     return Promise.reject(new Error('server_busy'))
   }
-  return new Promise((resolve, reject) => {
+  return new Promise((/** @type {(value?: void) => void} */ resolve, reject) => {
     const onAbort = () => {
       const i = ffmpegWaiting.indexOf(entry)
       if (i !== -1) ffmpegWaiting.splice(i, 1)
@@ -297,7 +326,24 @@ app.get('/health', (_req, res) =>
 app.use('/files', express.static(FILES_DIR, { index: false, dotfiles: 'deny' }))
 app.use('/files', (_req, res) => res.status(404).json({ ok: false, error: 'file_not_found' }))
 
-/** Konvertierung im Job-Modus: läuft nach der 202-Antwort weiter und meldet Fortschritt. */
+/**
+ * Was runJob für eine Konvertierung braucht; `log` landet nur im Konsolen-Log.
+ *
+ * @typedef {object} Conversion
+ * @property {string} inputPath hochgeladene Datei (temporär)
+ * @property {string[]} args ffmpeg-Argumente
+ * @property {string} outName
+ * @property {string} outPath
+ * @property {string} fmt
+ * @property {Record<string, unknown>} log
+ */
+
+/**
+ * Konvertierung im Job-Modus: läuft nach der 202-Antwort weiter und meldet Fortschritt.
+ *
+ * @param {import('./jobs').Job} job
+ * @param {Conversion} conv
+ */
 async function runJob(job, conv) {
   const { signal } = job.abort
   try {
@@ -323,7 +369,8 @@ async function runJob(job, conv) {
       format: conv.fmt,
       size: stats.size,
     })
-  } catch (e) {
+  } catch (caught) {
+    const e = /** @type {Error} */ (caught)
     if (signal.aborted) {
       console.log('[convert cancelled] job=' + job.id)
       safeUnlink(conv.outPath)
@@ -412,7 +459,8 @@ app.post('/api/convert', upload.single('file'), async (req, res) => {
       format: fmt,
       size: stats.size,
     })
-  } catch (e) {
+  } catch (caught) {
+    const e = /** @type {Error} */ (caught)
     if (e.message === 'client_closed') {
       console.log('[convert cancelled] Client hat vor dem Start abgebrochen')
       return
@@ -464,8 +512,8 @@ function sweepConvertedOutputs() {
         }
       } catch (_) {}
     }
-  } catch (e) {
-    console.error('[convert sweep err]', e.message)
+  } catch (caught) {
+    console.error('[convert sweep err]', /** @type {Error} */ (caught).message)
   }
   return removed
 }

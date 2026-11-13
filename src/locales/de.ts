@@ -1,4 +1,5 @@
-export default {
+/** Deutsch ist die Referenz: Ihre Struktur ist das Schema für alle anderen Sprachen. */
+const de = {
   app: {
     title: 'Audio Konverter',
     subtitle: 'Schnell & einfach konvertieren',
@@ -208,3 +209,8 @@ export default {
     },
   },
 }
+
+/** Struktur der Übersetzungen; en.ts wird per `satisfies` dagegen geprüft. */
+export type MessageSchema = typeof de
+
+export default de

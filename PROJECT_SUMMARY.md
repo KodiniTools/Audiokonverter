@@ -71,8 +71,8 @@ Eine **vollständig funktionale Vue 3-Anwendung** mit moderner Architektur und i
 17. `src/stores/themeStore.js` - Theme-Verwaltung (Pinia)
 
 ### i18n (3)
-18. `src/locales/de.js` - Deutsche Übersetzungen
-19. `src/locales/en.js` - Englische Übersetzungen
+18. `src/locales/de.ts` - Deutsche Übersetzungen (Referenz-Schema)
+19. `src/locales/en.ts` - Englische Übersetzungen (gegen de.ts typgeprüft)
 20. `src/locales/index.js` - i18n-Konfiguration
 
 ### Utilities (2)

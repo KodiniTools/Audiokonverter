@@ -1,4 +1,7 @@
-export default {
+import type { MessageSchema } from './de'
+
+// `satisfies` meldet fehlende und überzählige Schlüssel gegenüber de.ts beim Type-Check.
+const en = {
   app: {
     title: 'Audio Converter',
     subtitle: 'Fast & easy conversion',
@@ -206,4 +209,6 @@ export default {
       },
     },
   },
-}
+} satisfies MessageSchema
+
+export default en
