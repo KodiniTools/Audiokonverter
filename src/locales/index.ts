@@ -1,6 +1,6 @@
 import { createI18n } from 'vue-i18n'
-import de from './de.js'
-import en from './en.js'
+import de from './de'
+import en from './en'
 import { applyLocaleHead, resolveInitialLocale, type Locale } from '../utils/localeSeo'
 
 export const SITE_URL = 'https://kodinitools.com/audiokonverter/'

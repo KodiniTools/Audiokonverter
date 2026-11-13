@@ -206,6 +206,17 @@ Den Job-Modus (Fortschritt per SSE, Abbruch, verwaiste Jobs) prüft
 node backend/test/jobs.test.cjs          # oder: npm --prefix backend run test:jobs
 ```
 
+## Typprüfung
+
+Das Backend bleibt bewusst JavaScript (CommonJS): PM2 startet `server.js` direkt
+mit Node, deploy.sh kopiert `backend/` ohne Build-Schritt. Geprüft wird es
+trotzdem: `server.js`, `jobs.js` und `codecArgs.js` tragen `// @ts-check` und
+JSDoc-Typen, `tsconfig.backend.json` im Repo-Root prüft sie strikt. Das läuft mit
+`npm run type-check` (vue-tsc --build) im Root. Die Typpakete (`@types/express`,
+`@types/multer`) liegen in den devDependencies des Roots, die
+`package.json` hier bleibt unverändert. Die Tests in `test/` sind nicht Teil
+der Typprüfung.
+
 ## Abhängigkeiten
 
 `server.js` ist CommonJS und lädt alles per `require()`. Für **nanoid** heißt
