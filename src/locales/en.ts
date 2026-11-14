@@ -4,7 +4,7 @@ import type { MessageSchema } from './de'
 const en = {
   app: {
     title: 'Audio Converter',
-    subtitle: 'Fast & easy conversion',
+    subtitle: 'Convert MP3 to WAV, FLAC to MP3 and more',
   },
   nav: {
     home: 'Home',

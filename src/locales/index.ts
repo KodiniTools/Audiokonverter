@@ -8,14 +8,14 @@ export const SITE_URL = 'https://kodinitools.com/audiokonverter/'
 /** Titel und Beschreibung je Sprache (Deutsch steht zusätzlich statisch in index.html). */
 export const PAGE_META = {
   de: {
-    title: 'Audio Konverter online – MP3, WAV, FLAC umwandeln | KodiniTools',
+    title: 'MP3 in WAV umwandeln – Audio Konverter online | KodiniTools',
     description:
-      'Audiodateien kostenlos online umwandeln: MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF und WMA. Ohne Registrierung, kleine Dateien bleiben im Browser.',
+      'MP3 in WAV umwandeln und umgekehrt, kostenlos online. Audioformat ändern zwischen MP3, WAV, FLAC, OGG, AAC, M4A und OPUS. Ohne Registrierung.',
   },
   en: {
-    title: 'Online Audio Converter – Convert MP3, WAV, FLAC | KodiniTools',
+    title: 'Convert MP3 to WAV – Online Audio Converter | KodiniTools',
     description:
-      'Convert audio files online for free: MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF and WMA. No sign-up, small files stay in your browser.',
+      'Convert MP3 to WAV and back for free online. Change audio format between MP3, WAV, FLAC, OGG, AAC, M4A and OPUS. No sign-up required.',
   },
 } as const
 

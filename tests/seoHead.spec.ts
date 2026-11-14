@@ -19,7 +19,8 @@ describe('index.html SEO-Kopf', () => {
   it('Titel und Beschreibung nennen das Haupt-Keyword und halten die Länge ein', () => {
     const title = head.querySelector('title')?.textContent ?? ''
     const description = attr('meta[name="description"]', 'content') ?? ''
-    expect(title).toMatch(/^Audio Konverter/)
+    expect(title).toMatch(/^MP3 in WAV umwandeln/)
+    expect(title).toContain('Audio Konverter')
     expect(title.length).toBeLessThanOrEqual(70)
     expect(description.length).toBeGreaterThanOrEqual(120)
     expect(description.length).toBeLessThanOrEqual(160)
