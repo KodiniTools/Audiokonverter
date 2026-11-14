@@ -2,7 +2,7 @@
 const de = {
   app: {
     title: 'Audio Konverter',
-    subtitle: 'Schnell & einfach konvertieren',
+    subtitle: 'MP3 in WAV umwandeln, FLAC in MP3 und mehr',
   },
   nav: {
     home: 'Start',
