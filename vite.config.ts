@@ -6,6 +6,8 @@ import { createReadStream, readFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { dirname, join } from 'node:path'
 import { FFMPEG_CORE_DIR, FFMPEG_CORE_FILES } from './src/config/ffmpegCore'
+import { PAGE_META, SITE_URL } from './src/config/pageMeta'
+import { localizeHtml } from './src/utils/localizeHtml'
 
 /**
  * Liefert den FFmpeg-Kern (@ffmpeg/core, ESM) selbst aus, statt ihn zur
@@ -47,6 +49,33 @@ function ffmpegCore(): Plugin {
   }
 }
 
+/**
+ * Schreibt neben dist/index.html eine englische Fassung dist/index.en.html mit
+ * englischem <html lang>, Titel, Description, Canonical (?lang=en) und og:*.
+ * nginx liefert sie für /audiokonverter/?lang=en aus, damit Crawler ohne
+ * JavaScript schon im HTML Englisch sehen. Laufzeit-i18n bleibt unverändert.
+ */
+function localizedIndexHtml(): Plugin {
+  return {
+    name: 'localized-index-html',
+    apply: 'build',
+    enforce: 'post',
+    generateBundle(_options, bundle) {
+      const index = bundle['index.html']
+      if (!index || index.type !== 'asset') {
+        this.error('localized-index-html: index.html fehlt im Bundle')
+      }
+      const html =
+        typeof index.source === 'string' ? index.source : new TextDecoder().decode(index.source)
+      this.emitFile({
+        type: 'asset',
+        fileName: 'index.en.html',
+        source: localizeHtml(html, 'en', PAGE_META.en, SITE_URL),
+      })
+    },
+  }
+}
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production'
@@ -55,6 +84,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       vue(),
       ffmpegCore(),
+      localizedIndexHtml(),
       VitePWA({
         registerType: 'autoUpdate',
         workbox: {

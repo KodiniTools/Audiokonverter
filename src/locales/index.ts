@@ -2,22 +2,9 @@ import { createI18n } from 'vue-i18n'
 import de from './de'
 import en from './en'
 import { applyLocaleHead, resolveInitialLocale, type Locale } from '../utils/localeSeo'
+import { PAGE_META, SITE_URL } from '../config/pageMeta'
 
-export const SITE_URL = 'https://kodinitools.com/audiokonverter/'
-
-/** Titel und Beschreibung je Sprache (Deutsch steht zusätzlich statisch in index.html). */
-export const PAGE_META = {
-  de: {
-    title: 'MP3 in WAV umwandeln – Audio Konverter online | KodiniTools',
-    description:
-      'MP3 in WAV umwandeln und umgekehrt, kostenlos online. Audioformat ändern zwischen MP3, WAV, FLAC, OGG, AAC, M4A und OPUS. Ohne Registrierung.',
-  },
-  en: {
-    title: 'Convert MP3 to WAV – Online Audio Converter | KodiniTools',
-    description:
-      'Convert MP3 to WAV and back for free online. Change audio format between MP3, WAV, FLAC, OGG, AAC, M4A and OPUS. No sign-up required.',
-  },
-} as const
+export { PAGE_META, SITE_URL }
 
 function readStoredLocale(): string | null {
   try {
