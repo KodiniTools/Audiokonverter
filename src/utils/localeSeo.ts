@@ -1,39 +1,17 @@
-// Sprachfassungen als eigene URLs: Deutsch ohne Parameter, Englisch mit ?lang=en.
-// Canonical und hreflang zeigen darauf; beim Start hat ?lang Vorrang vor der
+// Schreibt die Sprachfassung (siehe localeUrls.ts) zur Laufzeit in den Head.
+// Canonical und hreflang zeigen auf die Sprach-URLs; beim Start hat ?lang Vorrang vor der
 // gespeicherten Sprache, damit Googlebot (ohne Speicher) unter ?lang=en Englisch sieht.
 
-export type Locale = 'de' | 'en'
+import { localeUrls, ogLocales, type Locale, type LocaleMeta } from './localeUrls'
 
-export interface LocaleMeta {
-  title: string
-  description: string
-}
-
-export const isLocale = (value: unknown): value is Locale => value === 'de' || value === 'en'
-
-/** Startsprache: ?lang=de|en, dann gespeicherte Wahl, sonst Deutsch. */
-export function resolveInitialLocale(search: string, stored: string | null | undefined): Locale {
-  const fromUrl = new URLSearchParams(search).get('lang')
-  if (isLocale(fromUrl)) return fromUrl
-  return isLocale(stored) ? stored : 'de'
-}
-
-/** Absolute URL einer Seite in der gewünschten Sprache. */
-export function localizedUrl(baseUrl: string, locale: Locale): string {
-  return locale === 'en' ? `${baseUrl}?lang=en` : baseUrl
-}
-
-/** Canonical und hreflang-Ziele (de, en, x-default = de) für eine Seite. */
-export function localeUrls(baseUrl: string, locale: Locale) {
-  return {
-    canonical: localizedUrl(baseUrl, locale),
-    alternates: [
-      { hreflang: 'de', href: localizedUrl(baseUrl, 'de') },
-      { hreflang: 'en', href: localizedUrl(baseUrl, 'en') },
-      { hreflang: 'x-default', href: localizedUrl(baseUrl, 'de') },
-    ],
-  }
-}
+export {
+  isLocale,
+  localeUrls,
+  localizedUrl,
+  resolveInitialLocale,
+  type Locale,
+  type LocaleMeta,
+} from './localeUrls'
 
 function upsert(
   doc: Document,
@@ -72,12 +50,11 @@ export function applyLocaleHead(
     })
   }
   doc.head.querySelector('meta[property="og:url"]')?.setAttribute('content', canonical)
-  doc.head
-    .querySelector('meta[property="og:locale"]')
-    ?.setAttribute('content', locale === 'de' ? 'de_DE' : 'en_US')
+  const og = ogLocales(locale)
+  doc.head.querySelector('meta[property="og:locale"]')?.setAttribute('content', og.locale)
   doc.head
     .querySelector('meta[property="og:locale:alternate"]')
-    ?.setAttribute('content', locale === 'de' ? 'en_US' : 'de_DE')
+    ?.setAttribute('content', og.alternate)
   if (!meta) return
   doc.title = meta.title
   upsert(doc, 'meta[name="description"]', 'meta', {
