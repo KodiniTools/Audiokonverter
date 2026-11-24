@@ -87,10 +87,12 @@ describe('Namespace und Einbindung', () => {
   it('lädt Tokens vor main.css und beide vor den Komponenten in src/main.ts', () => {
     const tokensIndex = mainTs.indexOf("import './design-system/tokens-v2.css'")
     const stylesIndex = mainTs.indexOf("import './assets/styles/main.css'")
-    const appIndex = mainTs.indexOf("import App from './App.vue'")
+    const layoutIndex = mainTs.indexOf("import './assets/styles/audio-layout.css'")
+    const appIndex = mainTs.indexOf("import('./App.vue')")
     expect(tokensIndex).toBeGreaterThanOrEqual(0)
     expect(stylesIndex).toBeGreaterThan(tokensIndex)
-    expect(appIndex).toBeGreaterThan(stylesIndex)
+    expect(layoutIndex).toBeGreaterThan(stylesIndex)
+    expect(appIndex).toBeGreaterThan(layoutIndex)
   })
 })
 

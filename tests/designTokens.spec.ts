@@ -208,10 +208,9 @@ describe('Partial-Angleichung aus dem Collage Maker', () => {
     )
   })
 
-  it('markiert alle eigenen Blöcke außerhalb von #app als .app-surface', () => {
-    const ownBlocks = indexHtml.match(/<(?:nav|section) class="[^"]*"/g) ?? []
-    expect(ownBlocks.length).toBe(4)
-    expect(ownBlocks.filter((tag) => !tag.includes('app-surface'))).toEqual([])
+  it('nimmt die Landingpage und die Werkzeughülle von den Partial-Regeln aus', () => {
+    expect(indexHtml).toMatch(/<main class="audio-landing app-surface" id="audio-landing">/)
+    expect(indexHtml).toMatch(/<div class="audio-tool-shell app-surface" id="audio-tool-shell">/)
   })
 })
 

@@ -1,0 +1,112 @@
+/* Stage 1: landing page and the shell around the existing converter. */
+.audio-landing {
+  --audio-glow: rgb(35 134 171 / 20%);
+  --audio-hero-subtitle: #69d7e9;
+  --audio-cta: #8f6320;
+  --audio-cta-hover: #7d561c;
+
+  background: radial-gradient(ellipse at 67% 0, var(--audio-glow), transparent 68%)
+    top center / 100% 42rem no-repeat var(--ds-surface-0);
+}
+
+:root[data-theme='light'] .audio-landing {
+  --audio-glow: rgb(74 159 197 / 16%);
+  --audio-hero-subtitle: #086a80;
+}
+
+.audio-tool-shell,
+:root[data-audio-page='app'] .audio-landing {
+  display: none;
+}
+
+:root[data-audio-page='app'] .audio-tool-shell {
+  display: block;
+}
+
+.audio-landing__hero {
+  padding-block: clamp(2.75rem, 7vw, 6rem) clamp(2rem, 5vw, 4rem);
+}
+
+.audio-landing__hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: clamp(1.5rem, 5vw, 4rem);
+}
+
+.audio-landing__hero h1 {
+  font-size: clamp(2.25rem, 5.25vw, 4.5rem);
+  font-weight: var(--ds-weight-regular);
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+.audio-landing__subtitle {
+  margin-block: var(--ds-space-3);
+  font-size: var(--ds-text-xl);
+  color: var(--audio-hero-subtitle);
+}
+
+.audio-landing__description {
+  margin-bottom: var(--ds-space-6);
+  color: var(--ds-text-2);
+}
+
+.audio-landing__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--ds-control-lg);
+  padding: var(--ds-space-2) var(--ds-space-5);
+  border-radius: var(--ds-radius-md);
+  background: var(--audio-cta);
+  color: #fff;
+}
+
+.audio-landing__cta:hover {
+  background: var(--audio-cta-hover);
+  color: #fff;
+}
+
+.audio-landing__cta:focus-visible,
+.audio-tool-shell__navigation a:focus-visible {
+  outline: none;
+  box-shadow: var(--ds-focus-ring);
+}
+
+.audio-landing__media {
+  margin: 0;
+  overflow: hidden;
+  border: var(--ds-border-width) solid var(--ds-border-strong);
+  border-radius: var(--ds-radius-lg);
+  box-shadow: var(--ds-shadow-overlay);
+}
+
+.audio-landing__media img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.audio-landing .feature-card,
+.audio-landing .tool-card,
+.audio-landing .faq-item {
+  background: linear-gradient(150deg, var(--ds-surface-1), var(--ds-surface-0));
+}
+
+.audio-tool-shell__navigation {
+  padding-block-start: var(--ds-space-4);
+}
+
+.audio-tool-shell__navigation a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--ds-control-md);
+}
+
+@media (max-width: 760px) {
+  .audio-landing__hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

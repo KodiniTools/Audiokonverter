@@ -1,19 +1,23 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-// Design-Tokens v2 (--ds-*, gemeinsam mit Collage Maker, Playlist Generator und MP3 Konverter),
-// danach die globalen Styles, die sie nutzen
 import './design-system/tokens-v2.css'
 import './assets/styles/main.css'
-import App from './App.vue'
+import './assets/styles/audio-layout.css'
 import i18n, { setLocale } from './locales/index.ts'
+import { useThemeStore } from './stores/themeStore'
 
-const app = createApp(App)
 const pinia = createPinia()
 
-app.use(pinia)
-app.use(i18n)
-
-app.mount('#app')
+if (document.documentElement.dataset.audioPage === 'app') {
+  void import('./App.vue').then(({ default: App }) => {
+    const app = createApp(App)
+    app.use(pinia)
+    app.use(i18n)
+    app.mount('#app')
+  })
+} else {
+  useThemeStore(pinia)
+}
 
 window.addEventListener('locale-changed', (e) => {
   const locale = (e as CustomEvent<{ locale?: string }>).detail?.locale
