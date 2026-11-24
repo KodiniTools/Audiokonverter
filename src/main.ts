@@ -5,6 +5,7 @@ import './assets/styles/main.css'
 import './assets/styles/audio-layout.css'
 import './assets/styles/audio-header.css'
 import './assets/styles/audio-controls.css'
+import './assets/styles/audio-workspace.css'
 import i18n, { setLocale } from './locales/index.ts'
 import { useThemeStore } from './stores/themeStore'
 

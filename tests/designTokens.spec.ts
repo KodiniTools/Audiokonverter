@@ -55,12 +55,17 @@ const audioControlsCss = stripComments(
   readFileSync(join(SRC, 'assets/styles/audio-controls.css'), 'utf8')
 )
 
+const audioWorkspaceCss = stripComments(
+  readFileSync(join(SRC, 'assets/styles/audio-workspace.css'), 'utf8')
+)
+
 /** Alle zu prüfenden Stylesheets: main.css, audio-layout.css, audio-header.css und jede Komponente. */
 const sheets = [
   { file: 'assets/styles/main.css', css: mainCssNoComments },
   { file: 'assets/styles/audio-layout.css', css: audioLayoutCss },
   { file: 'assets/styles/audio-header.css', css: audioHeaderCss },
   { file: 'assets/styles/audio-controls.css', css: audioControlsCss },
+  { file: 'assets/styles/audio-workspace.css', css: audioWorkspaceCss },
   ...vueStyles.map(({ file, css }) => ({ file, css })),
 ]
 
@@ -109,7 +114,8 @@ describe('Stylesheets auf Tokens v2', () => {
       ({ file }) =>
         file !== 'assets/styles/audio-layout.css' &&
         file !== 'assets/styles/audio-header.css' &&
-        file !== 'assets/styles/audio-controls.css'
+        file !== 'assets/styles/audio-controls.css' &&
+        file !== 'assets/styles/audio-workspace.css'
     )
     const hits = outsideLanding.flatMap(({ file, css }) =>
       [...css.matchAll(/gradient\(|backdrop-filter|filter:\s*blur|color-mix\(|text-shadow/g)].map(
@@ -161,6 +167,25 @@ describe('Stylesheets auf Tokens v2', () => {
   it('markiert die Dropzone beim Ziehen sichtbar (Akzentfläche, durchgezogener Rahmen)', () => {
     expect(audioControlsCss.replace(/\s+/g, ' ')).toMatch(
       /\.drop-area\.drag-over \{ background: var\(--ds-accent-soft\); border-style: solid; border-color: var\(--ds-accent\);/
+    )
+  })
+
+  it('erlaubt in audio-workspace.css nur die Flächenverläufe von Liste, Karten und Player', () => {
+    const flatWorkspace = audioWorkspaceCss.replace(/\s+/g, ' ')
+    const gradients = [
+      ...flatWorkspace.matchAll(/(?:radial|linear)-gradient\((?:[^()]|\([^()]*\))*\)/g),
+    ].map((m) => m[0])
+    expect([...new Set(gradients)].sort()).toEqual([
+      'linear-gradient(120deg, var(--ds-surface-1), var(--ds-surface-0))',
+      'linear-gradient(145deg, var(--ds-surface-1), var(--ds-surface-0))',
+    ])
+    expect(gradients.length).toBe(3)
+    expect(audioWorkspaceCss).not.toMatch(/backdrop-filter|filter:\s*blur|color-mix\(|text-shadow/)
+  })
+
+  it('zeigt den Lautstärkeregler des Players auch auf kleinen Bildschirmen', () => {
+    expect(audioWorkspaceCss.replace(/\s+/g, ' ')).toMatch(
+      /@media \(max-width: 768px\) \{.*\.sticky-player \.sp-volume \{ display: flex;/
     )
   })
 

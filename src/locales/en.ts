@@ -88,6 +88,7 @@ const en = {
   },
   status: {
     processing: 'Processing...',
+    converting: 'Processing...',
     completed: 'Done',
     error: 'Error',
     ready: 'Ready',

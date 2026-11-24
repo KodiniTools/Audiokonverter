@@ -86,6 +86,7 @@ const de = {
   },
   status: {
     processing: 'Läuft...',
+    converting: 'Läuft...',
     completed: 'Fertig',
     error: 'Fehler',
     ready: 'Bereit',

@@ -92,6 +92,8 @@ describe('Namespace und Einbindung', () => {
     expect(headerIndex).toBeGreaterThan(layoutIndex)
     const controlsIndex = mainTs.indexOf("import './assets/styles/audio-controls.css'")
     expect(controlsIndex).toBeGreaterThan(headerIndex)
+    const workspaceIndex = mainTs.indexOf("import './assets/styles/audio-workspace.css'")
+    expect(workspaceIndex).toBeGreaterThan(controlsIndex)
     const appIndex = mainTs.indexOf("import('./App.vue')")
     expect(tokensIndex).toBeGreaterThanOrEqual(0)
     expect(stylesIndex).toBeGreaterThan(tokensIndex)
