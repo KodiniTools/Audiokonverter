@@ -1,18 +1,5 @@
-/* Stage 1: landing page and the shell around the existing converter. */
-.audio-landing {
-  --audio-glow: rgb(35 134 171 / 20%);
-  --audio-hero-subtitle: #69d7e9;
-  --audio-cta: #8f6320;
-  --audio-cta-hover: #7d561c;
-
-  background: radial-gradient(ellipse at 67% 0, var(--audio-glow), transparent 68%)
-    top center / 100% 42rem no-repeat var(--ds-surface-0);
-}
-
-:root[data-theme='light'] .audio-landing {
-  --audio-glow: rgb(74 159 197 / 16%);
-  --audio-hero-subtitle: #086a80;
-}
+/* Etappe 1: Landingpage und Hülle um den bestehenden Konverter.
+   Nur Design-Tokens v2 (--ds-*), geprüft in tests/designTokens.spec.ts. */
 
 .audio-tool-shell,
 :root[data-audio-page='app'] .audio-landing {
@@ -24,28 +11,28 @@
 }
 
 .audio-landing__hero {
-  padding-block: clamp(2.75rem, 7vw, 6rem) clamp(2rem, 5vw, 4rem);
+  padding-block: var(--ds-space-16) var(--ds-space-12);
 }
 
 .audio-landing__hero-grid {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
   align-items: center;
-  gap: clamp(1.5rem, 5vw, 4rem);
+  gap: var(--ds-space-16);
 }
 
 .audio-landing__hero h1 {
-  font-size: clamp(2.25rem, 5.25vw, 4.5rem);
+  font-size: var(--ds-text-3xl);
   font-weight: var(--ds-weight-regular);
-  letter-spacing: -0.045em;
-  line-height: 1.05;
+  letter-spacing: var(--ds-tracking-tight);
+  line-height: var(--ds-leading-tight);
   overflow-wrap: anywhere;
 }
 
 .audio-landing__subtitle {
   margin-block: var(--ds-space-3);
   font-size: var(--ds-text-xl);
-  color: var(--audio-hero-subtitle);
+  color: var(--ds-link);
 }
 
 .audio-landing__description {
@@ -60,13 +47,15 @@
   min-height: var(--ds-control-lg);
   padding: var(--ds-space-2) var(--ds-space-5);
   border-radius: var(--ds-radius-md);
-  background: var(--audio-cta);
-  color: #fff;
+  background: var(--ds-accent);
+  color: var(--ds-on-accent);
+  font-weight: var(--ds-weight-medium);
+  transition: background-color var(--ds-duration) var(--ds-ease);
 }
 
 .audio-landing__cta:hover {
-  background: var(--audio-cta-hover);
-  color: #fff;
+  background: var(--ds-accent-hover);
+  color: var(--ds-on-accent);
 }
 
 .audio-landing__cta:focus-visible,
@@ -89,12 +78,6 @@
   height: auto;
 }
 
-.audio-landing .feature-card,
-.audio-landing .tool-card,
-.audio-landing .faq-item {
-  background: linear-gradient(150deg, var(--ds-surface-1), var(--ds-surface-0));
-}
-
 .audio-tool-shell__navigation {
   padding-block-start: var(--ds-space-4);
 }
@@ -106,7 +89,12 @@
 }
 
 @media (max-width: 760px) {
+  .audio-landing__hero {
+    padding-block: var(--ds-space-10) var(--ds-space-8);
+  }
+
   .audio-landing__hero-grid {
     grid-template-columns: minmax(0, 1fr);
+    gap: var(--ds-space-6);
   }
 }

@@ -43,9 +43,14 @@ const vueStyles = vueFiles.map((file) => {
   return { file: relative(SRC, file), source, css: stripComments(css) }
 })
 
-/** Alle zu prüfenden Stylesheets: main.css und jede Komponente. */
+const audioLayoutCss = stripComments(
+  readFileSync(join(SRC, 'assets/styles/audio-layout.css'), 'utf8')
+)
+
+/** Alle zu prüfenden Stylesheets: main.css, audio-layout.css und jede Komponente. */
 const sheets = [
   { file: 'assets/styles/main.css', css: mainCssNoComments },
+  { file: 'assets/styles/audio-layout.css', css: audioLayoutCss },
   ...vueStyles.map(({ file, css }) => ({ file, css })),
 ]
 
