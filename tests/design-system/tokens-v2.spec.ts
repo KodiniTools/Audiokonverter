@@ -88,6 +88,8 @@ describe('Namespace und Einbindung', () => {
     const tokensIndex = mainTs.indexOf("import './design-system/tokens-v2.css'")
     const stylesIndex = mainTs.indexOf("import './assets/styles/main.css'")
     const layoutIndex = mainTs.indexOf("import './assets/styles/audio-layout.css'")
+    const headerIndex = mainTs.indexOf("import './assets/styles/audio-header.css'")
+    expect(headerIndex).toBeGreaterThan(layoutIndex)
     const appIndex = mainTs.indexOf("import('./App.vue')")
     expect(tokensIndex).toBeGreaterThanOrEqual(0)
     expect(stylesIndex).toBeGreaterThan(tokensIndex)

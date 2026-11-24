@@ -42,98 +42,6 @@
   padding: 0 clamp(var(--ds-space-3), 3vw, var(--ds-space-6));
 }
 
-/* === Kopfleiste (HeroNav) === */
-.audio-landing .anchor-nav {
-  position: sticky;
-  top: var(--nav-height, 60px);
-  z-index: var(--ds-z-topbar);
-  background: var(--ds-surface-1);
-  border-bottom: var(--ds-border-width) solid var(--ds-border-strong);
-}
-
-.audio-landing .anchor-nav__inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--ds-space-4);
-  height: var(--ds-topbar-height);
-  max-width: calc(var(--ds-container) - var(--ds-space-10));
-  margin: 0 auto;
-  padding: 0 clamp(var(--ds-space-3), 3vw, var(--ds-space-6));
-}
-
-.audio-landing .anchor-nav__brand {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--ds-space-2);
-  flex-shrink: 0;
-  font-size: var(--ds-text-lg);
-  letter-spacing: var(--ds-tracking-tight);
-  color: var(--ds-text);
-  text-decoration: none;
-}
-
-.audio-landing .anchor-nav__brand:hover {
-  color: var(--ds-text);
-}
-
-.audio-landing .anchor-nav__brand-icon {
-  width: var(--ds-icon-sm);
-  height: var(--ds-icon-sm);
-  color: var(--ds-accent);
-}
-
-.audio-landing .anchor-nav__list {
-  display: flex;
-  align-items: center;
-  gap: var(--ds-space-1);
-  min-width: 0;
-  padding: var(--ds-space-1);
-  list-style: none;
-}
-
-.audio-landing .anchor-nav__link {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--ds-control-md);
-  padding: var(--ds-space-2) var(--ds-space-3);
-  border: var(--ds-border-width) solid transparent;
-  border-radius: var(--ds-radius-md);
-  font-size: var(--ds-text-md);
-  white-space: nowrap;
-  color: var(--ds-text-2);
-  text-decoration: none;
-  transition:
-    color var(--ds-duration) var(--ds-ease),
-    background-color var(--ds-duration) var(--ds-ease);
-}
-
-.audio-landing .anchor-nav__link:hover {
-  color: var(--ds-text);
-  background: var(--ds-surface-2);
-}
-
-.audio-landing .anchor-nav__link.active {
-  color: var(--ds-text);
-  background: var(--ds-accent-soft);
-  border-color: var(--ds-accent);
-}
-
-/* Der Audio Normalizer nutzt im hellen Theme das dunkle Gold als Akzent */
-:root[data-theme='light'] .audio-landing .anchor-nav__brand-icon {
-  color: var(--ds-button-bg);
-}
-
-:root[data-theme='light'] .audio-landing .anchor-nav__link.active {
-  border-color: var(--ds-button-bg);
-}
-
-.audio-landing .anchor-nav__brand:focus-visible,
-.audio-landing .anchor-nav__link:focus-visible {
-  outline: none;
-  box-shadow: var(--ds-focus-ring);
-}
-
 /* === Hero === */
 .audio-landing__hero {
   /* 32–96 px oben, 32–64 px unten */
@@ -190,8 +98,7 @@
   color: var(--ds-on-button);
 }
 
-.audio-landing__cta:focus-visible,
-.audio-tool-shell__navigation a:focus-visible {
+.audio-landing__cta:focus-visible {
   outline: none;
   box-shadow: var(--ds-focus-ring);
 }
@@ -393,38 +300,8 @@
   color: var(--ds-text-2);
 }
 
-/* === Werkzeug-Hülle === */
-.audio-tool-shell__navigation {
-  padding-block-start: var(--ds-space-4);
-}
-
-.audio-tool-shell__navigation a {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--ds-control-md);
-}
-
 /* === Responsive (Breakpoints wie im Audio Normalizer) === */
 @media (max-width: 768px) {
-  .audio-landing .anchor-nav__inner {
-    gap: var(--ds-space-3);
-    padding: 0 var(--ds-space-4);
-  }
-
-  .audio-landing .anchor-nav__list {
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .audio-landing .anchor-nav__list::-webkit-scrollbar {
-    display: none;
-  }
-
-  .audio-landing .anchor-nav__link {
-    padding: var(--ds-space-2);
-    font-size: var(--ds-text-sm);
-  }
-
   .audio-landing .landing-section-title {
     margin-bottom: var(--ds-space-6);
     font-size: var(--ds-text-xl);
@@ -443,18 +320,6 @@
 @media (max-width: 760px) {
   .audio-landing .audio-landing__hero-grid {
     grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-@media (max-width: 600px) {
-  /* Markenname nur visuell ausblenden, der Link bleibt für Screenreader benannt */
-  .audio-landing .anchor-nav__brand-text {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
   }
 }
 
