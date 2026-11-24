@@ -1,6 +1,14 @@
-/* Etappe 1: Landingpage und Hülle um den bestehenden Konverter.
-   Nur Design-Tokens v2 (--ds-*), geprüft in tests/designTokens.spec.ts. */
+/* ==========================================================================
+   Landingpage und Hülle um den Konverter
+   --------------------------------------------------------------------------
+   Vorlage: Landingpage des Audio Normalizers (KodiniTools/Audio-Normalizer,
+   src/views/LandingPage.vue, HeroNav.vue, kodini-layout-stage1.css und
+   kodini-header-stage2.css). Maße und Farben sind 1:1 übernommen und nur aus
+   --ds-*-Tokens gebildet; Ausnahmen (Lichtschein-Verläufe, Hero-Titel) sind in
+   tests/designTokens.spec.ts ausdrücklich zugelassen.
+   ========================================================================== */
 
+/* === Umschalten Landingpage / Werkzeug === */
 .audio-tool-shell,
 :root[data-audio-page='app'] .audio-landing {
   display: none;
@@ -10,33 +18,156 @@
   display: block;
 }
 
-.audio-landing__hero {
-  padding-block: var(--ds-space-16) var(--ds-space-12);
+/* === Seite: Fläche 0 mit zwei Lichtscheinen oben (blau links, cyan rechts) === */
+.audio-landing {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  font-size: var(--ds-text-md);
+  line-height: var(--ds-leading);
+  color: var(--ds-text);
+  background-color: var(--ds-surface-0);
+  background-image:
+    radial-gradient(ellipse at 85% 0%, var(--ds-glow-cyan), transparent 68%),
+    radial-gradient(ellipse at 12% 0%, var(--ds-glow-blue), transparent 62%);
+  background-repeat: no-repeat;
+  /* 42rem = 672 px */
+  background-size: 100% calc(var(--ds-space-16) * 10 + var(--ds-space-8));
 }
 
-.audio-landing__hero-grid {
+/* Inhaltsbreite 1160 px, Rand 12–24 px */
+.audio-landing .container {
+  max-width: calc(var(--ds-container) - var(--ds-space-10));
+  margin: 0 auto;
+  padding: 0 clamp(var(--ds-space-3), 3vw, var(--ds-space-6));
+}
+
+/* === Kopfleiste (HeroNav) === */
+.audio-landing .anchor-nav {
+  position: sticky;
+  top: var(--nav-height, 60px);
+  z-index: var(--ds-z-topbar);
+  background: var(--ds-surface-1);
+  border-bottom: var(--ds-border-width) solid var(--ds-border-strong);
+}
+
+.audio-landing .anchor-nav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-space-4);
+  height: var(--ds-topbar-height);
+  max-width: calc(var(--ds-container) - var(--ds-space-10));
+  margin: 0 auto;
+  padding: 0 clamp(var(--ds-space-3), 3vw, var(--ds-space-6));
+}
+
+.audio-landing .anchor-nav__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-2);
+  flex-shrink: 0;
+  font-size: var(--ds-text-lg);
+  letter-spacing: var(--ds-tracking-tight);
+  color: var(--ds-text);
+  text-decoration: none;
+}
+
+.audio-landing .anchor-nav__brand:hover {
+  color: var(--ds-text);
+}
+
+.audio-landing .anchor-nav__brand-icon {
+  width: var(--ds-icon-sm);
+  height: var(--ds-icon-sm);
+  color: var(--ds-accent);
+}
+
+.audio-landing .anchor-nav__list {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-1);
+  min-width: 0;
+  padding: var(--ds-space-1);
+  list-style: none;
+}
+
+.audio-landing .anchor-nav__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--ds-control-md);
+  padding: var(--ds-space-2) var(--ds-space-3);
+  border: var(--ds-border-width) solid transparent;
+  border-radius: var(--ds-radius-md);
+  font-size: var(--ds-text-md);
+  white-space: nowrap;
+  color: var(--ds-text-2);
+  text-decoration: none;
+  transition:
+    color var(--ds-duration) var(--ds-ease),
+    background-color var(--ds-duration) var(--ds-ease);
+}
+
+.audio-landing .anchor-nav__link:hover {
+  color: var(--ds-text);
+  background: var(--ds-surface-2);
+}
+
+.audio-landing .anchor-nav__link.active {
+  color: var(--ds-text);
+  background: var(--ds-accent-soft);
+  border-color: var(--ds-accent);
+}
+
+/* Der Audio Normalizer nutzt im hellen Theme das dunkle Gold als Akzent */
+:root[data-theme='light'] .audio-landing .anchor-nav__brand-icon {
+  color: var(--ds-button-bg);
+}
+
+:root[data-theme='light'] .audio-landing .anchor-nav__link.active {
+  border-color: var(--ds-button-bg);
+}
+
+.audio-landing .anchor-nav__brand:focus-visible,
+.audio-landing .anchor-nav__link:focus-visible {
+  outline: none;
+  box-shadow: var(--ds-focus-ring);
+}
+
+/* === Hero === */
+.audio-landing__hero {
+  /* 32–96 px oben, 32–64 px unten */
+  padding-block: clamp(var(--ds-space-8), 7vw, calc(var(--ds-space-16) + var(--ds-space-8)))
+    clamp(var(--ds-space-8), 5vw, var(--ds-space-16));
+}
+
+.audio-landing .audio-landing__hero-grid {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
   align-items: center;
-  gap: var(--ds-space-16);
+  gap: clamp(var(--ds-space-6), 5vw, var(--ds-space-16));
 }
 
-.audio-landing__hero h1 {
-  font-size: var(--ds-text-3xl);
+/* Titel 36–72 px wie im Audio Normalizer */
+.audio-landing .audio-landing__hero h1 {
+  margin-bottom: var(--ds-space-3);
+  font-size: clamp(calc(var(--ds-text-2xl) * 1.5), 5.25vw, calc(var(--ds-text-2xl) * 3));
   font-weight: var(--ds-weight-regular);
-  letter-spacing: var(--ds-tracking-tight);
-  line-height: var(--ds-leading-tight);
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+  color: var(--ds-text);
   overflow-wrap: anywhere;
 }
 
 .audio-landing__subtitle {
-  margin-block: var(--ds-space-3);
-  font-size: var(--ds-text-xl);
-  color: var(--ds-link);
+  margin-bottom: var(--ds-space-3);
+  font-size: var(--ds-text-lg);
+  color: var(--ds-heading-accent);
 }
 
 .audio-landing__description {
   margin-bottom: var(--ds-space-6);
+  font-size: var(--ds-text-md);
   color: var(--ds-text-2);
 }
 
@@ -44,12 +175,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: var(--ds-control-lg);
-  padding: var(--ds-space-2) var(--ds-space-5);
+  height: var(--ds-control-lg);
+  padding: 0 var(--ds-space-5);
   border-radius: var(--ds-radius-md);
   background: var(--ds-button-bg);
   color: var(--ds-on-button);
-  font-weight: var(--ds-weight-regular);
+  font-size: var(--ds-text-lg);
+  text-decoration: none;
   transition: background-color var(--ds-duration) var(--ds-ease);
 }
 
@@ -67,6 +199,7 @@
 .audio-landing__media {
   margin: 0;
   overflow: hidden;
+  background: var(--ds-surface-2);
   border: var(--ds-border-width) solid var(--ds-border-strong);
   border-radius: var(--ds-radius-lg);
   box-shadow: var(--ds-shadow-overlay);
@@ -76,8 +209,191 @@
   display: block;
   width: 100%;
   height: auto;
+  aspect-ratio: 16 / 9;
 }
 
+/* === Abschnitte: Features und FAQ als Band auf Fläche 1, Tools auf der Seite === */
+.audio-landing .full-width-section {
+  /* 32–64 px */
+  padding-block: clamp(var(--ds-space-8), 5vw, var(--ds-space-16));
+}
+
+.audio-landing .full-width-section--band {
+  background: var(--ds-surface-1);
+  border-top: var(--ds-border-width) solid var(--ds-border);
+  border-bottom: var(--ds-border-width) solid var(--ds-border);
+  scroll-margin-top: calc(var(--nav-height, 60px) + var(--ds-topbar-height));
+}
+
+.audio-landing .landing-section-title {
+  margin-bottom: var(--ds-space-8);
+  font-size: var(--ds-text-2xl);
+  font-weight: var(--ds-weight-regular);
+  line-height: var(--ds-leading-tight);
+  letter-spacing: var(--ds-tracking-tight);
+  text-align: center;
+  color: var(--ds-text);
+}
+
+/* === Karten (Features, Tools) === */
+.audio-landing :is(.features-grid, .tools-grid) {
+  display: grid;
+  /* min(100 %, 17rem = 272 px) */
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, calc(var(--ds-space-16) * 4 + var(--ds-space-4))), 1fr)
+  );
+  gap: var(--ds-gap);
+}
+
+.audio-landing :is(.feature-card, .tool-card) {
+  display: block;
+  padding: var(--ds-space-5);
+  background: linear-gradient(150deg, var(--ds-surface-1), var(--ds-surface-0));
+  border: var(--ds-border-width) solid var(--ds-border);
+  border-radius: var(--ds-radius-lg);
+  color: var(--ds-text);
+  text-decoration: none;
+  transition: border-color var(--ds-duration) var(--ds-ease);
+}
+
+.audio-landing :is(.feature-card, .tool-card):hover {
+  border-color: var(--ds-border-strong);
+  color: var(--ds-text);
+}
+
+.audio-landing .feature-card-icon-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ds-control-lg);
+  height: var(--ds-control-lg);
+  margin-bottom: var(--ds-space-3);
+  border-radius: var(--ds-radius-md);
+  background: var(--ds-surface-2);
+}
+
+.audio-landing .feature-card-icon {
+  width: var(--ds-icon-md);
+  height: var(--ds-icon-md);
+  color: var(--ds-text-2);
+}
+
+.audio-landing :is(.feature-card-title, .tool-card-title) {
+  margin-bottom: var(--ds-space-2);
+  font-size: var(--ds-text-lg);
+  font-weight: var(--ds-weight-regular);
+  line-height: var(--ds-leading-tight);
+  color: var(--ds-text);
+}
+
+.audio-landing :is(.feature-card-desc, .tool-card-desc) {
+  margin: 0;
+  font-size: var(--ds-text-md);
+  color: var(--ds-text-2);
+}
+
+.audio-landing .tool-card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-1);
+  margin-top: var(--ds-space-3);
+  font-size: var(--ds-text-md);
+  color: var(--ds-link);
+  transition: color var(--ds-duration) var(--ds-ease);
+}
+
+.audio-landing .tool-card:hover .tool-card-link {
+  color: var(--ds-accent);
+}
+
+.audio-landing .tool-card-link svg {
+  width: var(--ds-icon-sm);
+  height: var(--ds-icon-sm);
+}
+
+/* === FAQ === */
+.audio-landing .faq-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-3);
+  max-width: calc(var(--ds-space-16) * 11 + var(--ds-space-4)); /* 720 px */
+  margin: 0 auto;
+}
+
+.audio-landing .faq-item {
+  overflow: hidden;
+  background: linear-gradient(150deg, var(--ds-surface-1), var(--ds-surface-0));
+  border: var(--ds-border-width) solid var(--ds-border);
+  border-radius: var(--ds-radius-md);
+  transition: border-color var(--ds-duration) var(--ds-ease);
+}
+
+.audio-landing .faq-item:hover,
+.audio-landing .faq-item.active {
+  border-color: var(--ds-border-strong);
+}
+
+.audio-landing .faq-question {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--ds-space-4);
+  width: 100%;
+  min-height: var(--ds-row-height);
+  padding: var(--ds-space-3) var(--ds-space-5);
+  background: none;
+  border: 0;
+  font: inherit;
+  font-size: var(--ds-text-lg);
+  text-align: left;
+  color: var(--ds-text);
+  cursor: pointer;
+  transition: background-color var(--ds-duration) var(--ds-ease);
+}
+
+.audio-landing .faq-question:hover {
+  background: var(--ds-surface-2);
+}
+
+.audio-landing .faq-question:focus-visible {
+  outline: none;
+  box-shadow: var(--ds-focus-ring);
+}
+
+/* Plus / Minus wie im Audio Normalizer */
+.audio-landing .faq-toggle {
+  flex-shrink: 0;
+  font-size: var(--ds-text-xl);
+  color: var(--ds-text-2);
+}
+
+.audio-landing .faq-toggle::before {
+  content: '+';
+}
+
+.audio-landing .faq-item.active .faq-toggle::before {
+  content: '\2212';
+}
+
+.audio-landing .faq-answer {
+  display: none;
+  padding: 0 var(--ds-space-5) var(--ds-space-4);
+  font-size: var(--ds-text-md);
+  color: var(--ds-text-2);
+}
+
+.audio-landing .faq-item.active .faq-answer {
+  display: block;
+}
+
+.audio-landing .faq-answer p {
+  margin: 0;
+  font-size: var(--ds-text-md);
+  color: var(--ds-text-2);
+}
+
+/* === Werkzeug-Hülle === */
 .audio-tool-shell__navigation {
   padding-block-start: var(--ds-space-4);
 }
@@ -88,13 +404,76 @@
   min-height: var(--ds-control-md);
 }
 
-@media (max-width: 760px) {
-  .audio-landing__hero {
-    padding-block: var(--ds-space-10) var(--ds-space-8);
+/* === Responsive (Breakpoints wie im Audio Normalizer) === */
+@media (max-width: 768px) {
+  .audio-landing .anchor-nav__inner {
+    gap: var(--ds-space-3);
+    padding: 0 var(--ds-space-4);
   }
 
-  .audio-landing__hero-grid {
+  .audio-landing .anchor-nav__list {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .audio-landing .anchor-nav__list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .audio-landing .anchor-nav__link {
+    padding: var(--ds-space-2);
+    font-size: var(--ds-text-sm);
+  }
+
+  .audio-landing .landing-section-title {
+    margin-bottom: var(--ds-space-6);
+    font-size: var(--ds-text-xl);
+  }
+
+  .audio-landing .faq-question {
+    padding: var(--ds-space-3) var(--ds-space-4);
+    font-size: var(--ds-text-md);
+  }
+
+  .audio-landing .faq-answer {
+    padding: 0 var(--ds-space-4) var(--ds-space-3);
+  }
+}
+
+@media (max-width: 760px) {
+  .audio-landing .audio-landing__hero-grid {
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--ds-space-6);
+  }
+}
+
+@media (max-width: 600px) {
+  /* Markenname nur visuell ausblenden, der Link bleibt für Screenreader benannt */
+  .audio-landing .anchor-nav__brand-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .audio-landing__subtitle {
+    font-size: var(--ds-text-md);
+  }
+
+  .audio-landing__media {
+    border-radius: var(--ds-radius-md);
+  }
+
+  .audio-landing__cta {
+    width: 100%;
+    max-width: calc(var(--ds-space-16) * 5); /* 320 px */
+    height: var(--ds-row-height);
+  }
+
+  .audio-landing :is(.feature-card, .tool-card) {
+    padding: var(--ds-space-4);
   }
 }
