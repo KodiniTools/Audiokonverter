@@ -576,15 +576,15 @@ body
 }
 
 /* Die Angleichung oben macht alle Hintergründe transparent und alle Texte einfarbig.
-   Sprach-Umschalter und Theme-Umschalter sind Buttons und tragen deshalb wie alle
-   Buttons dunkles Gold mit weißer Beschriftung. Die aktive Sprache bleibt durch die
-   dunklere Fläche, eine weiße Innenlinie und Unterstreichung erkennbar.
+   Der Theme-Umschalter und die aktive Sprache tragen wie alle Buttons dunkles Gold
+   mit weißer Beschriftung. Die inaktive Sprache bleibt ohne Fläche, damit die
+   gewählte Sprache eindeutig erkennbar ist.
    Gleicher Präfix, eine Klasse mehr, damit diese Regeln gewinnen. */
 body
   > :not(#app):not(script):not(.app-surface):not(.cookie-banner):not(.cookie-consent):not(
     [class*='cookie']
   ):not([id*='cookie'])
-  [data-lang].global-nav-lang-btn,
+  [data-lang].global-nav-lang-btn.active,
 body
   > :not(#app):not(script):not(.app-surface):not(.cookie-banner):not(.cookie-consent):not(
     [class*='cookie']
@@ -598,7 +598,7 @@ body
   > :not(#app):not(script):not(.app-surface):not(.cookie-banner):not(.cookie-consent):not(
     [class*='cookie']
   ):not([id*='cookie'])
-  [data-lang].global-nav-lang-btn
+  [data-lang].global-nav-lang-btn.active
   *,
 body
   > :not(#app):not(script):not(.app-surface):not(.cookie-banner):not(.cookie-consent):not(
@@ -613,25 +613,21 @@ body
   > :not(#app):not(script):not(.app-surface):not(.cookie-banner):not(.cookie-consent):not(
     [class*='cookie']
   ):not([id*='cookie'])
-  [data-lang].global-nav-lang-btn:hover,
-body
-  > :not(#app):not(script):not(.app-surface):not(.cookie-banner):not(.cookie-consent):not(
-    [class*='cookie']
-  ):not([id*='cookie'])
-  .global-nav-theme-toggle:hover {
-  background-color: var(--ds-button-bg-hover) !important;
+  [data-lang].global-nav-lang-btn:not(.active):hover {
+  text-decoration: underline;
 }
 
 body
   > :not(#app):not(script):not(.app-surface):not(.cookie-banner):not(.cookie-consent):not(
     [class*='cookie']
   ):not([id*='cookie'])
-  [data-lang].global-nav-lang-btn.active {
+  [data-lang].global-nav-lang-btn.active:hover,
+body
+  > :not(#app):not(script):not(.app-surface):not(.cookie-banner):not(.cookie-consent):not(
+    [class*='cookie']
+  ):not([id*='cookie'])
+  .global-nav-theme-toggle:hover {
   background-color: var(--ds-button-bg-hover) !important;
-  color: var(--ds-on-button) !important;
-  outline: var(--ds-border-width) solid var(--ds-on-button);
-  outline-offset: calc(var(--ds-space-1) * -1);
-  text-decoration: underline;
 }
 
 /* ==========================================================================

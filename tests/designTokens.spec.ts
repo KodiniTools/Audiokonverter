@@ -332,16 +332,22 @@ describe('Partial-Angleichung aus dem Collage Maker', () => {
     )
   })
 
-  it('färbt Sprach- und Theme-Umschalter wie alle Buttons', () => {
+  it('färbt Theme-Umschalter und aktive Sprache wie alle Buttons', () => {
     expect(flat).toMatch(
-      /\[data-lang\]\.global-nav-lang-btn, [^{]*\.global-nav-theme-toggle \{\s*background-color: var\(--ds-button-bg\) !important;\s*color: var\(--ds-on-button\) !important;/
+      /\[data-lang\]\.global-nav-lang-btn\.active, [^{]*\.global-nav-theme-toggle \{\s*background-color: var\(--ds-button-bg\) !important;\s*color: var\(--ds-on-button\) !important;/
     )
   })
 
-  it('hebt die aktive Sprache mit dunklerer Fläche, Innenlinie und Unterstreichung hervor', () => {
+  it('lässt die inaktive Sprache ohne Goldfläche', () => {
+    expect(flat).not.toMatch(/\[data-lang\]\.global-nav-lang-btn(?:,| \{)/)
     expect(flat).toMatch(
-      /\.global-nav-lang-btn\.active \{\s*background-color: var\(--ds-button-bg-hover\) !important;\s*color: var\(--ds-on-button\) !important;\s*outline: [^;]+;\s*outline-offset: [^;]+;\s*text-decoration: underline;/
+      /\.global-nav-lang-btn:not\(\.active\):hover \{\s*text-decoration: underline;/
     )
+  })
+
+  it('legt die globale Navigation über die Audio-Konverter-Navigation', () => {
+    expect(audioHeaderCss).toMatch(/z-index: calc\(var\(--ds-z-topbar\) \+ 1\);/)
+    expect(audioHeaderCss).toMatch(/\.anchor-nav \{[^}]*z-index: var\(--ds-z-topbar\);/)
   })
 
   it('hält den Cookie-Banner über Navigation und Dropdowns', () => {
