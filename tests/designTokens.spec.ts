@@ -94,8 +94,29 @@ describe('Stylesheets auf Tokens v2', () => {
     expect(findAll(/(--[\w-]+)\s*:/, (name) => !EXTERNAL_VARIABLES.has(name))).toEqual([])
   })
 
-  it('nutzen keine Verläufe, keine Unschärfe und kein color-mix', () => {
-    expect(findAll(/gradient\(|backdrop-filter|filter:\s*blur|color-mix\(|text-shadow/)).toEqual([])
+  it('nutzen keine Verläufe, keine Unschärfe und kein color-mix (außer der Landing-Vorlage)', () => {
+    const outsideLanding = sheets.filter(({ file }) => file !== 'assets/styles/audio-layout.css')
+    const hits = outsideLanding.flatMap(({ file, css }) =>
+      [...css.matchAll(/gradient\(|backdrop-filter|filter:\s*blur|color-mix\(|text-shadow/g)].map(
+        (m) => `${file}: ${m[0]}`
+      )
+    )
+    expect(hits).toEqual([])
+  })
+
+  it('erlaubt in audio-layout.css nur die Verläufe der Audio-Normalizer-Landingpage', () => {
+    const gradients = [
+      ...audioLayoutCss.matchAll(
+        /(?:radial|linear)-gradient\([^;]*?\)(?=,\s*(?:radial|linear)|;)/g
+      ),
+    ].map((m) => m[0].replace(/\s+/g, ' '))
+    expect(gradients.length).toBe(4)
+    expect([...new Set(gradients)].sort()).toEqual([
+      'linear-gradient(150deg, var(--ds-surface-1), var(--ds-surface-0))',
+      'radial-gradient(ellipse at 12% 0%, var(--ds-glow-blue), transparent 62%)',
+      'radial-gradient(ellipse at 85% 0%, var(--ds-glow-cyan), transparent 68%)',
+    ])
+    expect(audioLayoutCss).not.toMatch(/backdrop-filter|filter:\s*blur|color-mix\(|text-shadow/)
   })
 
   it('setzen Schatten nur als Overlay-Schatten oder Fokus-Ring', () => {
@@ -123,7 +144,10 @@ describe('Stylesheets auf Tokens v2', () => {
     expect(
       findAll(
         /font-size:\s*([^;]+);/,
-        (value) => !/^var\(--ds-text-(?:xs|sm|md|lg|xl|2xl|3xl)\)$/.test(value)
+        (value) =>
+          !/^var\(--ds-text-(?:xs|sm|md|lg|xl|2xl|3xl)\)$/.test(value) &&
+          // Einzige Ausnahme: Hero-Titel 36–72 px wie im Audio Normalizer, aus --ds-text-2xl abgeleitet
+          value !== 'clamp(calc(var(--ds-text-2xl) * 1.5), 5.25vw, calc(var(--ds-text-2xl) * 3))'
       )
     ).toEqual([])
   })

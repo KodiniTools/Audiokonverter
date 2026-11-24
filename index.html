@@ -109,42 +109,27 @@
 
 <main class="audio-landing app-surface" id="audio-landing">
 <!-- =============================================================
-     ANCHOR NAVIGATION — Interne Seitennavigation
-     App | Features | FAQ | Blog (extern)
+     ANCHOR NAVIGATION — Kopfleiste wie im Audio Normalizer
+     Marke links, Start | Features | App | Blog | FAQ rechts
      ============================================================= -->
 <nav class="anchor-nav app-surface" id="anchor-nav" aria-label="Seitennavigation">
-  <div class="container">
+  <div class="anchor-nav__inner">
+    <a href="#start" class="anchor-nav__brand">
+      <svg class="anchor-nav__brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      <span class="anchor-nav__brand-text" data-i18n="landing.hero.title">Audio Konverter</span>
+    </a>
     <ul class="anchor-nav__list">
-      <li>
-        <a href="%BASE_URL%app" class="anchor-nav__link" data-audio-route>
-          <svg class="anchor-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-          <span data-i18n="nav.anchorApp">App</span>
-        </a>
-      </li>
-      <li>
-        <a href="#features" class="anchor-nav__link" data-anchor="features">
-          <svg class="anchor-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
-          <span data-i18n="nav.anchorFeatures">Features</span>
-        </a>
-      </li>
-      <li>
-        <a href="#faq" class="anchor-nav__link" data-anchor="faq">
-          <svg class="anchor-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
-          <span data-i18n="nav.anchorFaq">FAQ</span>
-        </a>
-      </li>
-      <li>
-        <!-- Externer Link (kein data-anchor): wird von initAnchorNav ignoriert -->
-        <a href="https://kodinitools.com/blog/audiodatei-format-aendern/" class="anchor-nav__link">
-          <svg class="anchor-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-          <span data-i18n="nav.anchorBlog">Blog</span>
-        </a>
-      </li>
+      <li><a href="#start" class="anchor-nav__link" data-anchor="start" data-i18n="nav.anchorStart">Start</a></li>
+      <li><a href="#features" class="anchor-nav__link" data-anchor="features" data-i18n="nav.anchorFeatures">Features</a></li>
+      <li><a href="%BASE_URL%app" class="anchor-nav__link" data-audio-route data-i18n="nav.anchorApp">App</a></li>
+      <!-- Externer Link (kein data-anchor): wird von initAnchorNav ignoriert -->
+      <li><a href="https://kodinitools.com/blog/audiodatei-format-aendern/" class="anchor-nav__link" data-i18n="nav.anchorBlog">Blog</a></li>
+      <li><a href="#faq" class="anchor-nav__link" data-anchor="faq" data-i18n="nav.anchorFaq">FAQ</a></li>
     </ul>
   </div>
 </nav>
 
-<section class="audio-landing__hero" aria-labelledby="audio-landing-title">
+<section class="audio-landing__hero" id="start" aria-labelledby="audio-landing-title">
   <div class="container audio-landing__hero-grid">
     <div>
       <h1 id="audio-landing-title" data-i18n="landing.hero.title">Audio Konverter</h1>
@@ -170,32 +155,31 @@
      FEATURES SECTION — Statisches HTML
      .app-surface: von der Partial-Angleichung in main.css ausgenommen
      ============================================================= -->
-<section class="full-width-section app-surface" id="features" data-reveal>
+<section class="full-width-section full-width-section--band app-surface" id="features" data-reveal>
   <div class="container">
     <h2 class="landing-section-title" data-i18n="landing.features.title">Features</h2>
-    <div class="section-divider"></div>
     <div class="features-grid">
 
       <div class="feature-card glass-card">
-        <svg class="feature-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        <span class="feature-card-icon-box"><svg class="feature-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
         <h3 class="feature-card-title" data-i18n="landing.features.formats.title">9 Audio-Formate</h3>
         <p class="feature-card-desc" data-i18n="landing.features.formats.desc">MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF und WMA werden vollständig unterstützt.</p>
       </div>
 
       <div class="feature-card glass-card">
-        <svg class="feature-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21v-7"/><path d="M4 10V3"/><path d="M12 21v-9"/><path d="M12 8V3"/><path d="M20 21v-5"/><path d="M20 12V3"/><path d="M2 14h4"/><path d="M10 8h4"/><path d="M18 16h4"/></svg>
+        <span class="feature-card-icon-box"><svg class="feature-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21v-7"/><path d="M4 10V3"/><path d="M12 21v-9"/><path d="M12 8V3"/><path d="M20 21v-5"/><path d="M20 12V3"/><path d="M2 14h4"/><path d="M10 8h4"/><path d="M18 16h4"/></svg></span>
         <h3 class="feature-card-title" data-i18n="landing.features.quality.title">Qualitätskontrolle</h3>
         <p class="feature-card-desc" data-i18n="landing.features.quality.desc">Von niedrig bis Maximum – wähle die Qualität, die zu dir passt.</p>
       </div>
 
       <div class="feature-card glass-card">
-        <svg class="feature-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
+        <span class="feature-card-icon-box"><svg class="feature-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg></span>
         <h3 class="feature-card-title" data-i18n="landing.features.privacy.title">100% Privatsphäre</h3>
         <p class="feature-card-desc" data-i18n="landing.features.privacy.desc">Dateien werden nach Konvertierung automatisch gelöscht.</p>
       </div>
 
       <div class="feature-card glass-card">
-        <svg class="feature-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></svg>
+        <span class="feature-card-icon-box"><svg class="feature-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></svg></span>
         <h3 class="feature-card-title" data-i18n="landing.features.batch.title">Batch-Konvertierung</h3>
         <p class="feature-card-desc" data-i18n="landing.features.batch.desc">Mehrere Dateien gleichzeitig konvertieren – schnell und effizient.</p>
       </div>
@@ -207,10 +191,9 @@
 <!-- =============================================================
      TOOL CARDS — Statisches HTML
      ============================================================= -->
-<section class="full-width-section full-width-section--alt app-surface" data-reveal>
+<section class="full-width-section app-surface" data-reveal>
   <div class="container">
     <h2 class="landing-section-title" data-i18n="tools.title">Unsere Audio-Tools</h2>
-    <div class="section-divider"></div>
 
     <div class="tools-grid">
       <a href="https://kodinitools.com/visualizer/"
@@ -273,16 +256,15 @@
 <!-- =============================================================
      FAQ SECTION — Statisches HTML + Vanilla JS Accordion
      ============================================================= -->
-<section class="full-width-section app-surface" id="faq" data-reveal>
+<section class="full-width-section full-width-section--band app-surface" id="faq" data-reveal>
   <div class="container">
     <h2 class="landing-section-title" data-i18n="faq.title">FAQ</h2>
-    <div class="section-divider"></div>
 
     <div class="faq-grid" id="faq-grid">
       <div class="faq-item" data-faq="formats">
         <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-answer-formats">
           <span data-i18n="faq.questions.formats.q">Welche Formate werden unterstützt?</span>
-          <svg class="faq-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          <span class="faq-toggle" aria-hidden="true"></span>
         </button>
         <div class="faq-answer" id="faq-answer-formats">
           <p data-i18n="faq.questions.formats.a">MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF und WMA werden unterstützt. Zusätzlich lassen sich WebM-Dateien (z. B. Aufnahmen aus dem Browser) als Quelle in jedes dieser Formate umwandeln.</p>
@@ -292,7 +274,7 @@
       <div class="faq-item" data-faq="quality">
         <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-answer-quality">
           <span data-i18n="faq.questions.quality.q">Was bedeutet die Qualitätseinstellung?</span>
-          <svg class="faq-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          <span class="faq-toggle" aria-hidden="true"></span>
         </button>
         <div class="faq-answer" id="faq-answer-quality">
           <p data-i18n="faq.questions.quality.a">Höhere Qualität = besserer Sound, größere Datei.</p>
@@ -302,7 +284,7 @@
       <div class="faq-item" data-faq="privacy">
         <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-answer-privacy">
           <span data-i18n="faq.questions.privacy.q">Sind meine Dateien sicher?</span>
-          <svg class="faq-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          <span class="faq-toggle" aria-hidden="true"></span>
         </button>
         <div class="faq-answer" id="faq-answer-privacy">
           <p data-i18n="faq.questions.privacy.a">Ja! Dateien werden nach Konvertierung automatisch gelöscht.</p>
@@ -312,7 +294,7 @@
       <div class="faq-item" data-faq="batch">
         <button type="button" class="faq-question" aria-expanded="false" aria-controls="faq-answer-batch">
           <span data-i18n="faq.questions.batch.q">Kann ich mehrere Dateien gleichzeitig konvertieren?</span>
-          <svg class="faq-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          <span class="faq-toggle" aria-hidden="true"></span>
         </button>
         <div class="faq-answer" id="faq-answer-batch">
           <p data-i18n="faq.questions.batch.a">Klar! Einfach mehrere Dateien hochladen.</p>
@@ -354,7 +336,7 @@
      --------------------------------------------------------------- */
   var translations = {
     de: {
-      nav: { backToLanding: "← Zur Landingpage", anchorApp: 'App', anchorFeatures: 'Features', anchorFaq: 'FAQ', anchorBlog: 'Blog' },
+      nav: { backToLanding: "← Zur Landingpage", anchorStart: 'Start', anchorApp: 'App', anchorFeatures: 'Features', anchorFaq: 'FAQ', anchorBlog: 'Blog' },
       landing: {
         hero: {
           title: "Audio Konverter",
@@ -391,7 +373,7 @@
       }
     },
     en: {
-      nav: { backToLanding: "← Back to the landing page", anchorApp: 'App', anchorFeatures: 'Features', anchorFaq: 'FAQ', anchorBlog: 'Blog' },
+      nav: { backToLanding: "← Back to the landing page", anchorStart: 'Home', anchorApp: 'App', anchorFeatures: 'Features', anchorFaq: 'FAQ', anchorBlog: 'Blog' },
       landing: {
         hero: {
           title: "Audio Converter",
@@ -561,6 +543,11 @@
           activeId = sections[i].id;
           break;
         }
+      }
+
+      // Am Seitenende den letzten Abschnitt markieren (FAQ erreicht den Offset sonst nie)
+      if (window.innerHeight + scrollY >= document.documentElement.scrollHeight - 2) {
+        activeId = sections[sections.length - 1].id;
       }
 
       links.forEach(function(link) {
