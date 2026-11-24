@@ -1,0 +1,226 @@
+/* ==========================================================================
+   Etappe 2: gemeinsame Audio-Konverter-Navigation und Kopfbereich
+   --------------------------------------------------------------------------
+   Die Navigation (#anchor-nav) steht auf Landingpage und Werkzeugseite.
+   Aussehen wie die Kopfleiste des Audio Normalizers (HeroNav.vue,
+   kodini-header-stage2.css); die aktive Seite (aria-current="page") ist
+   dunkelgold mit weißer Schrift. Nur --ds-*-Tokens.
+   ========================================================================== */
+
+/* === Globale SSI-Navigation: eigene Fläche und Trennlinie === */
+body
+  > .global-nav:not(#app):not(.app-surface):not(.cookie-banner):not(.cookie-consent):not(
+    [class*='cookie']
+  ) {
+  background-color: var(--ds-surface-0) !important;
+  border-bottom: var(--ds-border-width) solid var(--ds-border);
+}
+
+body > .global-nav .global-nav-links.is-open {
+  box-shadow: var(--ds-shadow-overlay);
+}
+
+.global-nav :is(a, button):focus-visible {
+  outline: 2px solid var(--ds-accent);
+  outline-offset: 2px;
+}
+
+/* === Audio-Konverter-Navigation === */
+.anchor-nav {
+  position: sticky;
+  top: var(--nav-height, 60px);
+  z-index: var(--ds-z-topbar);
+  font-size: var(--ds-text-md);
+  line-height: var(--ds-leading);
+  background: var(--ds-surface-1);
+  border-bottom: var(--ds-border-width) solid var(--ds-border-strong);
+}
+
+/* Lokaler Vite-Test ohne SSI-Navigation: nichts darüber, also ganz oben kleben */
+:root:has(#audio-theme-fallback:not([hidden])) .anchor-nav {
+  top: 0;
+}
+
+.anchor-nav.scrolled {
+  box-shadow: var(--ds-shadow-overlay);
+}
+
+/* Inhaltsbreite 1160 px wie die Landingpage */
+.anchor-nav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-space-4);
+  min-height: var(--ds-topbar-height);
+  max-width: calc(var(--ds-container) - var(--ds-space-10));
+  margin: 0 auto;
+  padding: 0 clamp(var(--ds-space-3), 3vw, var(--ds-space-6));
+}
+
+.anchor-nav__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-2);
+  flex-shrink: 0;
+  font-size: var(--ds-text-lg);
+  letter-spacing: var(--ds-tracking-tight);
+  color: var(--ds-text);
+  text-decoration: none;
+}
+
+.anchor-nav__brand:hover {
+  color: var(--ds-text);
+}
+
+.anchor-nav__brand-icon {
+  width: var(--ds-icon-sm);
+  height: var(--ds-icon-sm);
+  color: var(--ds-accent);
+}
+
+.anchor-nav__list {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-1);
+  min-width: 0;
+  padding: var(--ds-space-1);
+  list-style: none;
+}
+
+.anchor-nav__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--ds-control-md);
+  padding: var(--ds-space-2) var(--ds-space-3);
+  border: var(--ds-border-width) solid transparent;
+  border-radius: var(--ds-radius-md);
+  font-size: var(--ds-text-md);
+  white-space: nowrap;
+  color: var(--ds-text-2);
+  text-decoration: none;
+  transition:
+    color var(--ds-duration) var(--ds-ease),
+    background-color var(--ds-duration) var(--ds-ease);
+}
+
+.anchor-nav__link:hover {
+  color: var(--ds-text);
+  background: var(--ds-surface-2);
+}
+
+/* Scroll-Spy (Features, FAQ): Auswahl-Muster wie im Audio Normalizer */
+.anchor-nav__link.active {
+  color: var(--ds-text);
+  background: var(--ds-accent-soft);
+  border-color: var(--ds-accent);
+}
+
+/* Aktive Seite (Übersicht oder Konverter): dunkles Gold, weiße Schrift */
+.anchor-nav__link[aria-current='page'],
+.anchor-nav__link[aria-current='page']:hover {
+  color: var(--ds-on-button);
+  background: var(--ds-button-bg);
+  border-color: var(--ds-button-bg);
+}
+
+.anchor-nav__link[aria-current='page']:hover {
+  background: var(--ds-button-bg-hover);
+  border-color: var(--ds-button-bg-hover);
+}
+
+/* Der Audio Normalizer nutzt im hellen Theme das dunkle Gold als Akzent */
+:root[data-theme='light'] .anchor-nav__brand-icon {
+  color: var(--ds-button-bg);
+}
+
+:root[data-theme='light'] .anchor-nav__link.active {
+  border-color: var(--ds-button-bg);
+}
+
+.anchor-nav__brand:focus-visible,
+.anchor-nav__link:focus-visible,
+.anchor-nav__theme-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ds-focus-ring);
+}
+
+/* Nur auf der Landingpage: Sprunglinks und Blog */
+:root[data-audio-page='app'] .audio-nav__landing-only {
+  display: none;
+}
+
+/* === Lokaler Dunkelmodus-Schalter (nur ohne SSI-Navigation sichtbar) ===
+   Wie alle Buttons dunkelgold mit weißer Beschriftung; eingeschaltet dunkler. */
+.anchor-nav__theme-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-2);
+  min-height: var(--ds-control-md);
+  padding: var(--ds-space-2) var(--ds-space-3);
+  border: var(--ds-border-width) solid var(--ds-button-bg);
+  border-radius: var(--ds-radius-md);
+  background: var(--ds-button-bg);
+  color: var(--ds-on-button);
+  font-size: var(--ds-text-md);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--ds-duration) var(--ds-ease);
+}
+
+.anchor-nav__theme-btn:hover,
+.anchor-nav__theme-btn[aria-pressed='true'] {
+  background: var(--ds-button-bg-hover);
+  border-color: var(--ds-button-bg-hover);
+  color: var(--ds-on-button);
+}
+
+.anchor-nav__theme-icon {
+  width: var(--ds-icon-sm);
+  height: var(--ds-icon-sm);
+}
+
+/* === Kopfbereich der Werkzeugseite: Lichtschein und Titel wie die Landingpage === */
+.audio-tool-shell .hero-section {
+  background-color: var(--ds-surface-0);
+  background-image: radial-gradient(ellipse at 50% 0%, var(--ds-glow-cyan), transparent 72%);
+}
+
+/* Titel 32–56 px */
+.audio-tool-shell .header-title .main-title {
+  font-size: clamp(var(--ds-text-3xl), 4.7vw, calc(var(--ds-text-3xl) * 1.75));
+  font-weight: var(--ds-weight-regular);
+  letter-spacing: -0.045em;
+}
+
+.audio-tool-shell .header-title .main-subtitle {
+  color: var(--ds-heading-accent);
+}
+
+/* === Schmale Geräte: Navigation darf umbrechen und scrollt mit === */
+@media (max-width: 760px) {
+  .anchor-nav {
+    position: relative;
+    top: auto;
+  }
+
+  .anchor-nav__inner {
+    flex-wrap: wrap;
+    gap: 0 var(--ds-space-3);
+    padding: var(--ds-space-1) var(--ds-space-4);
+  }
+
+  .anchor-nav__list {
+    flex-wrap: wrap;
+    padding-inline: 0;
+  }
+
+  .anchor-nav__link,
+  .anchor-nav__theme-btn {
+    padding-inline: var(--ds-space-2);
+    font-size: var(--ds-text-sm);
+  }
+
+  html {
+    scroll-padding-top: calc(var(--nav-height, 60px) + var(--ds-space-3));
+  }
+}

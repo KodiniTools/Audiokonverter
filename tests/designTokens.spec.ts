@@ -47,10 +47,15 @@ const audioLayoutCss = stripComments(
   readFileSync(join(SRC, 'assets/styles/audio-layout.css'), 'utf8')
 )
 
-/** Alle zu prüfenden Stylesheets: main.css, audio-layout.css und jede Komponente. */
+const audioHeaderCss = stripComments(
+  readFileSync(join(SRC, 'assets/styles/audio-header.css'), 'utf8')
+)
+
+/** Alle zu prüfenden Stylesheets: main.css, audio-layout.css, audio-header.css und jede Komponente. */
 const sheets = [
   { file: 'assets/styles/main.css', css: mainCssNoComments },
   { file: 'assets/styles/audio-layout.css', css: audioLayoutCss },
+  { file: 'assets/styles/audio-header.css', css: audioHeaderCss },
   ...vueStyles.map(({ file, css }) => ({ file, css })),
 ]
 
@@ -95,7 +100,10 @@ describe('Stylesheets auf Tokens v2', () => {
   })
 
   it('nutzen keine Verläufe, keine Unschärfe und kein color-mix (außer der Landing-Vorlage)', () => {
-    const outsideLanding = sheets.filter(({ file }) => file !== 'assets/styles/audio-layout.css')
+    const outsideLanding = sheets.filter(
+      ({ file }) =>
+        file !== 'assets/styles/audio-layout.css' && file !== 'assets/styles/audio-header.css'
+    )
     const hits = outsideLanding.flatMap(({ file, css }) =>
       [...css.matchAll(/gradient\(|backdrop-filter|filter:\s*blur|color-mix\(|text-shadow/g)].map(
         (m) => `${file}: ${m[0]}`
@@ -117,6 +125,16 @@ describe('Stylesheets auf Tokens v2', () => {
       'radial-gradient(ellipse at 85% 0%, var(--ds-glow-cyan), transparent 68%)',
     ])
     expect(audioLayoutCss).not.toMatch(/backdrop-filter|filter:\s*blur|color-mix\(|text-shadow/)
+  })
+
+  it('erlaubt in audio-header.css nur den Lichtschein über dem Werkzeug-Kopfbereich', () => {
+    const gradients = [...audioHeaderCss.matchAll(/(?:radial|linear)-gradient\([^;]*?\);/g)].map(
+      (m) => m[0].replace(/\s+/g, ' ')
+    )
+    expect(gradients).toEqual([
+      'radial-gradient(ellipse at 50% 0%, var(--ds-glow-cyan), transparent 72%);',
+    ])
+    expect(audioHeaderCss).not.toMatch(/backdrop-filter|filter:\s*blur|color-mix\(|text-shadow/)
   })
 
   it('setzen Schatten nur als Overlay-Schatten oder Fokus-Ring', () => {
@@ -147,7 +165,9 @@ describe('Stylesheets auf Tokens v2', () => {
         (value) =>
           !/^var\(--ds-text-(?:xs|sm|md|lg|xl|2xl|3xl)\)$/.test(value) &&
           // Einzige Ausnahme: Hero-Titel 36–72 px wie im Audio Normalizer, aus --ds-text-2xl abgeleitet
-          value !== 'clamp(calc(var(--ds-text-2xl) * 1.5), 5.25vw, calc(var(--ds-text-2xl) * 3))'
+          value !== 'clamp(calc(var(--ds-text-2xl) * 1.5), 5.25vw, calc(var(--ds-text-2xl) * 3))' &&
+          // Titel der Werkzeugseite 32–56 px, aus --ds-text-3xl abgeleitet
+          value !== 'clamp(var(--ds-text-3xl), 4.7vw, calc(var(--ds-text-3xl) * 1.75))'
       )
     ).toEqual([])
   })
@@ -276,6 +296,21 @@ describe('Partial-Angleichung aus dem Collage Maker', () => {
     expect(flat).toMatch(
       /\.cookie-banner,[\s\S]*?z-index: 10000 !important;\s*position: fixed !important;/
     )
+  })
+
+  it('markiert die aktive Seite der Audio-Konverter-Navigation dunkelgold mit weißer Schrift', () => {
+    const flatHeader = audioHeaderCss.replace(/\s+/g, ' ')
+    expect(flatHeader).toMatch(
+      /\.anchor-nav__link\[aria-current='page'\], \.anchor-nav__link\[aria-current='page'\]:hover \{ color: var\(--ds-on-button\); background: var\(--ds-button-bg\);/
+    )
+  })
+
+  it('stellt die Navigation vor die Landingpage, damit sie auch auf /app sichtbar ist', () => {
+    const navIndex = indexHtml.indexOf('<nav class="anchor-nav app-surface" id="anchor-nav"')
+    expect(navIndex).toBeGreaterThan(0)
+    expect(navIndex).toBeLessThan(indexHtml.indexOf('<main class="audio-landing'))
+    expect(indexHtml).toMatch(/data-audio-overview/)
+    expect(indexHtml).toMatch(/data-audio-app/)
   })
 
   it('nimmt die Landingpage und die Werkzeughülle von den Partial-Regeln aus', () => {

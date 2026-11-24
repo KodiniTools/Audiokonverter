@@ -107,29 +107,39 @@
 <!-- ===== SSI: Global Navigation (Theme, Language) ===== -->
 <!--#include virtual="/partials/nav.html" -->
 
-<main class="audio-landing app-surface" id="audio-landing">
 <!-- =============================================================
-     ANCHOR NAVIGATION — Kopfleiste wie im Audio Normalizer
-     Marke links, Start | Features | App | Blog | FAQ rechts
+     AUDIO-KONVERTER-NAVIGATION — gemeinsam für Landingpage und Werkzeug
+     Marke links; Übersicht | Konverter | Features | FAQ | Blog rechts.
+     Die aktive Seite trägt aria-current="page" (dunkles Gold, weiße Schrift).
+     Features/FAQ/Blog nur auf der Landingpage. Der Dunkelmodus-Schalter
+     erscheint nur ohne SSI-Navigation (lokaler Vite-Test), siehe src/main.ts.
      ============================================================= -->
-<nav class="anchor-nav app-surface" id="anchor-nav" aria-label="Seitennavigation">
+<nav class="anchor-nav app-surface" id="anchor-nav" aria-label="Audio-Konverter-Navigation" data-i18n-label="nav.label">
   <div class="anchor-nav__inner">
-    <a href="#start" class="anchor-nav__brand">
+    <a href="%BASE_URL%" class="anchor-nav__brand" data-audio-route>
       <svg class="anchor-nav__brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
       <span class="anchor-nav__brand-text" data-i18n="landing.hero.title">Audio Konverter</span>
     </a>
     <ul class="anchor-nav__list">
-      <li><a href="#start" class="anchor-nav__link" data-anchor="start" data-i18n="nav.anchorStart">Start</a></li>
-      <li><a href="#features" class="anchor-nav__link" data-anchor="features" data-i18n="nav.anchorFeatures">Features</a></li>
-      <li><a href="%BASE_URL%app" class="anchor-nav__link" data-audio-route data-i18n="nav.anchorApp">App</a></li>
+      <li><a href="%BASE_URL%" class="anchor-nav__link" data-audio-route data-audio-overview data-i18n="nav.overview">Übersicht</a></li>
+      <li><a href="%BASE_URL%app" class="anchor-nav__link" data-audio-route data-audio-app data-i18n="nav.anchorApp">Konverter</a></li>
+      <li class="audio-nav__landing-only"><a href="#features" class="anchor-nav__link" data-anchor="features" data-i18n="nav.anchorFeatures">Features</a></li>
+      <li class="audio-nav__landing-only"><a href="#faq" class="anchor-nav__link" data-anchor="faq" data-i18n="nav.anchorFaq">FAQ</a></li>
       <!-- Externer Link (kein data-anchor): wird von initAnchorNav ignoriert -->
-      <li><a href="https://kodinitools.com/blog/audiodatei-format-aendern/" class="anchor-nav__link" data-i18n="nav.anchorBlog">Blog</a></li>
-      <li><a href="#faq" class="anchor-nav__link" data-anchor="faq" data-i18n="nav.anchorFaq">FAQ</a></li>
+      <li class="audio-nav__landing-only"><a href="https://kodinitools.com/blog/audiodatei-format-aendern/" class="anchor-nav__link" data-i18n="nav.anchorBlog">Blog</a></li>
+      <li class="audio-nav__theme" id="audio-theme-fallback" hidden>
+        <button type="button" class="anchor-nav__theme-btn" id="audio-theme-toggle" aria-pressed="false">
+          <svg class="anchor-nav__theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9Z"/></svg>
+          <span data-i18n="nav.darkMode">Dunkelmodus</span>
+        </button>
+      </li>
     </ul>
   </div>
 </nav>
 
-<section class="audio-landing__hero" id="start" aria-labelledby="audio-landing-title">
+<main class="audio-landing app-surface" id="audio-landing">
+
+<section class="audio-landing__hero" aria-labelledby="audio-landing-title">
   <div class="container audio-landing__hero-grid">
     <div>
       <h1 id="audio-landing-title" data-i18n="landing.hero.title">Audio Konverter</h1>
@@ -307,9 +317,6 @@
 </main>
 
 <div class="audio-tool-shell app-surface" id="audio-tool-shell">
-  <div class="container audio-tool-shell__navigation">
-    <a href="%BASE_URL%" data-audio-route data-i18n="nav.backToLanding">← Zur Landingpage</a>
-  </div>
   <div id="app"></div>
 </div>
 <script type="module" src="/src/main.ts"></script>
@@ -336,7 +343,7 @@
      --------------------------------------------------------------- */
   var translations = {
     de: {
-      nav: { backToLanding: "← Zur Landingpage", anchorStart: 'Start', anchorApp: 'App', anchorFeatures: 'Features', anchorFaq: 'FAQ', anchorBlog: 'Blog' },
+      nav: { label: 'Audio-Konverter-Navigation', overview: 'Übersicht', darkMode: 'Dunkelmodus', anchorApp: 'Konverter', anchorFeatures: 'Features', anchorFaq: 'FAQ', anchorBlog: 'Blog' },
       landing: {
         hero: {
           title: "Audio Konverter",
@@ -373,7 +380,7 @@
       }
     },
     en: {
-      nav: { backToLanding: "← Back to the landing page", anchorStart: 'Home', anchorApp: 'App', anchorFeatures: 'Features', anchorFaq: 'FAQ', anchorBlog: 'Blog' },
+      nav: { label: 'Audio converter navigation', overview: 'Overview', darkMode: 'Dark mode', anchorApp: 'Converter', anchorFeatures: 'Features', anchorFaq: 'FAQ', anchorBlog: 'Blog' },
       landing: {
         hero: {
           title: "Audio Converter",
@@ -447,6 +454,11 @@
       if (value !== null) el.setAttribute('alt', value);
     });
 
+    document.querySelectorAll('[data-i18n-label]').forEach(function(el) {
+      var value = getNestedValue(t, el.getAttribute('data-i18n-label'));
+      if (value !== null) el.setAttribute('aria-label', value);
+    });
+
     document.querySelectorAll('[data-audio-route]').forEach(function(link) {
       var target = new URL(link.href);
       target.searchParams.set('lang', locale);
@@ -514,7 +526,13 @@
      --------------------------------------------------------------- */
   function initAnchorNav() {
     var nav = document.getElementById('anchor-nav');
-    var links = document.querySelectorAll('.anchor-nav__link[data-anchor]');
+    if (!nav) return;
+    var isApp = document.documentElement.getAttribute('data-audio-page') === 'app';
+    var currentPage = nav.querySelector(isApp ? '[data-audio-app]' : '[data-audio-overview]');
+    if (currentPage) currentPage.setAttribute('aria-current', 'page');
+    if (isApp) return;
+
+    var links = nav.querySelectorAll('.anchor-nav__link[data-anchor]');
     var sections = [];
 
     links.forEach(function(link) {
@@ -526,36 +544,27 @@
     if (!sections.length) return;
 
     function updateNav() {
-      var scrollY = window.scrollY;
-
-      if (scrollY > 20) {
-        nav.classList.add('scrolled');
-      } else {
-        nav.classList.remove('scrolled');
-      }
-
-      // Welche Sektion ist gerade sichtbar?
-      var activeId = sections[0].id;
-      var offset = 140;
+      nav.classList.toggle('scrolled', window.scrollY > 20);
+      // Abschnitt gilt als aktiv, sobald er unter der Navigation angekommen ist
+      var offset = Math.max(0, nav.getBoundingClientRect().bottom) + 24;
+      var active = null;
 
       for (var i = sections.length - 1; i >= 0; i--) {
         if (sections[i].el.getBoundingClientRect().top <= offset) {
-          activeId = sections[i].id;
+          active = sections[i].link;
           break;
         }
       }
 
       // Am Seitenende den letzten Abschnitt markieren (FAQ erreicht den Offset sonst nie)
-      if (window.innerHeight + scrollY >= document.documentElement.scrollHeight - 2) {
-        activeId = sections[sections.length - 1].id;
+      if (window.scrollY > 0 && window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
+        active = sections[sections.length - 1].link;
       }
 
       links.forEach(function(link) {
-        if (link.getAttribute('data-anchor') === activeId) {
-          link.classList.add('active');
-        } else {
-          link.classList.remove('active');
-        }
+        link.classList.toggle('active', link === active);
+        if (link === active) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
       });
     }
 
@@ -570,6 +579,7 @@
       }
     }, { passive: true });
 
+    window.addEventListener('resize', updateNav, { passive: true });
     updateNav();
   }
 
@@ -591,10 +601,10 @@
 
   document.addEventListener('DOMContentLoaded', function() {
     applyPageTranslations();
+    initAnchorNav();
     if (document.documentElement.getAttribute('data-audio-page') !== 'app') {
       initFaqAccordion();
       initScrollReveal();
-      initAnchorNav();
     }
   });
 
