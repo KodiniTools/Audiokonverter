@@ -87,10 +87,12 @@ describe('Namespace und Einbindung', () => {
   it('lädt Tokens vor main.css und beide vor den Komponenten in src/main.ts', () => {
     const tokensIndex = mainTs.indexOf("import './design-system/tokens-v2.css'")
     const stylesIndex = mainTs.indexOf("import './assets/styles/main.css'")
-    const appIndex = mainTs.indexOf("import App from './App.vue'")
+    const layoutIndex = mainTs.indexOf("import './assets/styles/audio-layout.css'")
+    const appIndex = mainTs.indexOf("import('./App.vue')")
     expect(tokensIndex).toBeGreaterThanOrEqual(0)
     expect(stylesIndex).toBeGreaterThan(tokensIndex)
-    expect(appIndex).toBeGreaterThan(stylesIndex)
+    expect(layoutIndex).toBeGreaterThan(stylesIndex)
+    expect(appIndex).toBeGreaterThan(layoutIndex)
   })
 })
 
@@ -110,6 +112,8 @@ describe('Kontrast (WCAG AA, mindestens 4.5:1)', () => {
     const colors = themeColorsV2(theme)
     expect(contrastRatio(colors.onAccent, colors.accent)).toBeGreaterThanOrEqual(AA)
     expect(contrastRatio(colors.onAccent, colors.accentHover)).toBeGreaterThanOrEqual(AA)
+    expect(contrastRatio(colors.onButton, colors.buttonBg)).toBeGreaterThanOrEqual(AA)
+    expect(contrastRatio(colors.onButton, colors.buttonBgHover)).toBeGreaterThanOrEqual(AA)
   })
 
   it.each(THEMES)('%s: Status- und Linkfarben als Text auf Panel', (theme) => {

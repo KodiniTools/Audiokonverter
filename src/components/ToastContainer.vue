@@ -123,7 +123,7 @@ const { toasts, removeToast } = useToast()
 .toast-title {
   display: block;
   font-size: var(--ds-text-md);
-  font-weight: var(--ds-weight-semibold);
+  font-weight: var(--ds-weight-regular);
 }
 
 .toast-text {

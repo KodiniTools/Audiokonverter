@@ -1,0 +1,100 @@
+/* Etappe 1: Landingpage und Hülle um den bestehenden Konverter.
+   Nur Design-Tokens v2 (--ds-*), geprüft in tests/designTokens.spec.ts. */
+
+.audio-tool-shell,
+:root[data-audio-page='app'] .audio-landing {
+  display: none;
+}
+
+:root[data-audio-page='app'] .audio-tool-shell {
+  display: block;
+}
+
+.audio-landing__hero {
+  padding-block: var(--ds-space-16) var(--ds-space-12);
+}
+
+.audio-landing__hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: var(--ds-space-16);
+}
+
+.audio-landing__hero h1 {
+  font-size: var(--ds-text-3xl);
+  font-weight: var(--ds-weight-regular);
+  letter-spacing: var(--ds-tracking-tight);
+  line-height: var(--ds-leading-tight);
+  overflow-wrap: anywhere;
+}
+
+.audio-landing__subtitle {
+  margin-block: var(--ds-space-3);
+  font-size: var(--ds-text-xl);
+  color: var(--ds-link);
+}
+
+.audio-landing__description {
+  margin-bottom: var(--ds-space-6);
+  color: var(--ds-text-2);
+}
+
+.audio-landing__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--ds-control-lg);
+  padding: var(--ds-space-2) var(--ds-space-5);
+  border-radius: var(--ds-radius-md);
+  background: var(--ds-button-bg);
+  color: var(--ds-on-button);
+  font-weight: var(--ds-weight-regular);
+  transition: background-color var(--ds-duration) var(--ds-ease);
+}
+
+.audio-landing__cta:hover {
+  background: var(--ds-button-bg-hover);
+  color: var(--ds-on-button);
+}
+
+.audio-landing__cta:focus-visible,
+.audio-tool-shell__navigation a:focus-visible {
+  outline: none;
+  box-shadow: var(--ds-focus-ring);
+}
+
+.audio-landing__media {
+  margin: 0;
+  overflow: hidden;
+  border: var(--ds-border-width) solid var(--ds-border-strong);
+  border-radius: var(--ds-radius-lg);
+  box-shadow: var(--ds-shadow-overlay);
+}
+
+.audio-landing__media img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.audio-tool-shell__navigation {
+  padding-block-start: var(--ds-space-4);
+}
+
+.audio-tool-shell__navigation a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--ds-control-md);
+}
+
+@media (max-width: 760px) {
+  .audio-landing__hero {
+    padding-block: var(--ds-space-10) var(--ds-space-8);
+  }
+
+  .audio-landing__hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--ds-space-6);
+  }
+}

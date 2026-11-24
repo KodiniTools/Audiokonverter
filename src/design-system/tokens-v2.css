@@ -33,6 +33,9 @@
   --ds-accent-hover: #e0b06a;
   --ds-accent-soft: rgba(212, 162, 87, 0.14);
   --ds-on-accent: #0a1324;
+  --ds-button-bg: #8f6320;
+  --ds-button-bg-hover: #7d561c;
+  --ds-on-button: #ffffff;
   --ds-link: #6aaef5;
 
   /* Status */
@@ -128,6 +131,9 @@
   --ds-accent-hover: #b8842f;
   --ds-accent-soft: rgba(201, 152, 77, 0.16);
   --ds-on-accent: #14213a;
+  --ds-button-bg: #8f6320;
+  --ds-button-bg-hover: #7d561c;
+  --ds-on-button: #ffffff;
   --ds-link: #0f5aa8;
 
   --ds-success: #177a42;
@@ -156,6 +162,9 @@
   --ds-accent-hover: #b8842f;
   --ds-accent-soft: rgba(201, 152, 77, 0.16);
   --ds-on-accent: #14213a;
+  --ds-button-bg: #8f6320;
+  --ds-button-bg-hover: #7d561c;
+  --ds-on-button: #ffffff;
   --ds-link: #0f5aa8;
 
   --ds-success: #177a42;

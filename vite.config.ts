@@ -91,7 +91,7 @@ export default defineConfig(({ mode }) => {
           cleanupOutdatedCaches: true,
           skipWaiting: true,
           clientsClaim: true,
-          globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+          globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff2}'],
           // Der FFmpeg-Kern (~32 MB) wird nicht vorab gecacht, sondern erst bei
           // Bedarf über die Laufzeitregel unten.
           globIgnores: ['**/ffmpeg/**'],
@@ -115,7 +115,7 @@ export default defineConfig(({ mode }) => {
           background_color: '#f6f5f1',
           display: 'standalone',
           scope: isProduction ? '/audiokonverter/' : '/',
-          start_url: isProduction ? '/audiokonverter/' : '/',
+          start_url: isProduction ? '/audiokonverter/app' : '/app',
           categories: ['utilities', 'music'],
           icons: [
             {

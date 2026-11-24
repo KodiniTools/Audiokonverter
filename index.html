@@ -17,6 +17,26 @@
       document.documentElement.setAttribute('data-theme', 'light')
     }
   </script>
+  <script>
+    // Die beiden URLs teilen sich die HTML-Hülle für SSI und den PWA-Fallback.
+    (function() {
+      var base = new URL('%BASE_URL%', location.origin);
+      var tool = new URL('app', base);
+      var params = new URLSearchParams(location.search);
+      var atLanding = location.pathname === base.pathname ||
+        location.pathname === base.pathname + 'index.html' ||
+        location.pathname === base.pathname + 'index.en.html';
+      var legacyTool = atLanding && (params.has('source') || location.hash === '#converter');
+      if (legacyTool) {
+        tool.search = location.search;
+        tool.hash = location.hash;
+        history.replaceState(history.state, '', tool.href);
+      }
+      if (location.pathname === tool.pathname || location.pathname === tool.pathname + '/') {
+        document.documentElement.setAttribute('data-audio-page', 'app');
+      }
+    })();
+  </script>
   <meta name="description" content="MP3 in WAV umwandeln und umgekehrt, kostenlos online. Audioformat ändern zwischen MP3, WAV, FLAC, OGG, AAC, M4A und OPUS. Ohne Registrierung.">
   <meta name="keywords" content="mp3 in wav umwandeln, audio konverter online, wav in mp3, flac in mp3, ogg in mp3, audioformat ändern, kostenlos">
   <meta name="author" content="KodiniTools">
@@ -64,7 +84,7 @@
       "@type": "ConvertAction",
       "target": {
         "@type": "EntryPoint",
-        "urlTemplate": "https://kodinitools.com/audiokonverter/",
+        "urlTemplate": "https://kodinitools.com/audiokonverter/app",
         "actionPlatform": ["http://schema.org/DesktopWebPlatform", "http://schema.org/MobileWebPlatform"]
       },
       "object": {
@@ -87,6 +107,7 @@
 <!-- ===== SSI: Global Navigation (Theme, Language) ===== -->
 <!--#include virtual="/partials/nav.html" -->
 
+<main class="audio-landing app-surface" id="audio-landing">
 <!-- =============================================================
      ANCHOR NAVIGATION — Interne Seitennavigation
      App | Features | FAQ | Blog (extern)
@@ -95,7 +116,7 @@
   <div class="container">
     <ul class="anchor-nav__list">
       <li>
-        <a href="#converter" class="anchor-nav__link active" data-anchor="converter">
+        <a href="%BASE_URL%app" class="anchor-nav__link" data-audio-route>
           <svg class="anchor-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
           <span data-i18n="nav.anchorApp">App</span>
         </a>
@@ -123,13 +144,27 @@
   </div>
 </nav>
 
-<!-- =============================================================
-     VUE APP (Island) — Hero + Converter
-     Rendered by Vue: HeaderTitle, FileUpload, FileList,
-     ConversionSettings, GlobalActions, StatusDisplay, Toasts
-     ============================================================= -->
-<div id="app"></div>
-<script type="module" src="/src/main.ts"></script>
+<section class="audio-landing__hero" aria-labelledby="audio-landing-title">
+  <div class="container audio-landing__hero-grid">
+    <div>
+      <h1 id="audio-landing-title" data-i18n="landing.hero.title">Audio Konverter</h1>
+      <p class="audio-landing__subtitle" data-i18n="landing.hero.subtitle">Audiodateien in dein Wunschformat umwandeln</p>
+      <p class="audio-landing__description" data-i18n="landing.hero.description">Konvertiere einzelne Dateien oder ganze Stapel in MP3, WAV, FLAC und sechs weitere Formate. Kostenlos und ohne Anmeldung.</p>
+      <a class="audio-landing__cta" href="%BASE_URL%app" data-audio-route data-i18n="landing.hero.cta">Audio konvertieren →</a>
+    </div>
+    <figure class="audio-landing__media">
+      <img
+        src="/audio-konverter-hero.webp"
+        width="1440"
+        height="810"
+        fetchpriority="high"
+        decoding="async"
+        alt="Eine Audiowelle verbindet den WAV-Eingang des Konverters mit MP3 und FLAC."
+        data-i18n-alt="landing.hero.imageAlt"
+      >
+    </figure>
+  </div>
+</section>
 
 <!-- =============================================================
      FEATURES SECTION — Statisches HTML
@@ -287,6 +322,16 @@
   </div>
 </section>
 
+</main>
+
+<div class="audio-tool-shell app-surface" id="audio-tool-shell">
+  <div class="container audio-tool-shell__navigation">
+    <a href="%BASE_URL%" data-audio-route data-i18n="nav.backToLanding">← Zur Landingpage</a>
+  </div>
+  <div id="app"></div>
+</div>
+<script type="module" src="/src/main.ts"></script>
+
 <!-- ===== SSI: Footer & Cookie Banner ===== -->
 <!--#include virtual="/partials/footer.html" -->
 <!--#include virtual="/partials/cookie-banner.html" -->
@@ -309,8 +354,15 @@
      --------------------------------------------------------------- */
   var translations = {
     de: {
-      nav: { anchorApp: 'App', anchorFeatures: 'Features', anchorFaq: 'FAQ', anchorBlog: 'Blog' },
+      nav: { backToLanding: "← Zur Landingpage", anchorApp: 'App', anchorFeatures: 'Features', anchorFaq: 'FAQ', anchorBlog: 'Blog' },
       landing: {
+        hero: {
+          title: "Audio Konverter",
+          subtitle: "Audiodateien in dein Wunschformat umwandeln",
+          description: "Konvertiere einzelne Dateien oder ganze Stapel in MP3, WAV, FLAC und sechs weitere Formate. Kostenlos und ohne Anmeldung.",
+          cta: "Audio konvertieren →",
+          imageAlt: "Eine Audiowelle verbindet den WAV-Eingang des Konverters mit MP3 und FLAC.",
+        },
         features: {
           title: 'Features',
           formats: { title: '9 Audio-Formate', desc: 'MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF und WMA werden vollständig unterstützt.' },
@@ -339,8 +391,15 @@
       }
     },
     en: {
-      nav: { anchorApp: 'App', anchorFeatures: 'Features', anchorFaq: 'FAQ', anchorBlog: 'Blog' },
+      nav: { backToLanding: "← Back to the landing page", anchorApp: 'App', anchorFeatures: 'Features', anchorFaq: 'FAQ', anchorBlog: 'Blog' },
       landing: {
+        hero: {
+          title: "Audio Converter",
+          subtitle: "Convert audio files to the format you need",
+          description: "Convert individual files or batches to MP3, WAV, FLAC, and six more formats. Free and no sign-up required.",
+          cta: "Convert audio →",
+          imageAlt: "An audio waveform connects the converter’s WAV input to MP3 and FLAC.",
+        },
         features: {
           title: 'Features',
           formats: { title: '9 Audio Formats', desc: 'MP3, WAV, FLAC, OGG, AAC, M4A, OPUS, AIFF and WMA are fully supported.' },
@@ -377,7 +436,11 @@
   }
 
   function getLocale() {
-    return localStorage.getItem('locale') || 'de';
+    var locale = document.documentElement.lang;
+    try {
+      locale = localStorage.getItem('locale') || locale;
+    } catch (e) {}
+    return locale === 'en' ? 'en' : 'de';
   }
 
   /* ---------------------------------------------------------------
@@ -395,6 +458,17 @@
       if (value !== null) {
         el.textContent = value;
       }
+    });
+
+    document.querySelectorAll('[data-i18n-alt]').forEach(function(el) {
+      var value = getNestedValue(t, el.getAttribute('data-i18n-alt'));
+      if (value !== null) el.setAttribute('alt', value);
+    });
+
+    document.querySelectorAll('[data-audio-route]').forEach(function(link) {
+      var target = new URL(link.href);
+      target.searchParams.set('lang', locale);
+      link.href = target.href;
     });
 
     document.documentElement.lang = locale;
@@ -530,9 +604,11 @@
 
   document.addEventListener('DOMContentLoaded', function() {
     applyPageTranslations();
-    initFaqAccordion();
-    initScrollReveal();
-    initAnchorNav();
+    if (document.documentElement.getAttribute('data-audio-page') !== 'app') {
+      initFaqAccordion();
+      initScrollReveal();
+      initAnchorNav();
+    }
   });
 
 })();

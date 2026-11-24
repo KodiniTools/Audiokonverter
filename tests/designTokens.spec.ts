@@ -43,9 +43,14 @@ const vueStyles = vueFiles.map((file) => {
   return { file: relative(SRC, file), source, css: stripComments(css) }
 })
 
-/** Alle zu prüfenden Stylesheets: main.css und jede Komponente. */
+const audioLayoutCss = stripComments(
+  readFileSync(join(SRC, 'assets/styles/audio-layout.css'), 'utf8')
+)
+
+/** Alle zu prüfenden Stylesheets: main.css, audio-layout.css und jede Komponente. */
 const sheets = [
   { file: 'assets/styles/main.css', css: mainCssNoComments },
+  { file: 'assets/styles/audio-layout.css', css: audioLayoutCss },
   ...vueStyles.map(({ file, css }) => ({ file, css })),
 ]
 
@@ -146,20 +151,55 @@ describe('Stylesheets auf Tokens v2', () => {
   })
 })
 
-describe('UI-Schrift Supreme (gebündelt wie im Collage Maker)', () => {
-  it.each([
-    [400, 'Regular'],
-    [500, 'Medium'],
-    [700, 'Bold'],
-  ])('deklariert @font-face für Gewicht %i aus src/assets/fonts', (weight, cut) => {
-    const faces = mainCss.match(/@font-face\s*{[^}]*}/g) ?? []
-    const face = faces.find(
-      (f) =>
-        /font-family:\s*'Supreme'/.test(f) && new RegExp(`font-weight:\\s*${weight}\\b`).test(f)
+describe('UI-Schrift: ausschließlich Supreme Regular', () => {
+  const faces = mainCss.match(/@font-face\s*{[^}]*}/g) ?? []
+
+  it('deklariert genau ein @font-face: Supreme 400 aus src/assets/fonts', () => {
+    expect(faces).toHaveLength(1)
+    expect(faces[0]).toMatch(/font-family:\s*'Supreme'/)
+    expect(faces[0]).toMatch(/font-weight:\s*400\b/)
+    expect(faces[0]).toContain("url('../fonts/Supreme-Regular.woff2')")
+    expect(existsSync(join(SRC, 'assets/fonts/Supreme-Regular.woff2'))).toBe(true)
+  })
+
+  it('bündelt keine weiteren Schnitte', () => {
+    expect(readdirSync(join(SRC, 'assets/fonts'))).toEqual(['Supreme-Regular.woff2'])
+  })
+
+  it('setzt in allen Stylesheets nur das Gewicht --ds-weight-regular', () => {
+    expect(
+      findAll(
+        /font-weight:\s*([^;]+);/,
+        (value) => value !== 'var(--ds-weight-regular)' && value !== '400'
+      ) // 400 nur im @font-face
+    ).toEqual([])
+  })
+
+  it('verhindert Kunst-Fettdruck und setzt b/strong/th auf Regular', () => {
+    expect(mainCss).toMatch(/html \{[^}]*font-synthesis: none;/)
+    expect(mainCss).toMatch(/b,\s*strong,\s*th \{\s*font-weight: var\(--ds-weight-regular\);/)
+  })
+})
+
+describe('Buttons: dunkles Gold mit weißer Beschriftung', () => {
+  const flatCss = mainCssNoComments.replace(/\s+/g, ' ')
+
+  it('gibt allen .btn-Varianten und .btn-icon die Button-Fläche', () => {
+    expect(flatCss).toMatch(
+      /\.btn, \.btn-primary, \.btn-secondary, \.btn-ghost, \.btn-danger \{ background: var\(--ds-button-bg\); border-color: var\(--ds-button-bg\); color: var\(--ds-on-button\);/
     )
-    expect(face, `Kein @font-face für Supreme ${weight}`).toBeDefined()
-    expect(face).toContain(`url('../fonts/Supreme-${cut}.woff2')`)
-    expect(existsSync(join(SRC, `assets/fonts/Supreme-${cut}.woff2`))).toBe(true)
+    expect(flatCss).toMatch(
+      /\.btn-icon \{[^}]*background: var\(--ds-button-bg\);[^}]*color: var\(--ds-on-button\);/
+    )
+  })
+
+  it('nutzt für Button-Flächen weder Akzent noch Eingabeflächen', () => {
+    const buttonRules = sheets.flatMap(({ file, css }) =>
+      [...css.matchAll(/([^{}]*(?:\.btn|-btn|__cta)[^{}]*)\{([^}]*)\}/g)]
+        .filter((m) => /background(?:-color)?:\s*var\(--ds-(?:accent|surface)/.test(m[2] ?? ''))
+        .map((m) => `${file}: ${(m[1] ?? '').trim()}`)
+    )
+    expect(buttonRules).toEqual([])
   })
 })
 
@@ -196,9 +236,15 @@ describe('Partial-Angleichung aus dem Collage Maker', () => {
     )
   })
 
-  it('zeigt die aktive Sprache als Primärfläche', () => {
+  it('färbt Sprach- und Theme-Umschalter wie alle Buttons', () => {
     expect(flat).toMatch(
-      /\.global-nav-lang-btn\.active \{\s*background-color: var\(--ds-accent\) !important;\s*color: var\(--ds-on-accent\) !important;/
+      /\[data-lang\]\.global-nav-lang-btn, [^{]*\.global-nav-theme-toggle \{\s*background-color: var\(--ds-button-bg\) !important;\s*color: var\(--ds-on-button\) !important;/
+    )
+  })
+
+  it('hebt die aktive Sprache mit dunklerer Fläche, Innenlinie und Unterstreichung hervor', () => {
+    expect(flat).toMatch(
+      /\.global-nav-lang-btn\.active \{\s*background-color: var\(--ds-button-bg-hover\) !important;\s*color: var\(--ds-on-button\) !important;\s*outline: [^;]+;\s*outline-offset: [^;]+;\s*text-decoration: underline;/
     )
   })
 
@@ -208,10 +254,9 @@ describe('Partial-Angleichung aus dem Collage Maker', () => {
     )
   })
 
-  it('markiert alle eigenen Blöcke außerhalb von #app als .app-surface', () => {
-    const ownBlocks = indexHtml.match(/<(?:nav|section) class="[^"]*"/g) ?? []
-    expect(ownBlocks.length).toBe(4)
-    expect(ownBlocks.filter((tag) => !tag.includes('app-surface'))).toEqual([])
+  it('nimmt die Landingpage und die Werkzeughülle von den Partial-Regeln aus', () => {
+    expect(indexHtml).toMatch(/<main class="audio-landing app-surface" id="audio-landing">/)
+    expect(indexHtml).toMatch(/<div class="audio-tool-shell app-surface" id="audio-tool-shell">/)
   })
 })
 

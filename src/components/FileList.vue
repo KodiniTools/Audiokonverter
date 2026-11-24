@@ -232,7 +232,7 @@ function removeFile(fileId: string): void {
 
 .file-list-title {
   font-size: var(--ds-text-lg);
-  font-weight: var(--ds-weight-semibold);
+  font-weight: var(--ds-weight-regular);
   color: var(--ds-text);
 }
 
@@ -305,10 +305,10 @@ function removeFile(fileId: string): void {
   width: var(--ds-control-sm);
   height: var(--ds-control-sm);
   flex-shrink: 0;
-  background: var(--ds-surface-1);
-  border: var(--ds-border-width) solid var(--ds-border-strong);
+  background: var(--ds-button-bg);
+  border: var(--ds-border-width) solid var(--ds-button-bg);
   border-radius: var(--ds-radius-full);
-  color: var(--ds-text-2);
+  color: var(--ds-on-button);
   transition:
     background-color var(--ds-duration) var(--ds-ease),
     border-color var(--ds-duration) var(--ds-ease),
@@ -316,14 +316,15 @@ function removeFile(fileId: string): void {
 }
 
 .file-item-info:hover .btn-play-indicator {
-  background: var(--ds-surface-3);
-  color: var(--ds-text);
+  background: var(--ds-button-bg-hover);
+  border-color: var(--ds-button-bg-hover);
 }
 
+/* Laufende Datei: dunklere Fläche mit weißem Rand */
 .btn-play-indicator.active {
-  background: var(--ds-accent);
-  border-color: var(--ds-accent);
-  color: var(--ds-on-accent);
+  background: var(--ds-button-bg-hover);
+  border-color: var(--ds-on-button);
+  color: var(--ds-on-button);
 }
 
 .file-details {
@@ -336,7 +337,7 @@ function removeFile(fileId: string): void {
 .file-name {
   overflow: hidden;
   font-size: var(--ds-text-md);
-  font-weight: var(--ds-weight-medium);
+  font-weight: var(--ds-weight-regular);
   color: var(--ds-text);
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -358,7 +359,7 @@ function removeFile(fileId: string): void {
 
 .file-size.converted {
   color: var(--ds-text);
-  font-weight: var(--ds-weight-medium);
+  font-weight: var(--ds-weight-regular);
 }
 
 .file-item-status {
@@ -380,7 +381,7 @@ function removeFile(fileId: string): void {
   border: var(--ds-border-width) solid var(--ds-border);
   border-radius: var(--ds-radius-full);
   font-size: var(--ds-text-xs);
-  font-weight: var(--ds-weight-medium);
+  font-weight: var(--ds-weight-regular);
   color: var(--ds-text-2);
   white-space: nowrap;
 }
@@ -438,15 +439,10 @@ function removeFile(fileId: string): void {
   align-items: center;
   justify-content: center;
   font-size: var(--ds-text-xs);
-  font-weight: var(--ds-weight-semibold);
+  font-weight: var(--ds-weight-regular);
   letter-spacing: var(--ds-tracking-tight);
   color: var(--ds-text);
   font-variant-numeric: tabular-nums;
-}
-
-/* Löschen ist destruktiv: Icon in --ds-danger bei Hover, flache Fläche */
-.btn-remove:hover:not(:disabled) {
-  color: var(--ds-danger);
 }
 
 .file-error {
