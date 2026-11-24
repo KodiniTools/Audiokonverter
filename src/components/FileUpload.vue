@@ -327,7 +327,7 @@ onBeforeUnmount(() => {
 
 .upload-title {
   font-size: var(--ds-text-lg);
-  font-weight: var(--ds-weight-semibold);
+  font-weight: var(--ds-weight-regular);
   color: var(--ds-text);
 }
 
@@ -351,7 +351,7 @@ onBeforeUnmount(() => {
 
 .upload-status {
   font-size: var(--ds-text-sm);
-  font-weight: var(--ds-weight-medium);
+  font-weight: var(--ds-weight-regular);
   color: var(--ds-text);
 }
 

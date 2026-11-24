@@ -139,7 +139,7 @@ function cancelConversion(): void {
 .settings-title {
   margin-bottom: var(--ds-space-4);
   font-size: var(--ds-text-lg);
-  font-weight: var(--ds-weight-semibold);
+  font-weight: var(--ds-weight-regular);
   color: var(--ds-text);
 }
 
@@ -159,12 +159,12 @@ function cancelConversion(): void {
 /* Label über dem Feld: 13 px, 500, Text 2; der Wert steht im Label */
 .setting-label {
   font-size: var(--ds-text-sm);
-  font-weight: var(--ds-weight-medium);
+  font-weight: var(--ds-weight-regular);
   color: var(--ds-text-2);
 }
 
 .setting-label strong {
-  font-weight: var(--ds-weight-semibold);
+  font-weight: var(--ds-weight-regular);
   color: var(--ds-text);
 }
 

@@ -169,7 +169,7 @@ function startNew(): void {
 
 .completion-label {
   font-size: var(--ds-text-md);
-  font-weight: var(--ds-weight-semibold);
+  font-weight: var(--ds-weight-regular);
   color: var(--ds-text);
 }
 
@@ -186,7 +186,7 @@ function startNew(): void {
 .wizard-title {
   margin-bottom: var(--ds-space-3);
   font-size: var(--ds-text-lg);
-  font-weight: var(--ds-weight-semibold);
+  font-weight: var(--ds-weight-regular);
   color: var(--ds-text);
   text-align: center;
 }
@@ -228,7 +228,7 @@ function startNew(): void {
 
 .wizard-card-label {
   font-size: var(--ds-text-md);
-  font-weight: var(--ds-weight-semibold);
+  font-weight: var(--ds-weight-regular);
   color: var(--ds-text);
 }
 

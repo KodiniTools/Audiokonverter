@@ -82,6 +82,24 @@
         "$description": "Text und Icons auf Akzent",
         "$extensions": { "css": "--ds-on-accent" }
       },
+      "buttonBg": {
+        "$type": "color",
+        "$value": "#8f6320",
+        "$description": "Fläche aller Buttons (dunkles Gold, Audiokonverter)",
+        "$extensions": { "css": "--ds-button-bg" }
+      },
+      "buttonBgHover": {
+        "$type": "color",
+        "$value": "#7d561c",
+        "$description": "Hover und aktiver Zustand der Button-Fläche",
+        "$extensions": { "css": "--ds-button-bg-hover" }
+      },
+      "onButton": {
+        "$type": "color",
+        "$value": "#ffffff",
+        "$description": "Beschriftung und Icons auf Buttons",
+        "$extensions": { "css": "--ds-on-button" }
+      },
       "link": {
         "$type": "color",
         "$value": "#6aaef5",
@@ -179,6 +197,24 @@
         "$value": "#14213a",
         "$description": "Text und Icons auf Akzent",
         "$extensions": { "css": "--ds-on-accent" }
+      },
+      "buttonBg": {
+        "$type": "color",
+        "$value": "#8f6320",
+        "$description": "Fläche aller Buttons (dunkles Gold, Audiokonverter)",
+        "$extensions": { "css": "--ds-button-bg" }
+      },
+      "buttonBgHover": {
+        "$type": "color",
+        "$value": "#7d561c",
+        "$description": "Hover und aktiver Zustand der Button-Fläche",
+        "$extensions": { "css": "--ds-button-bg-hover" }
+      },
+      "onButton": {
+        "$type": "color",
+        "$value": "#ffffff",
+        "$description": "Beschriftung und Icons auf Buttons",
+        "$extensions": { "css": "--ds-on-button" }
       },
       "link": {
         "$type": "color",

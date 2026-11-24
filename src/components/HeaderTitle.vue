@@ -23,7 +23,7 @@ const { t } = useI18n()
 /* Hero-H1: 32 px fett, eng gesetzt (mobil 24 px) */
 .main-title {
   font-size: var(--ds-text-3xl);
-  font-weight: var(--ds-weight-bold);
+  font-weight: var(--ds-weight-regular);
   letter-spacing: var(--ds-tracking-tight);
   color: var(--ds-text);
 }

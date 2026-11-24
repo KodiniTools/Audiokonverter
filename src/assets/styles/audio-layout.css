@@ -47,15 +47,15 @@
   min-height: var(--ds-control-lg);
   padding: var(--ds-space-2) var(--ds-space-5);
   border-radius: var(--ds-radius-md);
-  background: var(--ds-accent);
-  color: var(--ds-on-accent);
-  font-weight: var(--ds-weight-medium);
+  background: var(--ds-button-bg);
+  color: var(--ds-on-button);
+  font-weight: var(--ds-weight-regular);
   transition: background-color var(--ds-duration) var(--ds-ease);
 }
 
 .audio-landing__cta:hover {
-  background: var(--ds-accent-hover);
-  color: var(--ds-on-accent);
+  background: var(--ds-button-bg-hover);
+  color: var(--ds-on-button);
 }
 
 .audio-landing__cta:focus-visible,

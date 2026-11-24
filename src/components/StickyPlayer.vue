@@ -150,7 +150,7 @@ onBeforeUnmount(() => {
 .sp-track-name {
   overflow: hidden;
   font-size: var(--ds-text-md);
-  font-weight: var(--ds-weight-medium);
+  font-weight: var(--ds-weight-regular);
   color: var(--ds-text);
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -165,7 +165,7 @@ onBeforeUnmount(() => {
   min-width: 0;
 }
 
-/* Play/Pause: Primäraktion der Leiste, rund */
+/* Play/Pause: rund, dunkelgoldene Button-Fläche wie alle Buttons */
 .sp-play-btn {
   display: flex;
   align-items: center;
@@ -173,16 +173,16 @@ onBeforeUnmount(() => {
   width: var(--ds-control-lg);
   height: var(--ds-control-lg);
   flex-shrink: 0;
-  background: var(--ds-accent);
+  background: var(--ds-button-bg);
   border: 0;
   border-radius: var(--ds-radius-full);
-  color: var(--ds-on-accent);
+  color: var(--ds-on-button);
   cursor: pointer;
   transition: background-color var(--ds-duration) var(--ds-ease);
 }
 
 .sp-play-btn:hover:not(:disabled) {
-  background: var(--ds-accent-hover);
+  background: var(--ds-button-bg-hover);
 }
 
 .sp-play-btn:focus-visible {
