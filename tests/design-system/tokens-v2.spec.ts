@@ -90,6 +90,8 @@ describe('Namespace und Einbindung', () => {
     const layoutIndex = mainTs.indexOf("import './assets/styles/audio-layout.css'")
     const headerIndex = mainTs.indexOf("import './assets/styles/audio-header.css'")
     expect(headerIndex).toBeGreaterThan(layoutIndex)
+    const controlsIndex = mainTs.indexOf("import './assets/styles/audio-controls.css'")
+    expect(controlsIndex).toBeGreaterThan(headerIndex)
     const appIndex = mainTs.indexOf("import('./App.vue')")
     expect(tokensIndex).toBeGreaterThanOrEqual(0)
     expect(stylesIndex).toBeGreaterThan(tokensIndex)
