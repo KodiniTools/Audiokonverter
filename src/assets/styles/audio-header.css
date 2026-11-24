@@ -12,6 +12,8 @@ body
   > .global-nav:not(#app):not(.app-surface):not(.cookie-banner):not(.cookie-consent):not(
     [class*='cookie']
   ) {
+  /* Über der Audio-Konverter-Navigation, damit deren Leiste die Aufklappmenüs nicht verdeckt */
+  z-index: calc(var(--ds-z-topbar) + 1);
   background-color: var(--ds-surface-0) !important;
   border-bottom: var(--ds-border-width) solid var(--ds-border);
 }

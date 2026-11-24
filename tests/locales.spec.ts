@@ -43,4 +43,11 @@ describe('Übersetzungen', () => {
       expect(forms(enEntries.get(path)), path).toBe(forms(value))
     }
   })
+
+  // FileList.vue zeigt für jeden Status außer 'pending' den Text `status.<status>`
+  it('haben einen Text für jeden angezeigten Dateistatus', () => {
+    for (const status of ['converting', 'completed', 'error']) {
+      expect(deEntries.has(`status.${status}`), status).toBe(true)
+    }
+  })
 })
