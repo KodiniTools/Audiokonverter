@@ -51,11 +51,16 @@ const audioHeaderCss = stripComments(
   readFileSync(join(SRC, 'assets/styles/audio-header.css'), 'utf8')
 )
 
+const audioControlsCss = stripComments(
+  readFileSync(join(SRC, 'assets/styles/audio-controls.css'), 'utf8')
+)
+
 /** Alle zu prüfenden Stylesheets: main.css, audio-layout.css, audio-header.css und jede Komponente. */
 const sheets = [
   { file: 'assets/styles/main.css', css: mainCssNoComments },
   { file: 'assets/styles/audio-layout.css', css: audioLayoutCss },
   { file: 'assets/styles/audio-header.css', css: audioHeaderCss },
+  { file: 'assets/styles/audio-controls.css', css: audioControlsCss },
   ...vueStyles.map(({ file, css }) => ({ file, css })),
 ]
 
@@ -102,7 +107,9 @@ describe('Stylesheets auf Tokens v2', () => {
   it('nutzen keine Verläufe, keine Unschärfe und kein color-mix (außer der Landing-Vorlage)', () => {
     const outsideLanding = sheets.filter(
       ({ file }) =>
-        file !== 'assets/styles/audio-layout.css' && file !== 'assets/styles/audio-header.css'
+        file !== 'assets/styles/audio-layout.css' &&
+        file !== 'assets/styles/audio-header.css' &&
+        file !== 'assets/styles/audio-controls.css'
     )
     const hits = outsideLanding.flatMap(({ file, css }) =>
       [...css.matchAll(/gradient\(|backdrop-filter|filter:\s*blur|color-mix\(|text-shadow/g)].map(
@@ -135,6 +142,26 @@ describe('Stylesheets auf Tokens v2', () => {
       'radial-gradient(ellipse at 50% 0%, var(--ds-glow-cyan), transparent 72%);',
     ])
     expect(audioHeaderCss).not.toMatch(/backdrop-filter|filter:\s*blur|color-mix\(|text-shadow/)
+  })
+
+  it('erlaubt in audio-controls.css nur den Lichtschein der Dropzone und den Panel-Verlauf', () => {
+    const flatControls = audioControlsCss.replace(/\s+/g, ' ')
+    const gradients = [
+      ...flatControls.matchAll(/(?:radial|linear)-gradient\((?:[^()]|\([^()]*\))*\)/g),
+    ]
+      .map((m) => m[0])
+      .sort()
+    expect(gradients).toEqual([
+      'linear-gradient(145deg, var(--ds-surface-1), var(--ds-surface-0))',
+      'radial-gradient(ellipse at 50% 0%, var(--ds-glow-cyan), transparent 75%)',
+    ])
+    expect(audioControlsCss).not.toMatch(/backdrop-filter|filter:\s*blur|color-mix\(|text-shadow/)
+  })
+
+  it('markiert die Dropzone beim Ziehen sichtbar (Akzentfläche, durchgezogener Rahmen)', () => {
+    expect(audioControlsCss.replace(/\s+/g, ' ')).toMatch(
+      /\.drop-area\.drag-over \{ background: var\(--ds-accent-soft\); border-style: solid; border-color: var\(--ds-accent\);/
+    )
   })
 
   it('setzen Schatten nur als Overlay-Schatten oder Fokus-Ring', () => {
