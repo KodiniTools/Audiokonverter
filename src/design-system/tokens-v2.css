@@ -50,6 +50,9 @@
   /* Effekte (theme-abhängig) */
   --ds-focus-ring: 0 0 0 2px var(--ds-surface-0), 0 0 0 4px var(--ds-accent);
   --ds-shadow-overlay: 0 8px 24px rgba(0, 0, 0, 0.35);
+  /* Primär-Buttons: dreistufiger dunkelgoldener Verlauf, weiße Schrift bleibt über 4,5:1 */
+  --ds-button-grad: linear-gradient(180deg, #9c6c26 0%, #7a5218 45%, #4a2f0a 100%);
+  --ds-button-grad-hover: linear-gradient(180deg, #8c5f1f 0%, #6a4614 45%, #402908 100%);
 
   /* === Typografie === */
   --ds-font-sans: 'Supreme', sans-serif;
@@ -149,6 +152,9 @@
 
   --ds-focus-ring: 0 0 0 2px var(--ds-surface-0), 0 0 0 4px var(--ds-accent);
   --ds-shadow-overlay: 0 8px 24px rgba(20, 33, 58, 0.12);
+  /* Primär-Buttons: dreistufiger dunkelgoldener Verlauf, weiße Schrift bleibt über 4,5:1 */
+  --ds-button-grad: linear-gradient(180deg, #9c6c26 0%, #7a5218 45%, #4a2f0a 100%);
+  --ds-button-grad-hover: linear-gradient(180deg, #8c5f1f 0%, #6a4614 45%, #402908 100%);
 }
 
 /* === Light (SSI-Partials, spiegelt .light-theme vollständig) === */
@@ -183,4 +189,7 @@
 
   --ds-focus-ring: 0 0 0 2px var(--ds-surface-0), 0 0 0 4px var(--ds-accent);
   --ds-shadow-overlay: 0 8px 24px rgba(20, 33, 58, 0.12);
+  /* Primär-Buttons: dreistufiger dunkelgoldener Verlauf, weiße Schrift bleibt über 4,5:1 */
+  --ds-button-grad: linear-gradient(180deg, #9c6c26 0%, #7a5218 45%, #4a2f0a 100%);
+  --ds-button-grad-hover: linear-gradient(180deg, #8c5f1f 0%, #6a4614 45%, #402908 100%);
 }

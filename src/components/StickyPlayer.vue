@@ -173,7 +173,7 @@ onBeforeUnmount(() => {
   width: var(--ds-control-lg);
   height: var(--ds-control-lg);
   flex-shrink: 0;
-  background: var(--ds-button-bg);
+  background: var(--ds-button-grad);
   border: 0;
   border-radius: var(--ds-radius-full);
   color: var(--ds-on-button);
@@ -182,7 +182,7 @@ onBeforeUnmount(() => {
 }
 
 .sp-play-btn:hover:not(:disabled) {
-  background: var(--ds-button-bg-hover);
+  background: var(--ds-button-grad-hover);
 }
 
 .sp-play-btn:focus-visible {

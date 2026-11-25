@@ -152,3 +152,19 @@ describe('tokens-v2.ts', () => {
     expect(breakpointsV2).toEqual({ phone: 480, tablet: 768, desktop: 1024 })
   })
 })
+
+describe('Verlauf der Buttons', () => {
+  it.each([
+    ['dark', rootBlock],
+    ['light (.light-theme)', lightBlock],
+    ["light ([data-theme='light'])", dataThemeLightBlock],
+  ] as const)('%s: jede Stufe hält mit weißer Schrift AA', (_name, block) => {
+    for (const name of ['--ds-button-grad', '--ds-button-grad-hover']) {
+      const stops = block[name]?.match(/#[0-9a-f]{6}/gi) ?? []
+      expect(stops).toHaveLength(3)
+      for (const stop of stops) {
+        expect(contrastRatio('#ffffff', stop)).toBeGreaterThanOrEqual(AA)
+      }
+    }
+  })
+})

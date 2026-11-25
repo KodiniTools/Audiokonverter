@@ -219,13 +219,13 @@ textarea {
 .btn-secondary,
 .btn-ghost,
 .btn-danger {
-  background: var(--ds-button-bg);
+  background: var(--ds-button-grad);
   border-color: var(--ds-button-bg);
   color: var(--ds-on-button);
 }
 
 .btn:hover:not(:disabled) {
-  background: var(--ds-button-bg-hover);
+  background: var(--ds-button-grad-hover);
   border-color: var(--ds-button-bg-hover);
   color: var(--ds-on-button);
 }
@@ -248,7 +248,7 @@ textarea {
   width: var(--ds-control-sm);
   height: var(--ds-control-sm);
   flex-shrink: 0;
-  background: var(--ds-button-bg);
+  background: var(--ds-button-grad);
   border: var(--ds-border-width) solid var(--ds-button-bg);
   border-radius: var(--ds-radius-sm);
   color: var(--ds-on-button);
@@ -259,7 +259,7 @@ textarea {
 }
 
 .btn-icon:hover:not(:disabled) {
-  background: var(--ds-button-bg-hover);
+  background: var(--ds-button-grad-hover);
   border-color: var(--ds-button-bg-hover);
   color: var(--ds-on-button);
 }
@@ -590,7 +590,7 @@ body
     [class*='cookie']
   ):not([id*='cookie'])
   .global-nav-theme-toggle {
-  background-color: var(--ds-button-bg) !important;
+  background: var(--ds-button-grad) !important;
   color: var(--ds-on-button) !important;
 }
 
@@ -627,7 +627,7 @@ body
     [class*='cookie']
   ):not([id*='cookie'])
   .global-nav-theme-toggle:hover {
-  background-color: var(--ds-button-bg-hover) !important;
+  background: var(--ds-button-grad-hover) !important;
 }
 
 /* ==========================================================================

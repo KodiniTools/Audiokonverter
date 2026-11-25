@@ -286,6 +286,18 @@
         "$value": "0 8px 24px rgba(0, 0, 0, 0.35)",
         "$description": "Einziger Schatten: Dialog, Popover, Menü",
         "$extensions": { "css": "--ds-shadow-overlay" }
+      },
+      "buttonGrad": {
+        "$type": "gradient",
+        "$value": "linear-gradient(180deg, #9c6c26 0%, #7a5218 45%, #4a2f0a 100%)",
+        "$description": "Fläche der Primär-Buttons: dreistufiger dunkelgoldener Verlauf (oberste Stufe 4,58:1 mit Weiß)",
+        "$extensions": { "css": "--ds-button-grad" }
+      },
+      "buttonGradHover": {
+        "$type": "gradient",
+        "$value": "linear-gradient(180deg, #8c5f1f 0%, #6a4614 45%, #402908 100%)",
+        "$description": "Primär-Button :hover",
+        "$extensions": { "css": "--ds-button-grad-hover" }
       }
     },
     "light": {
@@ -300,6 +312,18 @@
         "$value": "0 8px 24px rgba(20, 33, 58, 0.12)",
         "$description": "Einziger Schatten: Dialog, Popover, Menü",
         "$extensions": { "css": "--ds-shadow-overlay" }
+      },
+      "buttonGrad": {
+        "$type": "gradient",
+        "$value": "linear-gradient(180deg, #9c6c26 0%, #7a5218 45%, #4a2f0a 100%)",
+        "$description": "Fläche der Primär-Buttons: dreistufiger dunkelgoldener Verlauf (oberste Stufe 4,58:1 mit Weiß)",
+        "$extensions": { "css": "--ds-button-grad" }
+      },
+      "buttonGradHover": {
+        "$type": "gradient",
+        "$value": "linear-gradient(180deg, #8c5f1f 0%, #6a4614 45%, #402908 100%)",
+        "$description": "Primär-Button :hover",
+        "$extensions": { "css": "--ds-button-grad-hover" }
       }
     }
   },

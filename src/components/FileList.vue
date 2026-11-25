@@ -305,7 +305,7 @@ function removeFile(fileId: string): void {
   width: var(--ds-control-sm);
   height: var(--ds-control-sm);
   flex-shrink: 0;
-  background: var(--ds-button-bg);
+  background: var(--ds-button-grad);
   border: var(--ds-border-width) solid var(--ds-button-bg);
   border-radius: var(--ds-radius-full);
   color: var(--ds-on-button);
@@ -316,13 +316,13 @@ function removeFile(fileId: string): void {
 }
 
 .file-item-info:hover .btn-play-indicator {
-  background: var(--ds-button-bg-hover);
+  background: var(--ds-button-grad-hover);
   border-color: var(--ds-button-bg-hover);
 }
 
 /* Laufende Datei: dunklere Fläche mit weißem Rand */
 .btn-play-indicator.active {
-  background: var(--ds-button-bg-hover);
+  background: var(--ds-button-grad-hover);
   border-color: var(--ds-on-button);
   color: var(--ds-on-button);
 }
