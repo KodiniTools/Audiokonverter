@@ -86,7 +86,7 @@
   height: var(--ds-control-lg);
   padding: 0 var(--ds-space-5);
   border-radius: var(--ds-radius-md);
-  background: var(--ds-button-bg);
+  background: var(--ds-button-grad);
   color: var(--ds-on-button);
   font-size: var(--ds-text-lg);
   text-decoration: none;
@@ -94,7 +94,7 @@
 }
 
 .audio-landing__cta:hover {
-  background: var(--ds-button-bg-hover);
+  background: var(--ds-button-grad-hover);
   color: var(--ds-on-button);
 }
 

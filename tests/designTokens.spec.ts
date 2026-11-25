@@ -282,10 +282,10 @@ describe('Buttons: dunkles Gold mit weißer Beschriftung', () => {
 
   it('gibt allen .btn-Varianten und .btn-icon die Button-Fläche', () => {
     expect(flatCss).toMatch(
-      /\.btn, \.btn-primary, \.btn-secondary, \.btn-ghost, \.btn-danger \{ background: var\(--ds-button-bg\); border-color: var\(--ds-button-bg\); color: var\(--ds-on-button\);/
+      /\.btn, \.btn-primary, \.btn-secondary, \.btn-ghost, \.btn-danger \{ background: var\(--ds-button-grad\); border-color: var\(--ds-button-bg\); color: var\(--ds-on-button\);/
     )
     expect(flatCss).toMatch(
-      /\.btn-icon \{[^}]*background: var\(--ds-button-bg\);[^}]*color: var\(--ds-on-button\);/
+      /\.btn-icon \{[^}]*background: var\(--ds-button-grad\);[^}]*color: var\(--ds-on-button\);/
     )
   })
 
@@ -334,7 +334,7 @@ describe('Partial-Angleichung aus dem Collage Maker', () => {
 
   it('färbt Theme-Umschalter und aktive Sprache wie alle Buttons', () => {
     expect(flat).toMatch(
-      /\[data-lang\]\.global-nav-lang-btn\.active, [^{]*\.global-nav-theme-toggle \{\s*background-color: var\(--ds-button-bg\) !important;\s*color: var\(--ds-on-button\) !important;/
+      /\[data-lang\]\.global-nav-lang-btn\.active, [^{]*\.global-nav-theme-toggle \{\s*background: var\(--ds-button-grad\) !important;\s*color: var\(--ds-on-button\) !important;/
     )
   })
 
@@ -359,7 +359,7 @@ describe('Partial-Angleichung aus dem Collage Maker', () => {
   it('markiert die aktive Seite der Audio-Konverter-Navigation dunkelgold mit weißer Schrift', () => {
     const flatHeader = audioHeaderCss.replace(/\s+/g, ' ')
     expect(flatHeader).toMatch(
-      /\.anchor-nav__link\[aria-current='page'\], \.anchor-nav__link\[aria-current='page'\]:hover \{ color: var\(--ds-on-button\); background: var\(--ds-button-bg\);/
+      /\.anchor-nav__link\[aria-current='page'\], \.anchor-nav__link\[aria-current='page'\]:hover \{ color: var\(--ds-on-button\); background: var\(--ds-button-grad\);/
     )
   })
 

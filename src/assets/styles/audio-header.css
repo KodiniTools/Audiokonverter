@@ -121,12 +121,12 @@ body > .global-nav .global-nav-links.is-open {
 .anchor-nav__link[aria-current='page'],
 .anchor-nav__link[aria-current='page']:hover {
   color: var(--ds-on-button);
-  background: var(--ds-button-bg);
+  background: var(--ds-button-grad);
   border-color: var(--ds-button-bg);
 }
 
 .anchor-nav__link[aria-current='page']:hover {
-  background: var(--ds-button-bg-hover);
+  background: var(--ds-button-grad-hover);
   border-color: var(--ds-button-bg-hover);
 }
 
@@ -161,7 +161,7 @@ body > .global-nav .global-nav-links.is-open {
   padding: var(--ds-space-2) var(--ds-space-3);
   border: var(--ds-border-width) solid var(--ds-button-bg);
   border-radius: var(--ds-radius-md);
-  background: var(--ds-button-bg);
+  background: var(--ds-button-grad);
   color: var(--ds-on-button);
   font-size: var(--ds-text-md);
   white-space: nowrap;
@@ -171,7 +171,7 @@ body > .global-nav .global-nav-links.is-open {
 
 .anchor-nav__theme-btn:hover,
 .anchor-nav__theme-btn[aria-pressed='true'] {
-  background: var(--ds-button-bg-hover);
+  background: var(--ds-button-grad-hover);
   border-color: var(--ds-button-bg-hover);
   color: var(--ds-on-button);
 }
