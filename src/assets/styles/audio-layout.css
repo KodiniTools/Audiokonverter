@@ -67,6 +67,15 @@
   overflow-wrap: anywhere;
 }
 
+/* Zweifarbiger Titel: „Audio“ in Logo-Gold, „Konverter“ in Logo-Blau */
+.audio-landing .audio-landing__title-brand {
+  color: var(--ds-title-gold);
+}
+
+.audio-landing .audio-landing__title-tool {
+  color: var(--ds-title-blue);
+}
+
 .audio-landing__subtitle {
   margin-bottom: var(--ds-space-3);
   font-size: var(--ds-text-lg);

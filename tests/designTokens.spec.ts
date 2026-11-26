@@ -388,6 +388,23 @@ describe('index.html', () => {
     expect(indexHtml).not.toMatch(/<style[\s>]/)
   })
 
+  it('färbt den Hero-Titel zweifarbig: „Audio“ Gold, „Konverter“ Blau', () => {
+    expect(indexHtml).toMatch(
+      /<h1 id="audio-landing-title"><span class="audio-landing__title-brand" data-i18n="landing\.hero\.titleBrand">Audio<\/span> <span class="audio-landing__title-tool" data-i18n="landing\.hero\.titleTool">Konverter<\/span><\/h1>/
+    )
+    expect(audioLayoutCss).toMatch(
+      /\.audio-landing__title-brand \{\s*color: var\(--ds-title-gold\);/
+    )
+    expect(audioLayoutCss).toMatch(
+      /\.audio-landing__title-tool \{\s*color: var\(--ds-title-blue\);/
+    )
+    // Hell: dunkles Gold und Logo-Blau, Dunkel: helleres Gold und helleres Logo-Blau
+    expect(tokensCss).toMatch(/--ds-title-gold: #e6bc76;\s*--ds-title-blue: #48a0d8;/)
+    expect(tokensCss.match(/--ds-title-gold: #775115;\s*--ds-title-blue: #0058a0;/g)).toHaveLength(
+      2
+    )
+  })
+
   it('nutzt keine Emoji als Icons', () => {
     expect(indexHtml.match(/&#(?:9654|10024|10067|128221);/g) ?? []).toEqual([])
     expect(indexHtml.match(/\p{Extended_Pictographic}/gu) ?? []).toEqual([])
