@@ -118,6 +118,18 @@
         "$description": "Untertitel im Landing-Hero (wie Audio Normalizer)",
         "$extensions": { "css": "--ds-heading-accent" }
       },
+      "titleGold": {
+        "$type": "color",
+        "$value": "#e6bc76",
+        "$description": "Erstes Wort der Hero-Überschrift (Gold, aus dem KodiniTools-Logo)",
+        "$extensions": { "css": "--ds-title-gold" }
+      },
+      "titleBlue": {
+        "$type": "color",
+        "$value": "#48a0d8",
+        "$description": "Zweites Wort der Hero-Überschrift (Blau, gemessen im KodiniTools-Logo)",
+        "$extensions": { "css": "--ds-title-blue" }
+      },
       "link": {
         "$type": "color",
         "$value": "#6aaef5",
@@ -251,6 +263,18 @@
         "$value": "#086a80",
         "$description": "Untertitel im Landing-Hero (wie Audio Normalizer)",
         "$extensions": { "css": "--ds-heading-accent" }
+      },
+      "titleGold": {
+        "$type": "color",
+        "$value": "#775115",
+        "$description": "Erstes Wort der Hero-Überschrift (Gold, aus dem KodiniTools-Logo)",
+        "$extensions": { "css": "--ds-title-gold" }
+      },
+      "titleBlue": {
+        "$type": "color",
+        "$value": "#0058a0",
+        "$description": "Zweites Wort der Hero-Überschrift (Blau, gemessen im KodiniTools-Logo)",
+        "$extensions": { "css": "--ds-title-blue" }
       },
       "link": {
         "$type": "color",
