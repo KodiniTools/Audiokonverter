@@ -405,6 +405,11 @@ describe('index.html', () => {
     )
   })
 
+  it('zeigt das Hero-Bild im Seitenverhältnis der Datei (2752 × 1536)', () => {
+    expect(indexHtml).toMatch(/src="\/audio-konverter-hero\.webp"\s+width="2752"\s+height="1536"/)
+    expect(audioLayoutCss).not.toMatch(/aspect-ratio: 16 \/ 9/)
+  })
+
   it('nutzt keine Emoji als Icons', () => {
     expect(indexHtml.match(/&#(?:9654|10024|10067|128221);/g) ?? []).toEqual([])
     expect(indexHtml.match(/\p{Extended_Pictographic}/gu) ?? []).toEqual([])
