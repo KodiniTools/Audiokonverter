@@ -125,7 +125,7 @@
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 16 / 9;
+  /* Seitenverhältnis kommt aus width/height des Bildes (2752 × 1536) */
 }
 
 /* === Abschnitte: Features und FAQ als Band auf Fläche 1, Tools auf der Seite === */
